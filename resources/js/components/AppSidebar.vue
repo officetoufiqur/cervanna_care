@@ -36,7 +36,7 @@ const mainNavItems: NavItem[] = [
             </SidebarHeader>
         </div>
 
-        <SidebarContent>
+        <SidebarContent class="mt-2">
             <NavMain :items="mainNavItems" />
         </SidebarContent>
 

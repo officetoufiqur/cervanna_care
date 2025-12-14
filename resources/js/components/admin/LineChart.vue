@@ -13,16 +13,16 @@ const data = {
     {
       label: 'Income',
       data: [15000, 18000, 22000, 5000, 30000, 35000, 40000],
-      borderColor: 'rgb(75, 192, 192)',
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      borderColor: '#56284f',
+      backgroundColor: 'rgb(86, 40, 79, 0.4)',
       tension: 0.4,
       fill: true
     },
     {
       label: 'Expense',
       data: [10000, 12000, 18000, 15000, 20000, 22000, 23120],
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      borderColor: '#400022',
+      backgroundColor: 'rgb(64, 0, 34, 0.4)',
       tension: 0.4,
       fill: true
     }

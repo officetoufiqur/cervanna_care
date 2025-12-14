@@ -12,16 +12,16 @@ const data = {
     {
       label: 'Revenue',
       data: [35000, 40000, 25000, 30000],
-      backgroundColor: '#4bc0c0',
-      borderColor: '#4bc0c0',
+      backgroundColor: '#400022',
+      borderColor: '#400022',
       borderWidth: 1,
       borderRadius: 4
     },
     {
       label: 'Profit',
       data: [15000, 22000, 12000, 18000],
-      backgroundColor: '#ff6384',
-      borderColor: '#ff6384',
+      backgroundColor: '#56284f',
+      borderColor: '#56284f',
       borderWidth: 1,
       borderRadius: 4
     }
@@ -100,7 +100,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div style="width: 100%; height: 250px;">
+    <div style="width: 100%; height: 39vh;">
         <canvas ref="chart"></canvas>
     </div>
 </template>
