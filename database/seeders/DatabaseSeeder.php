@@ -13,19 +13,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            FaqSeeder::class,
+            BannerSeeder::class,
+            NewsLetterSeeder::class,
+        ]);
 
-        User::factory()->create([
+         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
             'number' => '1234567890',
             'email_verified_at' => now(),
-        ]);
-
-        $this->call([
-            BannerSeeder::class,
-            NewsLetterSeeder::class
         ]);
     }
 }

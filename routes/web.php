@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\FaqController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -26,6 +27,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/news-letters', 'newsLetters')->name('news-letters');
         Route::get('/news-letters/edit/{id}', 'newsLettersEdit')->name('news-letters.edit');
         Route::post('/news-letters/update/{id}', 'newsLettersUpdate')->name('news-letters.update');
+    });
+
+    Route::resource('/faqs', FaqController::class);
+
+    Route::controller(FaqController::class)->group(function () {
+        Route::get('/faqs/header/edit/{id}', 'faqsEdit')->name('faqs.edit');
+        Route::post('/faqs/header/update/{id}', 'faqsUpdate')->name('faqs.update');
     });
 });
 

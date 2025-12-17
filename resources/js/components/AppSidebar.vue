@@ -3,7 +3,7 @@ import NavMain from '@/components/NavMain.vue';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { ConstructionIcon, LayoutGrid } from 'lucide-vue-next';
+import { ConstructionIcon, LayoutGrid, MessageCircleQuestionIcon } from 'lucide-vue-next';
 
 const mainNavItems: NavItem[] = [
   {
@@ -25,6 +25,11 @@ const mainNavItems: NavItem[] = [
       },
     ],
   },
+  {
+    title: 'FAQs',
+    href: '/faqs',
+    icon: MessageCircleQuestionIcon,
+  }
 ];
 
 </script>
