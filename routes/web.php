@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\ChooseController;
 use App\Http\Controllers\FaqController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,6 +36,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/faqs/header/edit/{id}', 'faqsEdit')->name('faqs.edit');
         Route::post('/faqs/header/update/{id}', 'faqsUpdate')->name('faqs.update');
     });
+
+    Route::resource('/chooses', ChooseController::class);
 });
 
 require __DIR__.'/settings.php';
