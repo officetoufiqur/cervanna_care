@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
-
 defineProps<{
   forr?: string;
   label?: string;
@@ -25,7 +23,7 @@ function updateValue(event: Event) {
 
 <template>
   <div class="w-full">
-    <label :for="forr" class="text-[#5D5D5D] font-medium text-sm">{{ label }}</label>
+    <label :for="forr" class="text-[#5D5D5D] font-medium">{{ label }}</label>
     <input
       :type="type"
       :id="forr"
@@ -33,7 +31,7 @@ function updateValue(event: Event) {
       :placeholder="placeholder"
       :value="modelValue"
       @input="updateValue"
-      class="border border-gray-300 rounded px-3 py-2 w-full mt-1 text-sm"
+      class="border border-gray-300 rounded px-3 py-2.5 w-full mt-1"
     />
   </div>
 </template>

@@ -22,5 +22,10 @@ class DatabaseSeeder extends Seeder
             'number' => '1234567890',
             'email_verified_at' => now(),
         ]);
+
+        $this->call([
+            BannerSeeder::class,
+            NewsLetterSeeder::class
+        ]);
     }
 }

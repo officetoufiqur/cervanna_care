@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
-
 defineProps<{
   forr?: string;
   label?: string;
@@ -9,5 +7,5 @@ defineProps<{
 </script>
 
 <template>
-  <label :for="forr" class="text-[#5D5D5D] font-medium text-sm">{{ label }}</label>
+  <label :for="forr" class="text-[#5D5D5D] font-medium">{{ label }}</label>
 </template>

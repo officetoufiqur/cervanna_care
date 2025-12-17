@@ -1,66 +1,83 @@
-<script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Link } from '@inertiajs/vue3';
+<script setup lang="ts" generic="T extends { id: number }">
+import { ref, computed, watch } from 'vue'
+import { Link } from '@inertiajs/vue3'
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-vue-next';
 
-interface TableData {
-    [key: string]: any;
-    id: number;
+/* ----------------------------------
+   Types
+-----------------------------------*/
+interface TableColumn<T> {
+    key: keyof T | string
+    label: string
+    icon?: any
 }
 
-interface TableColumn {
-    key: string;
-    label: string;
-    icon?: any;
-}
-
+/* ----------------------------------
+   Props
+-----------------------------------*/
 const props = defineProps<{
-    rows: TableData[];
-    columns: TableColumn[];
-    title?: string;
-    createText?: string;
-    createUrl?: string;
-    createBtn?: boolean;
-    backText?: string;
-    backUrl?: string;
-    backBtn?: boolean;
-}>();
+    rows: T[]
+    columns: TableColumn<T>[]
+    title?: string
+    createText?: string
+    createUrl?: string
+    createBtn?: boolean
+}>()
 
+/* ----------------------------------
+   State
+-----------------------------------*/
+const entriesPerPage = ref(10)
+const currentPage = ref(1)
+const search = ref('')
 
-const entriesPerPage = ref(10);
-const currentPage = ref(1);
-const search = ref('');
+/* ----------------------------------
+   Computed
+-----------------------------------*/
+const filteredData = computed(() => {
+    if (!search.value) return props.rows
 
-const filteredData = computed(() =>
-    props.rows.filter((item) =>
+    return props.rows.filter(item =>
         Object.values(item)
             .join(' ')
             .toLowerCase()
             .includes(search.value.toLowerCase())
     )
-);
+})
 
 const totalPages = computed(() =>
-    Math.ceil(filteredData.value.length / entriesPerPage.value)
-);
+    Math.max(1, Math.ceil(filteredData.value.length / entriesPerPage.value))
+)
 
 const paginatedData = computed(() => {
-    const start = (currentPage.value - 1) * entriesPerPage.value;
-    return filteredData.value.slice(start, start + entriesPerPage.value);
-});
+    const start = (currentPage.value - 1) * entriesPerPage.value
+    return filteredData.value.slice(start, start + entriesPerPage.value)
+})
 
+/* ----------------------------------
+   Watchers
+-----------------------------------*/
 watch([search, entriesPerPage], () => {
-    currentPage.value = 1;
-});
+    currentPage.value = 1
+})
 </script>
 
 <template>
-    <div class="">
-        <div class="flex items-center justify-between mb-3">
-            <h2 class="text-2xl font-semibold mb-4">{{ title }}</h2>
-            <Link v-if="createBtn" :href="createUrl || '#'" class="bg-[#0f79bc] hover:bg-[#4a4745] px-6 py-2 text-white rounded-md">{{ createText }}</Link>
-            <Link v-if="backBtn" :href="backUrl || '#'" class="bg-[#0f79bc] hover:bg-[#4a4745] px-6 py-2 text-white rounded-md">{{ backText }}</Link>
+    <div class="w-full">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-semibold">{{ title }}</h2>
+
+            <div class="flex gap-2">
+                <Link v-if="createBtn" :href="createUrl || '#'"
+                    class="bg-[#72275B] hover:bg-[#56284F] px-6 py-2 text-white rounded-md cursor-pointer">
+                    {{ createText }}
+                </Link>
+            </div>
         </div>
 
+        <!-- Filters -->
         <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
                 <select v-model="entriesPerPage" class="border px-2 py-1 rounded text-sm border-gray-300">
@@ -70,17 +87,19 @@ watch([search, entriesPerPage], () => {
                 </select>
                 <span class="text-sm text-gray-700">entries per page</span>
             </div>
+
             <div class="text-sm">
                 <label class="mr-2">Search:</label>
                 <input v-model="search" type="text" class="border px-2 py-1 rounded border-gray-300" />
             </div>
         </div>
 
+        <!-- Table -->
         <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border relative ">
+            <table class="min-w-full bg-white border rounded-lg">
                 <thead class="bg-gray-100 text-sm text-gray-700">
                     <tr>
-                        <th v-for="col in columns" :key="col.key" class="px-4 py-4 text-left">
+                        <th v-for="col in columns" :key="String(col.key)" class="px-4 py-3 text-left font-medium">
                             {{ col.label }}
                             <component :is="col.icon" v-if="col.icon" class="inline w-4 h-4 ml-1" />
                         </th>
@@ -88,42 +107,48 @@ watch([search, entriesPerPage], () => {
                 </thead>
 
                 <tbody>
+                    <!-- Empty -->
                     <tr v-if="paginatedData.length === 0">
                         <td :colspan="columns.length" class="text-center py-6 text-gray-500">
                             No data found
                         </td>
                     </tr>
-                    <tr v-for="item in paginatedData" :key="item.id">
-                        <td v-for="col in columns" :key="col.key" class="border border-gray-200 px-4 py-4">
-                            <slot :name="col.key" :item="item">
-                                {{ item[col.key] }}
+
+                    <!-- Rows -->
+                    <tr v-for="item in paginatedData" :key="item.id" class="border-t">
+                        <td v-for="col in columns" :key="String(col.key)" class="px-4 py-3 border">
+                            <slot :name="String(col.key)" :item="item">
+                                {{ item[col.key as keyof typeof item] }}
                             </slot>
                         </td>
                     </tr>
                 </tbody>
-
             </table>
         </div>
 
+        <!-- Pagination -->
         <div class="flex items-center justify-between mt-4 text-sm text-gray-600">
             <div>
                 Showing
                 {{ (currentPage - 1) * entriesPerPage + 1 }}
                 to
-                {{
-                    Math.min(currentPage * entriesPerPage, filteredData.length)
-                }}
+                {{ Math.min(currentPage * entriesPerPage, filteredData.length) }}
                 of {{ filteredData.length }} entries
             </div>
+
             <div class="flex gap-1">
                 <button @click="currentPage--" :disabled="currentPage === 1"
-                    class="px-2 py-1 border rounded disabled:opacity-50">
-                    ‹
+                    class="px-2 py-1 border rounded disabled:opacity-50 cursor-pointer">
+                    <ChevronLeftIcon class="w-4 h-4" />
                 </button>
-                <button class="px-2 py-1 border rounded bg-blue-600 text-white">{{ currentPage }}</button>
+
+                <button class="px-2 py-1 border rounded bg-[#72275B] text-white">
+                    {{ currentPage }}
+                </button>
+
                 <button @click="currentPage++" :disabled="currentPage >= totalPages"
-                    class="px-2 py-1 border rounded disabled:opacity-50">
-                    ›
+                    class="px-2 py-1 border rounded disabled:opacity-50 cursor-pointer">
+                    <ChevronRightIcon class="w-4 h-4" />
                 </button>
             </div>
         </div>
