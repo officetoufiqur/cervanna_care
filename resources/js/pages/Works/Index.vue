@@ -49,7 +49,7 @@ function deleteWorks(id: number) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            router.delete(`/Works/${id}`, {
+            router.delete(`/works/${id}`, {
                 preserveScroll: true,
                 onSuccess: () => {
                     data.value = props.works;
@@ -69,7 +69,7 @@ function deleteWorks(id: number) {
         <FlashMessage :message="props.flash.message" />
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-10">
             <FilterTable :rows="data" :columns="columns" title="Works List" create-btn create-text="Create Works"
-                create-url="/Works/create">
+                create-url="/works/create">
 
                 <template #subtitle="{ item }">
                     <span>{{ item.subtitle.length > 40
