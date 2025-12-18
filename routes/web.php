@@ -4,6 +4,7 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ChooseController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\WorksController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -44,6 +45,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/service/header/edit/{id}', 'serviceEdit')->name('service.edit');
         Route::post('/service/header/update/{id}', 'serviceUpdate')->name('service.update');
     });
+
+    Route::resource('/works', WorksController::class);
 });
 
 require __DIR__.'/settings.php';

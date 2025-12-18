@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             BannerSeeder::class,
             NewsLetterSeeder::class,
             ChooseSeeder::class,
-            ServiceSeeder::class
+            ServiceSeeder::class,
+            WorksSeeder::class
         ]);
 
          User::factory()->create([

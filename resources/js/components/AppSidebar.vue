@@ -31,6 +31,11 @@ const mainNavItems: NavItem[] = [
     icon: CogIcon,
   },
   {
+    title: 'Works',
+    href: '/works',
+    icon: ConstructionIcon,
+  },
+  {
     title: 'FAQs',
     href: '/faqs',
     icon: MessageCircleQuestionIcon,
