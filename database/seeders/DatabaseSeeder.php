@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             WorksSeeder::class,
             AboutSeeder::class,
+            OurCoreSeeder::class,
+            FoundationSeeder::class
         ]);
 
          User::factory()->create([

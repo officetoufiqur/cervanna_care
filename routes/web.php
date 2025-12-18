@@ -4,6 +4,8 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ChooseController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\FoundationController;
+use App\Http\Controllers\OurCoreController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\WorksController;
 use Illuminate\Support\Facades\Route;
@@ -48,12 +50,18 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('/works', WorksController::class);
-
+    
     Route::controller(AboutController::class)->group(function () {
         Route::get('/about', 'index')->name('about.index');
         Route::get('/about/edit/{id}', 'edit')->name('about.edit');
         Route::post('/about/update/{id}', 'update')->name('about.update');
     });
+
+    Route::resource('/our-cores', OurCoreController::class);
+    Route::resource('/foundation', FoundationController::class);
+
+
+
 });
 
 require __DIR__.'/settings.php';
