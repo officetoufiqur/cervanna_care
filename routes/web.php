@@ -3,6 +3,7 @@
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ChooseController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -38,6 +39,11 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('/chooses', ChooseController::class);
+    Route::resource('/services', ServiceController::class);
+    Route::controller(ServiceController::class)->group(function () {
+        Route::get('/service/header/edit/{id}', 'serviceEdit')->name('service.edit');
+        Route::post('/service/header/update/{id}', 'serviceUpdate')->name('service.update');
+    });
 });
 
 require __DIR__.'/settings.php';

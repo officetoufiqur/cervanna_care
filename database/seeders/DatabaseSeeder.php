@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
             BannerSeeder::class,
             NewsLetterSeeder::class,
-            ChooseSeeder::class
+            ChooseSeeder::class,
+            ServiceSeeder::class
         ]);
 
          User::factory()->create([
