@@ -3,7 +3,7 @@ import NavMain from '@/components/NavMain.vue';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { CogIcon, ConstructionIcon, HandHeartIcon, HeartHandshakeIcon, InfoIcon, LayoutGrid, MessageCircleQuestionIcon, UserRoundCheckIcon } from 'lucide-vue-next';
+import { CalendarCheckIcon, CogIcon, ConstructionIcon, HandHeartIcon, HeartHandshakeIcon, InfoIcon, LayoutGrid, MessageCircleQuestionIcon, SquareUserRoundIcon, UserRoundCheckIcon } from 'lucide-vue-next';
 import CogUser from './admin/icon/CogUser.vue';
 
 const mainNavItems: NavItem[] = [
@@ -60,6 +60,21 @@ const mainNavItems: NavItem[] = [
     title: 'Chooses',
     href: '/chooses',
     icon: UserRoundCheckIcon,
+  },
+  {
+    title: 'Events',
+    href: '/events',
+    icon: CalendarCheckIcon,
+  },
+  {
+    title: 'Contact',
+    icon: SquareUserRoundIcon,
+    subMenu: [
+      {
+        title: 'Get in Touch',
+        href: '/contacts',
+      },
+    ]
   }
 ];
 

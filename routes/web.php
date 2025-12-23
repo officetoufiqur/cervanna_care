@@ -3,6 +3,8 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ChooseController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FoundationController;
 use App\Http\Controllers\OurCoreController;
@@ -59,6 +61,10 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/our-cores', OurCoreController::class);
     Route::resource('/foundation', FoundationController::class);
+    Route::resource('/events', EventController::class);
+    Route::resource('/contacts', ContactController::class);
+    Route::get('/contacts/header/edit/{id}',[ContactController::class, 'contactEdit'])->name('contact.edit');
+    Route::post('/contact/header/update/{id}',[ContactController::class, 'contactUpdate'])->name('contact.update');
 
 
 

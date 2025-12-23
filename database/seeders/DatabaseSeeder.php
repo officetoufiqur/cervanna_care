@@ -22,7 +22,9 @@ class DatabaseSeeder extends Seeder
             WorksSeeder::class,
             AboutSeeder::class,
             OurCoreSeeder::class,
-            FoundationSeeder::class
+            FoundationSeeder::class,
+            EventSeeder::class,
+            ContactUsSeeder::class
         ]);
 
          User::factory()->create([
