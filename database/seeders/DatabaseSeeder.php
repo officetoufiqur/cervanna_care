@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
             OurCoreSeeder::class,
             FoundationSeeder::class,
             EventSeeder::class,
-            ContactUsSeeder::class
+            ContactUsSeeder::class,
+            BlogSeeder::class
         ]);
 
          User::factory()->create([
