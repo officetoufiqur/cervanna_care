@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import AlertError from '@/components/AlertError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -120,4 +120,4 @@ onMounted(async () => {
             </div>
         </CardContent>
     </Card>
-</template>
+</template> -->

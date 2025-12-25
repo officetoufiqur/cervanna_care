@@ -10,9 +10,38 @@ use App\Http\Controllers\FoundationController;
 use App\Http\Controllers\OurCoreController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\WorksController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+
+
+Route::get('/storage-link', function () {
+    $target = storage_path('app/public');
+    $link = '/home/nayon/cervannacare.testorbis.com/storage';
+
+    if (file_exists($link)) {
+        return 'Symlink already exists.';
+    }
+
+    symlink($target, $link);
+    return 'Symlink created successfully.';
+});
+
+Route::get('/clear-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+
+    return 'Cache cleared successfully!';
+});
+
+Route::get('/storage', function () {
+    Artisan::call('storage:link');
+
+    return 'Storage link created successfully!';
+});
 
 Route::get('/', function () {
     return Inertia::render('Home', [
