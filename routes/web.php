@@ -40,8 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/faqs', FaqController::class);
 
     Route::controller(FaqController::class)->group(function () {
-        Route::get('/faqs/header/edit/{id}', 'faqsEdit')->name('faqs.edit');
-        Route::post('/faqs/header/update/{id}', 'faqsUpdate')->name('faqs.update');
+        Route::get('/faqs/header/edit/{id}', 'faqsEdit')->name('faqs.header.edit');
+        Route::post('/faqs/header/update/{id}', 'faqsUpdate')->name('faqs.header.update');
     });
 
     Route::resource('/chooses', ChooseController::class);
@@ -52,7 +52,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('/works', WorksController::class);
-    
+
     Route::controller(AboutController::class)->group(function () {
         Route::get('/about', 'index')->name('about.index');
         Route::get('/about/edit/{id}', 'edit')->name('about.edit');
@@ -63,10 +63,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/foundation', FoundationController::class);
     Route::resource('/events', EventController::class);
     Route::resource('/contacts', ContactController::class);
-    Route::get('/contacts/header/edit/{id}',[ContactController::class, 'contactEdit'])->name('contact.edit');
-    Route::post('/contact/header/update/{id}',[ContactController::class, 'contactUpdate'])->name('contact.update');
-
-
+    Route::get('/contacts/header/edit/{id}', [ContactController::class, 'contactEdit'])->name('contact.edit');
+    Route::post('/contact/header/update/{id}', [ContactController::class, 'contactUpdate'])->name('contact.update');
 
 });
 
