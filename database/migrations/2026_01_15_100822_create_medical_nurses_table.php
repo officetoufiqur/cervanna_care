@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('medical_nurses', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('medical_id');
-            $table->foreign('medical_id')->references('id')->on('medicals');
-            $table->bigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignId('medical_id')->constrained('medicals')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('role');
             $table->string('educationCertificate');
             $table->boolean('isNursingInKenya');
