@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('house_managers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('experience');
-            $table->string('experienceYear');
-            $table->string('salaryRange');
+            $table->string('experience')->nullable();
+            $table->string('experienceYear')->nullable();
+            $table->string('salaryRange')->nullable();
             $table->string('serviceOffered');
             $table->boolean('isMother')->default(false);
             $table->string('ageOfKids');

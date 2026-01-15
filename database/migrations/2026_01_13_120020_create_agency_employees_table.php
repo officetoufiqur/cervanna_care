@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('agency_employees', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('agency_id');
-            $table->foreign('agency_id')->references('id')->on('agencies');
+            $table->foreignId('agency_id')->constrained('agencies')->cascadeOnDelete();
             $table->string('name');
             $table->string('educationLevel');
             $table->string('location');

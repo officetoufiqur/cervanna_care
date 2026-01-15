@@ -7,7 +7,6 @@ use App\Models\About;
 use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\Choose;
-use App\Models\Contact;
 use App\Models\ContactUs;
 use App\Models\Event;
 use App\Models\Faq;
@@ -15,6 +14,7 @@ use App\Models\Foundation;
 use App\Models\NewsLetter;
 use App\Models\OurCore;
 use App\Models\Service;
+use App\Models\Skill;
 use App\Models\Works;
 use App\Trait\ApiResponse;
 
@@ -123,6 +123,16 @@ class LandingPageController extends Controller
         return $this->successResponse(
             $blogs,
             'Blogs page fetched successfully',
+        );
+    }
+
+    public function skillNurse()
+    {
+        $skills = Skill::select('id', 'name', 'type')->where('status', true)->get();
+
+        return $this->successResponse(
+            $skills,
+            'Skills data fetched successfully',
         );
     }
 }
