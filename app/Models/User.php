@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'number',
+        'number_two',
         'otp',
         'age',
         'education',
@@ -32,6 +33,8 @@ class User extends Authenticatable
         'subRole',
         'gender',
         'languages',
+        'preferredRole',
+        'bio',
         'canDrive',
         'idCopy',
         'profilePhoto',
@@ -71,6 +74,8 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'languages' => 'array',
+            'preferred' => 'array',
+            'canDrive' => 'boolean',
         ];
     }
 }

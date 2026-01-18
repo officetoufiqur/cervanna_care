@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('physiotherapists', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('eduCertificate');
-            $table->boolean('isRegisterPCK');
-            $table->integer('registrationNumber');
-            $table->string('practiceLicense');
-            $table->integer('serviceFee');
+            $table->string('eduCertificate')->nullable();
+            $table->boolean('isRegisterPCK')->nullable();
+            $table->string('registrationNumber')->nullable();
+            $table->string('practiceLicense')->nullable();
+            $table->integer('serviceFee')->nullable();
             $table->timestamps();
         });
     }

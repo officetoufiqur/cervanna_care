@@ -24,6 +24,10 @@ class HouseManager extends Model
         'goodConductCertificate',
     ];
 
+    protected $casts = [
+        'ageOfKids' => 'array',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
