@@ -8,10 +8,10 @@ class Physiotherapist extends Model
 {
     protected $fillable = [
         'user_id',
-        'eduCertificate',
         'isRegisterPCK',
         'registrationNumber',
         'practiceLicense',
+        'eduCertificate',
         'serviceFee',
     ];
 

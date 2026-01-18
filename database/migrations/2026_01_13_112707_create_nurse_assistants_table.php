@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('nurse_assistants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('educationCertificate');
-            $table->string('skills');
-            $table->string('mobilityYears');
-            $table->string('bathingYears');
-            $table->string('feedingYears');
-            $table->integer('serviceFee');
+            $table->string('educationCertificate')->nullable();
+            $table->string('mobilityYears')->nullable();
+            $table->string('bathingYears')->nullable();
+            $table->string('feedingYears')->nullable();
+            $table->integer('serviceFee')->nullable();
             $table->timestamps();
         });
     }

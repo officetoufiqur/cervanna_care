@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('number')->unique();
+            $table->string('number_two')->nullable();
             $table->integer('otp')->nullable();
             $table->integer('age')->nullable();
             $table->string('location')->nullable();
@@ -27,6 +28,8 @@ return new class extends Migration
             $table->string('languages')->nullable();
             $table->boolean('canDrive')->default(false);
             $table->string('education')->nullable();
+            $table->text('bio')->nullable();
+            $table->string('preferredRole')->nullable();
             $table->string('idCopy')->nullable();
             $table->string('profilePhoto')->nullable();
             $table->string('drivingLicense')->nullable();

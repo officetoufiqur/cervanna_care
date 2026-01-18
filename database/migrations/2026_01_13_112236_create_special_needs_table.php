@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('special_needs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('educationCertificate');
-            $table->boolean('isRegisterPCK');
-            $table->integer('registrationNumber');
-            $table->string('practiceLicense');
-            $table->integer('serviceFee');
+            $table->string('educationCertificate')->nullable();
+            $table->boolean('isRegisterPCK')->nullable();
+            $table->string('registrationNumber')->nullable();
+            $table->string('practiceLicense')->nullable();
+            $table->integer('serviceFee')->nullable();
             $table->timestamps();
         });
     }

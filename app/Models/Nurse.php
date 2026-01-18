@@ -8,9 +8,9 @@ class Nurse extends Model
 {
     protected $fillable = [
         'user_id',
+        'number',
         'isNursingInKenya',
         'educationCertificate',
-        'skills',
         'mobilityYears',
         'bathingYears',
         'feedingYears',
@@ -20,5 +20,10 @@ class Nurse extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'skill_services', 'nurse_id', 'skill_id');
     }
 }

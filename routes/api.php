@@ -23,7 +23,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/register', 'register');
     Route::post('/verify', 'verifyOtp');
     Route::post('/login', 'login');
-    Route::post('/create-profile', 'create_profile');
+    // Route::post('/create-profile', 'create_profile');
 });
 
 Route::middleware('auth:sanctum')->post(
