@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\FileUpload;
 use App\Http\Controllers\Controller;
 use App\Mail\OtpMail;
+use App\Models\Agency;
+use App\Models\AgencyEmployee;
 use App\Models\HouseManager;
 use App\Models\Nurse;
 use App\Models\NurseAssistant;
@@ -12,7 +14,10 @@ use App\Models\Physiotherapist;
 use App\Models\SkillService;
 use App\Models\SpecialNeed;
 use App\Models\User;
+use App\Models\CareInstitution;
+use App\Models\InstitutionNurse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -709,8 +714,236 @@ class AuthController extends Controller
 
         } elseif ($user->role === 'agency') {
 
-        } elseif ($user->role === 'care_institutions') {
+            $request->validate([
+                'companyName' => 'required|string|max:255',
+                'kraPin' => 'required|string|max:255',
+                'companyRegistrationNumber' => 'required|string|max:255',
+                'number' => 'required|string|max:255',
+                'businessLocation' => 'required|string|max:255',
+                'registrationDocument' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'agency_services' => 'nullable|array|min:1',
+                'placementFee' => 'required',
+                'replacementWindow' => 'required',
+                'numberOfReplacement' => 'required',
 
+                'employees' => 'nullable|array|min:1',
+
+                'employees.*.name' => 'required_with:employees|string|max:255',
+                'employees.*.educationLevel' => 'required_with:employees|string',
+                'employees.*.location' => 'required_with:employees|string',
+                'employees.*.experience' => 'required_with:employees|string',
+                'employees.*.salaryRange' => 'required_with:employees|string',
+                'employees.*.isMother' => 'required_with:employees|boolean',
+                'employees.*.kidAges' => 'nullable|string',
+                'employees.*.handlePets' => 'required_with:employees|boolean',
+                'employees.*.preferredRole' => 'required_with:employees|string',
+                'employees.*.languages' => 'required_with:employees|string',
+                'employees.*.cooking' => 'required_with:employees|boolean',
+                'employees.*.housekeeping' => 'required_with:employees|boolean',
+                'employees.*.childcare' => 'required_with:employees|boolean',
+                'employees.*.liveType' => 'required_with:employees|string',
+
+                'employees.*.idCopy' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'employees.*.profilePhoto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+                'employees.*.drivingLicense' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'employees.*.goodConductCertificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'employees.*.aidCertificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+            ]);
+
+            DB::transaction(function () use ($request, $user) {
+
+                $agency = Agency::firstOrNew([
+                    'user_id' => $user->id,
+                ]);
+
+                $registrationDocument = null;
+                if ($request->hasFile('registrationDocument')) {
+                    $registrationDocument = FileUpload::storeFile(
+                        $request->file('registrationDocument'),
+                        'uploads/agency'
+                    );
+
+                    $agency->registrationDocument = $registrationDocument;
+                }
+
+                $agency->fill([
+                    'companyName' => $request->companyName,
+                    'kraPin' => $request->kraPin,
+                    'companyRegistrationNumber' => $request->companyRegistrationNumber,
+                    'number' => $request->number,
+                    'agency_services' => $request->agency_services,
+                    'businessLocation' => $request->businessLocation,
+                    'placementFee' => $request->placementFee,
+                    'replacementWindow' => $request->replacementWindow,
+                    'numberOfReplacement' => $request->numberOfReplacement,
+                ]);
+
+                $agency->save();
+
+                if ($request->filled('employees')) {
+
+                    foreach ($request->employees as $index => $employeeData) {
+
+                        $employee = new AgencyEmployee;
+                        $employee->agency_id = $agency->id;
+
+                        $employee->fill($employeeData);
+
+                        if ($request->hasFile("employees.$index.idCopy")) {
+                            $employee->idCopy = FileUpload::storeFile(
+                                $request->file("employees.$index.idCopy"),
+                                'uploads/employees'
+                            );
+                        }
+
+                        if ($request->hasFile("employees.$index.profilePhoto")) {
+                            $employee->profilePhoto = FileUpload::storeFile(
+                                $request->file("employees.$index.profilePhoto"),
+                                'uploads/employees'
+                            );
+                        }
+
+                        if ($request->hasFile("employees.$index.drivingLicense")) {
+                            $employee->drivingLicense = FileUpload::storeFile(
+                                $request->file("employees.$index.drivingLicense"),
+                                'uploads/employees'
+                            );
+                        }
+
+                        if ($request->hasFile("employees.$index.goodConductCertificate")) {
+                            $employee->goodConductCertificate = FileUpload::storeFile(
+                                $request->file("employees.$index.goodConductCertificate"),
+                                'uploads/employees'
+                            );
+                        }
+
+                        if ($request->hasFile("employees.$index.aidCertificate")) {
+                            $employee->aidCertificate = FileUpload::storeFile(
+                                $request->file("employees.$index.aidCertificate"),
+                                'uploads/employees'
+                            );
+                        }
+
+                        $employee->save();
+                    }
+                }
+            });
+
+            return response()->json([
+                'message' => 'Agency profile and employees registered successfully',
+            ], 200);
+
+        } elseif ($user->role === 'care_institutions') {
+            $request->validate([
+
+                'companyName' => 'required|string|max:255',
+                'kraPin' => 'required|string|max:255',
+                'companyRegistrationNumber' => 'required|string|max:255',
+                'number' => 'required|string|max:255',
+                'businessLocation' => 'required|string|max:255',
+                'registrationDocument' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+
+                'institutionNurses' => 'nullable|array|min:1',
+
+                'institutionNurses.*.fullName' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.age' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.location' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.experience' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.gender' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.education' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.canDrive' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.preferredRole' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.languages' => 'required_with:institutionNurses|array|min:1',
+                // 'institutionNurses.*.educationCertificate' => 'required_with:institutionNurses|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'institutionNurses.*.isNursingInKenya' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.hospitalBasedCare' => 'required_with:institutionNurses|boolean',
+                'institutionNurses.*.services' => 'required|array|min:1',
+                'institutionNurses.*.hospitalBasedYearsOfExperience' => 'required_with:institutionNurses|integer',
+                'institutionNurses.*.hospitalBasedReferenceContact' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.homeBasedCare' => 'required_with:institutionNurses|boolean',
+                'institutionNurses.*.homeBasedYearsOfExperience' => 'required_with:institutionNurses|integer',
+                'institutionNurses.*.homeBasedReferenceContact' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.mobilityYears' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.bathingYears' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.feedingYears' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.serviceFee' => 'required_with:institutionNurses|integer',
+                'institutionNurses.*.bio' => 'required_with:institutionNurses|string|max:255',
+                // 'institutionNurses.*.idCopy' => 'required_with:institutionNurses|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                // 'institutionNurses.*.profilePhoto' => 'required_with:institutionNurses|image|mimes:jpg,jpeg,png,webp|max:2048',
+            ]);
+
+            DB::transaction(function () use ($request, $user) {
+
+                $careInstitution = CareInstitution::firstOrNew([
+                    'user_id' => $user->id,
+                ]);
+
+                $registrationDocument = null;
+                if ($request->hasFile('registrationDocument')) {
+                    $registrationDocument = FileUpload::storeFile(
+                        $request->file('registrationDocument'),
+                        'uploads/careInstitution'
+                    );
+
+                    $careInstitution->registrationDocument = $registrationDocument;
+                }
+
+                $careInstitution->fill([
+                    'companyName' => $request->companyName,
+                    'kraPin' => $request->kraPin,
+                    'companyRegistrationNumber' => $request->companyRegistrationNumber,
+                    'number' => $request->number,
+                    'businessLocation' => $request->businessLocation,
+                    'placementFee' => $request->placementFee,
+                    'replacementWindow' => $request->replacementWindow,
+                    'numberOfReplacement' => $request->numberOfReplacement,
+                ]);
+
+                $careInstitution->save();
+       
+
+                if ($request->filled('institutionNurses')) {
+
+                    foreach ($request->institutionNurses as $index => $nurseData) {
+
+                        $institutionNurse = new InstitutionNurse();
+                        $institutionNurse->care_institution_id = $careInstitution->id;
+                        $institutionNurse->fill($nurseData);
+
+                        if ($request->hasFile("institutionNurses.$index.idCopy")) {
+                            $institutionNurse->idCopy = FileUpload::storeFile(
+                                $request->file("institutionNurses.$index.idCopy"),
+                                'uploads/institutionNurse'
+                            );
+                        }
+
+                        if ($request->hasFile("institutionNurses.$index.profilePhoto")) {
+                            $institutionNurse->profilePhoto = FileUpload::storeFile(
+                                $request->file("institutionNurses.$index.profilePhoto"),
+                                'uploads/institutionNurses'
+                            );
+                        }
+
+                        if ($request->hasFile("institutionNurses.$index.educationCertificate")) {
+                            $institutionNurse->educationCertificate = FileUpload::storeFile(
+                                $request->file("institutionNurses.$index.educationCertificate"),
+                                'uploads/institutionNurses'
+                            );
+                        }
+
+                        $institutionNurse->save();
+
+                        if (!empty($nurseData['services'])) {
+                            $institutionNurse->skills()->sync($nurseData['services']);
+                        }
+                    }
+
+                }
+            });
+
+            return response()->json([
+                'message' => 'Care institution profile and nurses registered successfully',
+            ], 200);
         }
 
     }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Skill;
 
 class SkillSeeder extends Seeder
 {
@@ -11,64 +12,100 @@ class SkillSeeder extends Seeder
      */
     public function run(): void
     {
-        $one = [
-            'name' => 'Basic Patient Care (bathing, dressing, feeding, and assisting with mobility)',
-            'type' => 'nurse',
+        $skills = [
+
+            // ===== NURSE =====
+            [
+                'name' => 'Basic Patient Care (bathing, dressing, feeding, and assisting with mobility)',
+                'type' => 'nurse',
+            ],
+            [
+                'name' => 'Vital Signs Monitoring (checking blood pressure, blood sugar, pulse, temperature, etc.)',
+                'type' => 'nurse',
+            ],
+            [
+                'name' => 'Medical Assistance: Assisting nurses with wound care and administering medication (in some cases)',
+                'type' => 'nurse',
+            ],
+            [
+                'name' => 'Compassion & Communication Skills',
+                'type' => 'nurse',
+            ],
+            [
+                'name' => 'Special needs children caregiving',
+                'type' => 'nurse',
+            ],
+            [
+                'name' => 'Elderly caregiving',
+                'type' => 'nurse',
+            ],
+            [
+                'name' => 'Handling Medical Equipment (e.g., feeding tubes, catheter, oxygen tanks)',
+                'type' => 'nurse',
+            ],
+
+            // ===== NURSE AIDE ASSISTANT =====
+            [
+                'name' => 'Basic Patient Care (bathing, dressing, feeding, and assisting with mobility)',
+                'type' => 'nurse_aide_assistant',
+            ],
+            [
+                'name' => 'Vital Signs Monitoring (checking blood pressure, blood sugar, pulse, temperature, etc.)',
+                'type' => 'nurse_aide_assistant',
+            ],
+            [
+                'name' => 'Compassion & Strong Communication Skills',
+                'type' => 'nurse_aide_assistant',
+            ],
+            [
+                'name' => 'Special needs caregiver (e.g., autistic, deaf, blind)',
+                'type' => 'nurse_aide_assistant',
+            ],
+            [
+                'name' => 'Elderly caregiving',
+                'type' => 'nurse_aide_assistant',
+            ],
+
+            // ===== INSTITUTION NURSE =====
+            [
+                'name' => 'Basic Patient Care (bathing, dressing, feeding, and assisting with mobility)',
+                'type' => 'institution_nurse',
+            ],
+            [
+                'name' => 'Vital Signs Monitoring (checking blood pressure, blood sugar, pulse, temperature, etc.)',
+                'type' => 'institution_nurse',
+            ],
+            [
+                'name' => 'Medical Assistance: Assisting nurses with wound care and administering medication (in some cases)',
+                'type' => 'institution_nurse',
+            ],
+            [
+                'name' => 'Compassion & Communication Skills',
+                'type' => 'institution_nurse',
+            ],
+            [
+                'name' => 'Special needs children caregiving',
+                'type' => 'institution_nurse',
+            ],
+            [
+                'name' => 'Elderly caregiving',
+                'type' => 'institution_nurse',
+            ],
+            [
+                'name' => 'Handling Medical Equipment (e.g., feeding tubes, catheter, oxygen tanks)',
+                'type' => 'institution_nurse',
+            ],
         ];
 
-        $two = [
-            'name' => 'Vital Signs Monitoring(checking blood pressure, blood sugar, pulse, temperature, etc.',
-            'type' => 'nurse',
-        ];
-
-        $three = [
-            'name' => 'Medical Assistance: Aassisting nurses with wound care, administering medication (in some cases)',
-            'type' => 'nurse',
-        ];
-        $four = [
-            'name' => 'Compassion & Communication Skills',
-            'type' => 'nurse',
-        ];
-        $five = [
-            'name' => 'Special needs children caregiving',
-            'type' => 'nurse',
-        ];
-        $six = [
-            'name' => 'Elderly caregiving',
-            'type' => 'nurse',
-        ];
-        $seven =
-         [
-             'name' => 'Handling Medical Equipment (e. g. feeding tubes, catheter, oxygen tanks)',
-             'type' => 'nurse',
-         ];
-
-        $eight = [
-            'name' => 'Basic Patient Care (bathing, dressing, feeding, and assisting with mobility)',
-            'type' => 'nurse_ade_assistant',
-        ];
-
-        $nine = [
-            'name' => 'Vital Signs Monitoring(checking blood pressure, blood sugar, pulse, temperature, etc.',
-            'type' => 'nurse_ade_assistant',
-        ];
-
-        $ten = [
-            'name' => 'Compassion &  strong communication Skills',
-            'type' => 'nurse_ade_assistant',
-        ];
-        $eleven = [
-            'name' => 'Special needs caregiver (name which special need you have worked with e. g. autistic, deaf, blind)',
-            'type' => 'nurse_ade_assistant',
-        ];
-        $twelve = [
-            'name' => 'Elderly caregiving',
-            'type' => 'nurse_ade_assistant',
-        ];
-
-        foreach ([$one, $two, $three, $four, $five, $six, $seven, $eight, $nine, $ten, $eleven, $twelve] as $skill) {
-            \App\Models\Skill::create($skill);
+        foreach ($skills as $skill) {
+            Skill::updateOrCreate(
+                [
+                    'name' => $skill['name'],
+                    'type' => $skill['type'],
+                ],
+                $skill
+            );
         }
-
     }
+
 }
