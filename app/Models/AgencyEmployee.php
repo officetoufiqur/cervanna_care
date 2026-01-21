@@ -31,6 +31,6 @@ class AgencyEmployee extends Model
 
     public function agency()
     {
-        return $this->belongsTo(Agency::class);
+        return $this->belongsTo(Agency::class, 'agency_id', 'id');
     }
 }

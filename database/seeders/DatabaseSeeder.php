@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     * 
      */
     public function run(): void
     {
@@ -25,7 +26,8 @@ class DatabaseSeeder extends Seeder
             FoundationSeeder::class,
             EventSeeder::class,
             ContactUsSeeder::class,
-            BlogSeeder::class
+            BlogSeeder::class,
+            SkillSeeder::class,
         ]);
 
          User::factory()->create([

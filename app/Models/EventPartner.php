@@ -12,7 +12,7 @@ class EventPartner extends Model
 
     protected $fillable = [
         'event_id',
-        'name'
+        'name',
     ];
 
     public function event()

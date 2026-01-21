@@ -11,19 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('agencies', function (Blueprint $table) {
+        Schema::create('care_institutions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('companyName')->nullable();
-            $table->string('number')->nullable();
             $table->string('kraPin')->nullable();
+            $table->string('number')->nullable();
             $table->string('companyRegistrationNumber')->nullable();
             $table->string('businessLocation')->nullable();
             $table->string('registrationDocument')->nullable();
-            $table->string('agency_services')->nullable();
-            $table->integer('placementFee')->nullable();
-            $table->integer('replacementWindow')->nullable();
-            $table->integer('numberOfReplacement')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('agencies');
+        Schema::dropIfExists('care_institutions');
     }
 };
