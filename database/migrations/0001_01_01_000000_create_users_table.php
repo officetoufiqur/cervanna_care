@@ -42,10 +42,10 @@ return new class extends Migration
             $table->integer('homeBasedYearsOfExperience')->nullable();
             $table->string('homeBasedReferenceContact')->nullable();
             $table->string('preferred')->nullable();
+            $table->boolean('is_profile_completed')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
-
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');

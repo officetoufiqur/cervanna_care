@@ -48,6 +48,7 @@ class User extends Authenticatable
         'homeBasedYearsOfExperience',
         'homeBasedReferenceContact',
         'preferred',
+        'is_profile_completed'
     ];
 
     /**
@@ -76,6 +77,7 @@ class User extends Authenticatable
             'languages' => 'array',
             'preferred' => 'array',
             'canDrive' => 'boolean',
+            'is_profile_completed' => 'boolean'
         ];
     }
 }

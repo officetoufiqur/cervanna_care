@@ -85,11 +85,21 @@ class AuthController extends Controller
         }
 
         $user->email_verified_at = now();
+        if ($user->role === 'user') {
+            $user->is_profile_completed = true;
+        }
         $user->save();
+
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'status' => true,
             'message' => 'Email verified successfully',
+            'data' => [
+                'token' => $token,
+                'role' => $user->role,
+                'is_profile_completed' => $user->is_profile_completed,
+            ],
         ], 200);
     }
 
@@ -100,13 +110,33 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->where('email_verified_at', '!=', null)->first();
+        $user = User::where('email', $request->email)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (!$user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid credentials',
             ], 401);
+        }
+
+        if (is_null($user->email_verified_at)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Please verify your email address',
+            ], 403);
+        }
+
+        if ($user->is_profile_completed === false) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Profile not completed. Please complete your profile.',
+                'data' => [
+                    'token' => $user->createToken('auth_token')->plainTextToken,
+                    'is_profile_completed' => false,
+                    'role' => $user->role,
+                    'subRole' => $user->subRole,
+                ],
+            ], 200);
         }
 
         return response()->json([
@@ -114,17 +144,20 @@ class AuthController extends Controller
             'message' => 'Login successful',
             'data' => [
                 'token' => $user->createToken('auth_token')->plainTextToken,
+                'is_profile_completed' => true,
+                'role' => $user->role,
+                'subRole' => $user->subRole,
             ],
         ], 200);
-
     }
+
 
     public function create_profile(Request $request)
     {
 
         $user = auth()->user();
 
-        if ($user->role == 'specialist') {
+        if ($user->role === 'specialist') {
 
             if ($user->subRole === 'house-manager') {
 
@@ -177,6 +210,7 @@ class AuthController extends Controller
                     'idCopy' => $idCopy,
                     'profilePhoto' => $profilePhoto,
                     'drivingLicense' => $drivingLicense,
+                    'is_profile_completed' => true,
                 ]);
 
                 $houseManager = HouseManager::firstOrNew([
@@ -302,7 +336,7 @@ class AuthController extends Controller
                     'goodConductCertificate' => $goodConductCertificate,
                     'drivingLicense' => $drivingLicense,
                     'referenceLetter' => $referenceLetter,
-
+                    'is_profile_completed' => true,
                 ]);
 
                 $nurse = Nurse::firstOrNew([
@@ -434,7 +468,7 @@ class AuthController extends Controller
                     'goodConductCertificate' => $goodConductCertificate,
                     'drivingLicense' => $drivingLicense,
                     'referenceLetter' => $referenceLetter,
-
+                    'is_profile_completed' => true,
                 ]);
 
                 $physiotherapist = Physiotherapist::firstOrNew([
@@ -557,7 +591,7 @@ class AuthController extends Controller
                     'goodConductCertificate' => $goodConductCertificate,
                     'drivingLicense' => $drivingLicense,
                     'referenceLetter' => $referenceLetter,
-
+                    'is_profile_completed' => true,
                 ]);
 
                 $nurse_assistant = NurseAssistant::firstOrNew([
@@ -679,6 +713,7 @@ class AuthController extends Controller
                     'goodConductCertificate' => $goodConductCertificate,
                     'drivingLicense' => $drivingLicense,
                     'referenceLetter' => $referenceLetter,
+                    'is_profile_completed' => true,
                 ]);
 
                 $specialNeed = SpecialNeed::firstOrNew([
@@ -776,6 +811,7 @@ class AuthController extends Controller
                     'placementFee' => $request->placementFee,
                     'replacementWindow' => $request->replacementWindow,
                     'numberOfReplacement' => $request->numberOfReplacement,
+                    'is_profile_completed' => true,
                 ]);
 
                 $agency->save();
@@ -939,6 +975,12 @@ class AuthController extends Controller
                     }
 
                 }
+
+                $user->update([
+
+                    'is_profile_completed' => true,
+                ]);
+                
             });
 
             return response()->json([

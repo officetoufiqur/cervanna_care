@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('type', ['nurse', 'nurse_ade_assistant']);
+            $table->enum('type', ['nurse', 'nurse_ade_assistant', 'institution_nurse']);
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
