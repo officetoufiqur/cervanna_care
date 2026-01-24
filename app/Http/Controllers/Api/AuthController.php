@@ -68,7 +68,7 @@ class AuthController extends Controller
             'otp' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->where('role', '!=', 'admin')->first();
 
         if (! $user) {
             return response()->json([
@@ -98,6 +98,7 @@ class AuthController extends Controller
             'data' => [
                 'token' => $token,
                 'role' => $user->role,
+                'subRole' => $user->subRole,
                 'is_profile_completed' => $user->is_profile_completed,
             ],
         ], 200);
@@ -110,7 +111,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->where('role', '!=', 'admin')->first();
 
         if (!$user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
@@ -151,7 +152,6 @@ class AuthController extends Controller
         ], 200);
     }
 
-
     public function create_profile(Request $request)
     {
 
@@ -176,11 +176,11 @@ class AuthController extends Controller
                     'ageOfKids' => 'nullable|array|min:1',
                     'isHandelingPet' => 'required|boolean',
                     'preferBeingA' => 'nullable|string|max:255',
-                    'idCopy' => 'required|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'profilePhoto' => 'required|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'drivingLicense' => 'required|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'firstAidCertificate' => 'required|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'goodConductCertificate' => 'required|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'drivingLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'firstAidCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'goodConductCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
 
                 ]);
 
@@ -882,16 +882,16 @@ class AuthController extends Controller
                 'institutionNurses' => 'nullable|array|min:1',
 
                 'institutionNurses.*.fullName' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.age' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.age' => 'required_with:institutionNurses|integer',
                 'institutionNurses.*.location' => 'required_with:institutionNurses|string|max:255',
                 'institutionNurses.*.experience' => 'required_with:institutionNurses|string|max:255',
                 'institutionNurses.*.gender' => 'required_with:institutionNurses|string|max:255',
                 'institutionNurses.*.education' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.canDrive' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.canDrive' => 'required_with:institutionNurses|boolean',
                 'institutionNurses.*.preferredRole' => 'required_with:institutionNurses|string|max:255',
                 'institutionNurses.*.languages' => 'required_with:institutionNurses|array|min:1',
-                // 'institutionNurses.*.educationCertificate' => 'required_with:institutionNurses|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                'institutionNurses.*.isNursingInKenya' => 'required_with:institutionNurses|string|max:255',
+                'institutionNurses.*.educationCertificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'institutionNurses.*.isNursingInKenya' => 'required_with:institutionNurses|boolean',
                 'institutionNurses.*.hospitalBasedCare' => 'required_with:institutionNurses|boolean',
                 'institutionNurses.*.services' => 'required|array|min:1',
                 'institutionNurses.*.hospitalBasedYearsOfExperience' => 'required_with:institutionNurses|integer',
@@ -989,4 +989,125 @@ class AuthController extends Controller
         }
 
     }
+
+    public function logout(Request $request)
+    {
+        auth()->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Logout successful',
+        ], 200);
+    }
+
+    public function getProfile(Request $request){
+
+        $user = auth()->user();
+
+        if($user->role === "user"){
+
+            $user = User::select('id','name', 'email', 'number', 'profilePhoto', 'is_profile_completed', 'role')->find($user->id);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User profile fetched successfully',
+                'data' => $user,
+            ], 200); 
+        }
+
+        if($user->role === "specialist"){
+
+            if($user->subRole === "house-manager"){
+                $user = User::with('houseManager')->find($user->id);
+                return response()->json([
+                    'status' => true,
+                    'message' => 'House manager profile fetched successfully',
+                    'houseManager' => $user,
+                ], 200); 
+            }
+
+            if($user->subRole === "nurse"){
+                $user = User::with('nurse.skills')->find($user->id);
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Nurse profile fetched successfully',
+                    'nurse' => $user,
+                ], 200); 
+            }
+
+            if($user->subRole === "physiotherapist"){
+                $user = User::with('physiotherapist')->find($user->id);
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Physiotherapist profile fetched successfully',
+                    'physiotherapist' => $user,
+                ], 200); 
+            }
+
+            if($user->subRole === "nurse-aide-or-assistant"){
+                $user = User::with('nurseAssistant')->find($user->id);
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Nurse assistant profile fetched successfully',
+                    'nurseAssistant' => $user,
+                ], 200); 
+            }
+
+            if($user->subRole === "special-need-caregivers"){
+                $user = User::with('specialNeed')->find($user->id);
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Special need profile fetched successfully',
+                    'specialNeed' => $user,
+                ], 200); 
+            }
+        }   
+
+
+        if($user->role === "agency"){
+
+            $user = User::select('id','name', 'email','is_profile_completed', 'role')->find($user->id);
+            $agency = Agency::where('user_id', $user->id)->first();
+            $agencyEmployees = AgencyEmployee::where('agency_id', $agency->id)->get();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Agency profile fetched successfully',
+                'agency' => $user,
+                'agency' => $agency,
+                'agencyEmployees' => $agencyEmployees, 
+            ], 200); 
+        }
+
+        if($user->role === "care_institutions"){
+
+            $user = User::select('id','email', 'number', 'profilePhoto', 'is_profile_completed', 'role')->find($user->id);
+            $careInstitution = CareInstitution::where('user_id', $user->id)->first();
+            $institutionNurses = [];
+
+            if ($careInstitution) {
+                $institutionNurses = InstitutionNurse::where(
+                    'care_institution_id',
+                    $careInstitution->id
+                )->get();
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Care institution profile fetched successfully',
+                'user' => $user,
+                'careInstitution' => $careInstitution,
+                'institutionNurses' => $institutionNurses,
+            ], 200); 
+        }
+
+
+    }
+
+
+
 }

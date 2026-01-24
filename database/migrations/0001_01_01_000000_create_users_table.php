@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('otp')->nullable();
             $table->integer('age')->nullable();
             $table->string('location')->nullable();
-            $table->enum('role', ['user', 'specialist', 'agency', 'care_institutions'])->default('user');
+            $table->enum('role', ['admin','user', 'specialist', 'agency', 'care_institutions'])->default('user');
             $table->enum('subRole', ['house-manager', 'nurse', 'physiotherapist', 'nurse-aide-or-assistant', 'special-need-caregivers'])->nullable();
             $table->string('gender')->nullable();
             $table->string('languages')->nullable();

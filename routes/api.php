@@ -23,9 +23,10 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/register', 'register');
     Route::post('/verify', 'verifyOtp');
     Route::post('/login', 'login');
-    // Route::post('/create-profile', 'create_profile');
 });
 
 Route::middleware('auth:sanctum')->post(
     '/create-profile', [AuthController::class, 'create_profile']
 );
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::get('/profile', [AuthController::class, 'getProfile'])->middleware('auth:sanctum');

@@ -80,4 +80,31 @@ class User extends Authenticatable
             'is_profile_completed' => 'boolean'
         ];
     }
+
+    public function houseManager()
+    {
+        return $this->hasOne(HouseManager::class);
+    }
+
+    public function nurse()
+    {
+        return $this->hasOne(Nurse::class);
+    }
+
+    public function physiotherapist()
+    {
+        return $this->hasOne(Physiotherapist::class);
+    }
+
+    public function nurseAssistant()
+    {
+        return $this->hasOne(NurseAssistant::class);
+    }
+
+    public function specialNeed()
+    {
+        return $this->hasOne(SpecialNeed::class);
+    }
+
+
 }

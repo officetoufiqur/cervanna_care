@@ -22,9 +22,9 @@ Route::get('/', function () {
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'is_not_admin', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'is_not_admin'])->group(function () {
     Route::controller(BannerController::class)->group(function () {
         Route::get('/banners', 'index')->name('banners.index');
         Route::get('/banners/create', 'create')->name('banners.create');
