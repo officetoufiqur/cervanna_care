@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('skill_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('nurse_id')->constrained('nurses')->onDelete('cascade')->nullable();
-            $table->foreignId('nurse_assistant_id')->constrained('nurse_assistants')->onDelete('cascade')->nullable();
-            $table->foreignId('institution_nurse_id')->constrained('institution_nurses')->onDelete('cascade')->nullable();
+            $table->foreignId('nurse_id')->nullable()->constrained('nurses')->onDelete('cascade');
+            $table->foreignId('nurse_assistant_id')->nullable()->constrained('nurse_assistants')->onDelete('cascade');
+            $table->foreignId('institution_nurse_id')->nullable()->constrained('institution_nurses')->onDelete('cascade');
             $table->foreignId('skill_id')->constrained('skills')->onDelete('cascade');
             $table->timestamps();
         });

@@ -38,10 +38,6 @@ withDefaults(
                             Log in
                         </Link>
 
-                        <Link v-if="canRegister" :href="register()"
-                            class="rounded-sm border px-5 py-1.5 text-sm hover:border-gray-400 text-white font-medium">
-                            Register
-                        </Link>
                     </template>
                 </nav>
             </header>

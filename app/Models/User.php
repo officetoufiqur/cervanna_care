@@ -48,6 +48,7 @@ class User extends Authenticatable
         'homeBasedYearsOfExperience',
         'homeBasedReferenceContact',
         'preferred',
+        'is_profile_completed'
     ];
 
     /**
@@ -76,6 +77,34 @@ class User extends Authenticatable
             'languages' => 'array',
             'preferred' => 'array',
             'canDrive' => 'boolean',
+            'is_profile_completed' => 'boolean'
         ];
     }
+
+    public function houseManager()
+    {
+        return $this->hasOne(HouseManager::class);
+    }
+
+    public function nurse()
+    {
+        return $this->hasOne(Nurse::class);
+    }
+
+    public function physiotherapist()
+    {
+        return $this->hasOne(Physiotherapist::class);
+    }
+
+    public function nurseAssistant()
+    {
+        return $this->hasOne(NurseAssistant::class);
+    }
+
+    public function specialNeed()
+    {
+        return $this->hasOne(SpecialNeed::class);
+    }
+
+
 }

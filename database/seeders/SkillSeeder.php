@@ -14,7 +14,6 @@ class SkillSeeder extends Seeder
     {
         $skills = [
 
-            // ===== NURSE =====
             [
                 'name' => 'Basic Patient Care (bathing, dressing, feeding, and assisting with mobility)',
                 'type' => 'nurse',
@@ -44,29 +43,26 @@ class SkillSeeder extends Seeder
                 'type' => 'nurse',
             ],
 
-            // ===== NURSE AIDE ASSISTANT =====
             [
                 'name' => 'Basic Patient Care (bathing, dressing, feeding, and assisting with mobility)',
-                'type' => 'nurse_aide_assistant',
+                'type' => 'nurse_ade_assistant',
             ],
             [
                 'name' => 'Vital Signs Monitoring (checking blood pressure, blood sugar, pulse, temperature, etc.)',
-                'type' => 'nurse_aide_assistant',
+                'type' => 'nurse_ade_assistant',
             ],
             [
                 'name' => 'Compassion & Strong Communication Skills',
-                'type' => 'nurse_aide_assistant',
+                'type' => 'nurse_ade_assistant',
             ],
             [
                 'name' => 'Special needs caregiver (e.g., autistic, deaf, blind)',
-                'type' => 'nurse_aide_assistant',
+                'type' => 'nurse_ade_assistant',
             ],
             [
                 'name' => 'Elderly caregiving',
-                'type' => 'nurse_aide_assistant',
+                'type' => 'nurse_ade_assistant',
             ],
-
-            // ===== INSTITUTION NURSE =====
             [
                 'name' => 'Basic Patient Care (bathing, dressing, feeding, and assisting with mobility)',
                 'type' => 'institution_nurse',
