@@ -14,6 +14,15 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/storage-link', function () {
+    Artisan::call('optimize:clear');
+    Artisan::call('storage:link');
+
+    return "Storage link created successfully";
+});
+
 Route::get('/', function () {
     return Inertia::render('Home', [
         'canRegister' => Features::enabled(Features::registration()),

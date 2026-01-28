@@ -43,6 +43,7 @@ return new class extends Migration
             $table->string('homeBasedReferenceContact')->nullable();
             $table->string('preferred')->nullable();
             $table->boolean('is_profile_completed')->default(false);
+            $table->boolean('is_profile_verified')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

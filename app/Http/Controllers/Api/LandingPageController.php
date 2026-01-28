@@ -16,6 +16,7 @@ use App\Models\OurCore;
 use App\Models\Service;
 use App\Models\Skill;
 use App\Models\Works;
+use App\Models\Price;
 use App\Trait\ApiResponse;
 
 class LandingPageController extends Controller
@@ -133,6 +134,16 @@ class LandingPageController extends Controller
         return $this->successResponse(
             $skills,
             'Skills data fetched successfully',
+        );
+    }
+
+    public function prices()
+    {
+        $prices = Price::where('status', 'active')->select('id', 'name', 'price')->get();
+
+        return $this->successResponse(
+            $prices,
+            'Prices data fetched successfully',
         );
     }
 }
