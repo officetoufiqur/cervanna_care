@@ -38,6 +38,7 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->string('idCopy')->nullable();
             $table->string('profilePhoto')->nullable();
+            $table->string('services')->nullable();
             $table->timestamps();
         });
     }

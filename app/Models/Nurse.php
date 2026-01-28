@@ -15,6 +15,7 @@ class Nurse extends Model
         'bathingYears',
         'feedingYears',
         'serviceFee',
+        'skills',
     ];
 
     public function user()
@@ -22,8 +23,8 @@ class Nurse extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function skills()
-    {
-        return $this->belongsToMany(Skill::class, 'skill_services', 'nurse_id', 'skill_id');
-    }
+    protected $casts = [
+        'skills' => 'array',
+    ];
+
 }

@@ -32,6 +32,7 @@ class InstitutionNurse extends Model
         'bio',
         'idCopy',
         'profilePhoto',
+        'services'
     ];
 
     public function careInstitution()
@@ -39,15 +40,11 @@ class InstitutionNurse extends Model
         return $this->belongsTo(CareInstitution::class);
     }
 
-    public function skills()
-    {
-        return $this->belongsToMany(Skill::class, 'skill_services', 'institution_nurse_id', 'skill_id');
-    }
-
 
     protected $casts = [
         'experience' => 'array',
         'languages' => 'array',
+        'services' => 'array',
     ];
 
 

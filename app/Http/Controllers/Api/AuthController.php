@@ -16,6 +16,7 @@ use App\Models\SpecialNeed;
 use App\Models\User;
 use App\Models\CareInstitution;
 use App\Models\InstitutionNurse;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -163,18 +164,18 @@ class AuthController extends Controller
 
                 $request->validate([
 
-                    'name' => 'required|string|max:255',
-                    'education' => 'required|string|max:255',
-                    'experience' => 'required|string|max:255',
-                    'location' => 'required|string|max:255',
+                    'name' => 'nullable|string|max:255',
+                    'education' => 'nullable|string|max:255',
+                    'experience' => 'nullable|string|max:255',
+                    'location' => 'nullable|string|max:255',
                     'preferredRole' => 'nullable|string|max:255',
                     'languages' => 'nullable|array|min:1',
-                    'phone' => 'required|digits:10',
-                    'salaryRange' => 'required|string|max:255',
-                    'serviceOffered' => 'required|string|max:255',
-                    'isMother' => 'required|boolean',
+                    'phone' => 'nullable',
+                    'salaryRange' => 'nullable|string|max:255',
+                    'serviceOffered' => 'nullable|string|max:255',
+                    'isMother' => 'nullable|boolean',
                     'ageOfKids' => 'nullable|array|min:1',
-                    'isHandelingPet' => 'required|boolean',
+                    'isHandelingPet' => 'nullable|boolean',
                     'preferBeingA' => 'nullable|string|max:255',
                     'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
@@ -238,7 +239,8 @@ class AuthController extends Controller
                 $houseManager->save();
 
                 return response()->json([
-                    'status' => true,
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => false,
                     'message' => 'House Manager Profile created successfully',
                 ], 200);
 
@@ -356,26 +358,15 @@ class AuthController extends Controller
                     'bathingYears' => $request->bathingYears,
                     'feedingYears' => $request->feedingYears,
                     'serviceFee' => $request->serviceFee,
+                    'skills' => $request->skills,
 
                 ]);
 
                 $nurse->save();
 
-                if ($request->filled('skills')) {
-                    $nurse->skills()->sync($request->skills);
-                }
-
-                // if ($request->skills) {
-                //     foreach ($request->skills as $skill) {
-                //         $skillService = new SkillService;
-                //         $skillService->nurse_id = $nurse->id;
-                //         $skillService->skill_id = $skill;
-                //         $skillService->save();
-                //     }
-                // }
-
                 return response()->json([
-                    'status' => true,
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => false,
                     'message' => 'Nurse Profile updated successfully',
                 ], 200);
             }
@@ -497,7 +488,8 @@ class AuthController extends Controller
                 $physiotherapist->save();
 
                 return response()->json([
-                    'status' => true,
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => false,
                     'message' => 'Physiotherapist Profile updated successfully',
                 ], 200);
             }
@@ -506,36 +498,36 @@ class AuthController extends Controller
 
                 $request->validate([
 
-                    'name' => 'nullable|string|max:255',
-                    'location' => 'nullable|string|max:255',
+                    'name' => 'nullable',
+                    'location' => 'nullable',
                     'age' => 'nullable',
-                    'experience' => 'nullable|string|max:255',
-                    'gender' => 'nullable|string|max:255',
-                    'languages' => 'nullable|array|min:1',
-                    'canDrive' => 'nullable|boolean',
+                    'experience' => 'nullable',
+                    'gender' => 'nullable',
+                    'languages' => 'nullable',
+                    'canDrive' => 'nullable',
                     'bio' => 'nullable',
-                    'education' => 'nullable|string|max:255',
+                    'education' => 'nullable',
                     'hospitalBasedCare' => 'nullable',
                     'hospitalBasedYearsOfExperience' => 'nullable',
-                    'hospitalBasedReferenceContact' => 'nullable|string|max:255',
+                    'hospitalBasedReferenceContact' => 'nullable',
                     'homeBasedCare' => 'nullable',
                     'homeBasedYearsOfExperience' => 'nullable',
-                    'homeBasedReferenceContact' => 'nullable|string|max:255',
-                    'preferred' => 'nullable|array|min:1',
+                    'homeBasedReferenceContact' => 'nullable',
+                    'preferred' => 'nullable',
 
-                    'number_two' => 'nullable|digits:10',
-                    'skills' => 'nullable|array|min:1',
+                    'number_two' => 'nullable',
+                    'skills' => 'nullable',
                     'mobilityYears' => 'nullable',
                     'bathingYears' => 'nullable',
                     'feedingYears' => 'nullable',
-                    'serviceFee' => 'nullable|integer',
+                    'serviceFee' => 'nullable',
 
-                    'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'goodConductCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'drivingLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'referenceLetter' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'educationCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'idCopy' => 'nullable',
+                    'profilePhoto' => 'nullable',
+                    'goodConductCertificate' => 'nullable',
+                    'drivingLicense' => 'nullable',
+                    'referenceLetter' => 'nullable',
+                    'educationCertificate' => 'nullable',
 
                 ]);
 
@@ -610,17 +602,14 @@ class AuthController extends Controller
                     'bathingYears' => $request->bathingYears,
                     'feedingYears' => $request->feedingYears,
                     'serviceFee' => $request->serviceFee,
-
+                    'skills' => $request->skills,
                 ]);
 
                 $nurse_assistant->save();
 
-                if ($request->filled('skills')) {
-                    $nurse_assistant->skills()->sync($request->skills);
-                }
-
                 return response()->json([
-                    'status' => true,
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => false,
                     'message' => 'Nurse Ade Assistant Profile updated successfully',
                 ], 200);
             }
@@ -629,34 +618,34 @@ class AuthController extends Controller
 
                 $request->validate([
 
-                    'name' => 'nullable|string|max:255',
-                    'location' => 'nullable|string|max:255',
+                    'name' => 'nullable',
+                    'location' => 'nullable',
                     'age' => 'nullable',
-                    'number_two' => 'nullable|digits:10',
-                    'experience' => 'nullable|string|max:255',
-                    'gender' => 'nullable|string|max:255',
-                    'languages' => 'nullable|array|min:1',
-                    'canDrive' => 'nullable|boolean',
+                    'number_two' => 'nullable',
+                    'experience' => 'nullable',
+                    'gender' => 'nullable',
+                    'languages' => 'nullable',
+                    'canDrive' => 'nullable',
                     'bio' => 'nullable',
-                    'education' => 'nullable|string|max:255',
+                    'education' => 'nullable',
                     'hospitalBasedCare' => 'nullable',
                     'hospitalBasedYearsOfExperience' => 'nullable',
-                    'hospitalBasedReferenceContact' => 'nullable|string|max:255',
+                    'hospitalBasedReferenceContact' => 'nullable',
                     'homeBasedCare' => 'nullable',
                     'homeBasedYearsOfExperience' => 'nullable',
-                    'homeBasedReferenceContact' => 'nullable|string|max:255',
-                    'preferred' => 'nullable|array|min:1',
-                    'isRegisterPCK' => 'nullable|boolean',
+                    'homeBasedReferenceContact' => 'nullable',
+                    'preferred' => 'nullable',
+                    'isRegisterPCK' => 'nullable',
                     'registrationNumber' => 'nullable',
                     'serviceFee' => 'nullable',
 
-                    'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'goodConductCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'drivingLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'referenceLetter' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'educationCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                    'practiceLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'idCopy' => 'nullable',
+                    'profilePhoto' => 'nullable',
+                    'goodConductCertificate' => 'nullable',
+                    'drivingLicense' => 'nullable',
+                    'referenceLetter' => 'nullable',
+                    'educationCertificate' => 'nullable',
+                    'practiceLicense' => 'nullable',
 
                 ]);
 
@@ -743,6 +732,8 @@ class AuthController extends Controller
                 $specialNeed->save();
 
                 return response()->json([
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => false,
                     'message' => 'Special Caregiver Profile updated successfully',
                 ], 200);
             }
@@ -750,39 +741,39 @@ class AuthController extends Controller
         } elseif ($user->role === 'agency') {
 
             $request->validate([
-                'companyName' => 'required|string|max:255',
-                'kraPin' => 'required|string|max:255',
-                'companyRegistrationNumber' => 'required|string|max:255',
-                'number' => 'required|string|max:255',
-                'businessLocation' => 'required|string|max:255',
-                'registrationDocument' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                'agency_services' => 'nullable|array|min:1',
-                'placementFee' => 'required',
-                'replacementWindow' => 'required',
-                'numberOfReplacement' => 'required',
+                'companyName' => 'nullable',
+                'kraPin' => 'nullable',
+                'companyRegistrationNumber' => 'nullable',
+                'number' => 'nullable',
+                'businessLocation' => 'nullable',
+                'registrationDocument' => 'nullable',
+                'agency_services' => 'nullable',
+                'placementFee' => 'nullable',
+                'replacementWindow' => 'nullable',
+                'numberOfReplacement' => 'nullable',
 
                 'employees' => 'nullable|array|min:1',
 
-                'employees.*.name' => 'required_with:employees|string|max:255',
-                'employees.*.educationLevel' => 'required_with:employees|string',
-                'employees.*.location' => 'required_with:employees|string',
-                'employees.*.experience' => 'required_with:employees|string',
-                'employees.*.salaryRange' => 'required_with:employees|string',
-                'employees.*.isMother' => 'required_with:employees|boolean',
-                'employees.*.kidAges' => 'nullable|string',
-                'employees.*.handlePets' => 'required_with:employees|boolean',
-                'employees.*.preferredRole' => 'required_with:employees|string',
-                'employees.*.languages' => 'required_with:employees|string',
-                'employees.*.cooking' => 'required_with:employees|boolean',
-                'employees.*.housekeeping' => 'required_with:employees|boolean',
-                'employees.*.childcare' => 'required_with:employees|boolean',
-                'employees.*.liveType' => 'required_with:employees|string',
+                'employees.*.name' => 'nullable',
+                'employees.*.educationLevel' => 'nullable',
+                'employees.*.location' => 'nullable',
+                'employees.*.experience' => 'nullable',
+                'employees.*.salaryRange' => 'nullable',
+                'employees.*.isMother' => 'nullable',
+                'employees.*.kidAges' => 'nullable',
+                'employees.*.handlePets' => 'nullable',
+                'employees.*.preferredRole' => 'nullable',
+                'employees.*.languages' => 'nullable',
+                'employees.*.cooking' => 'nullable',
+                'employees.*.housekeeping' => 'nullable',
+                'employees.*.childcare' => 'nullable',
+                'employees.*.liveType' => 'nullable',
 
-                'employees.*.idCopy' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                'employees.*.profilePhoto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-                'employees.*.drivingLicense' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                'employees.*.goodConductCertificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                'employees.*.aidCertificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'employees.*.idCopy' => 'nullable',
+                'employees.*.profilePhoto' => 'nullable',
+                'employees.*.drivingLicense' => 'nullable',
+                'employees.*.goodConductCertificate' => 'nullable',
+                'employees.*.aidCertificate' => 'nullable',
             ]);
 
             DB::transaction(function () use ($request, $user) {
@@ -811,7 +802,6 @@ class AuthController extends Controller
                     'placementFee' => $request->placementFee,
                     'replacementWindow' => $request->replacementWindow,
                     'numberOfReplacement' => $request->numberOfReplacement,
-                    'is_profile_completed' => true,
                 ]);
 
                 $agency->save();
@@ -863,49 +853,55 @@ class AuthController extends Controller
                         $employee->save();
                     }
                 }
+
+                $user->update([
+                    'is_profile_completed' => true,
+                ]);
             });
 
             return response()->json([
+                'is_profile_completed' => $user->is_profile_completed,
+                'is_profile_verified' => false,
                 'message' => 'Agency profile and employees registered successfully',
             ], 200);
 
         } elseif ($user->role === 'care_institutions') {
             $request->validate([
 
-                'companyName' => 'required|string|max:255',
-                'kraPin' => 'required|string|max:255',
-                'companyRegistrationNumber' => 'required|string|max:255',
-                'number' => 'required|string|max:255',
-                'businessLocation' => 'required|string|max:255',
+                'companyName' => 'nullable|string|max:255',
+                'kraPin' => 'nullable|string|max:255',
+                'companyRegistrationNumber' => 'nullable|string|max:255',
+                'number' => 'nullable|string|max:255',
+                'businessLocation' => 'nullable|string|max:255',
                 'registrationDocument' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
 
                 'institutionNurses' => 'nullable|array|min:1',
 
-                'institutionNurses.*.fullName' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.age' => 'required_with:institutionNurses|integer',
-                'institutionNurses.*.location' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.experience' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.gender' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.education' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.canDrive' => 'required_with:institutionNurses|boolean',
-                'institutionNurses.*.preferredRole' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.languages' => 'required_with:institutionNurses|array|min:1',
+                'institutionNurses.*.fullName' => 'nullable|string|max:255',
+                'institutionNurses.*.age' => 'nullable|integer',
+                'institutionNurses.*.location' => 'nullable|string|max:255',
+                'institutionNurses.*.experience' => 'nullable|string|max:255',
+                'institutionNurses.*.gender' => 'nullable|string|max:255',
+                'institutionNurses.*.education' => 'nullable|string|max:255',
+                'institutionNurses.*.canDrive' => 'nullable|boolean',
+                'institutionNurses.*.preferredRole' => 'nullable|string|max:255',
+                'institutionNurses.*.languages' => 'nullable|array|min:1',
                 'institutionNurses.*.educationCertificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                'institutionNurses.*.isNursingInKenya' => 'required_with:institutionNurses|boolean',
-                'institutionNurses.*.hospitalBasedCare' => 'required_with:institutionNurses|boolean',
-                'institutionNurses.*.services' => 'required|array|min:1',
-                'institutionNurses.*.hospitalBasedYearsOfExperience' => 'required_with:institutionNurses|integer',
-                'institutionNurses.*.hospitalBasedReferenceContact' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.homeBasedCare' => 'required_with:institutionNurses|boolean',
-                'institutionNurses.*.homeBasedYearsOfExperience' => 'required_with:institutionNurses|integer',
-                'institutionNurses.*.homeBasedReferenceContact' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.mobilityYears' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.bathingYears' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.feedingYears' => 'required_with:institutionNurses|string|max:255',
-                'institutionNurses.*.serviceFee' => 'required_with:institutionNurses|integer',
-                'institutionNurses.*.bio' => 'required_with:institutionNurses|string|max:255',
-                // 'institutionNurses.*.idCopy' => 'required_with:institutionNurses|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-                // 'institutionNurses.*.profilePhoto' => 'required_with:institutionNurses|image|mimes:jpg,jpeg,png,webp|max:2048',
+                'institutionNurses.*.isNursingInKenya' => 'nullable|boolean',
+                'institutionNurses.*.hospitalBasedCare' => 'nullable|boolean',
+                'institutionNurses.*.services' => 'nullable|array|min:1',
+                'institutionNurses.*.hospitalBasedYearsOfExperience' => 'nullable|integer',
+                'institutionNurses.*.hospitalBasedReferenceContact' => 'nullable|string|max:255',
+                'institutionNurses.*.homeBasedCare' => 'nullable|boolean',
+                'institutionNurses.*.homeBasedYearsOfExperience' => 'nullable|integer',
+                'institutionNurses.*.homeBasedReferenceContact' => 'nullable|string|max:255',
+                'institutionNurses.*.mobilityYears' => 'nullable|string|max:255',
+                'institutionNurses.*.bathingYears' => 'nullable|string|max:255',
+                'institutionNurses.*.feedingYears' => 'nullable|string|max:255',
+                'institutionNurses.*.serviceFee' => 'nullable|integer',
+                'institutionNurses.*.bio' => 'nullable|string|max:255',
+                'institutionNurses.*.idCopy' => 'nullable|image|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'institutionNurses.*.profilePhoto' => 'nullable|image|mimes:pdf,jpg,jpeg,png,webp|max:2048',
             ]);
 
             DB::transaction(function () use ($request, $user) {
@@ -968,15 +964,11 @@ class AuthController extends Controller
                         }
 
                         $institutionNurse->save();
-
-                        if (!empty($nurseData['services'])) {
-                            $institutionNurse->skills()->sync($nurseData['services']);
-                        }
                     }
 
                 }
 
-                $user->update([
+                $user->update([ 
 
                     'is_profile_completed' => true,
                 ]);
@@ -985,8 +977,10 @@ class AuthController extends Controller
 
             return response()->json([
                 'message' => 'Care institution profile and nurses registered successfully',
+                'is_profile_completed' => $user->is_profile_completed,
+                'is_profile_verified' => false,
             ], 200);
-        }
+        } 
 
     }
 
@@ -1027,7 +1021,7 @@ class AuthController extends Controller
             }
 
             if($user->subRole === "nurse"){
-                $user = User::with('nurse.skills')->find($user->id);
+                $user = User::with('nurse')->find($user->id);
 
                 return response()->json([
                     'status' => true,
@@ -1109,5 +1103,186 @@ class AuthController extends Controller
     }
 
 
+    public function booking(Request $request)
+    {
+        $user = auth()->user();
+
+        if($user->role === "user"){
+
+            $request->validate([
+
+            'specialist_id' => 'required',
+            'patient_name' => 'required',
+            'patient_age' => 'required',
+            'patient_gender' => 'required',
+            'category' => 'required',
+            'services' => 'required',
+            'relationship_to_booking_person' => 'required',
+            'price_id' => 'required',
+            'booking_amount' => 'required',
+            'patient_have_any_conditions' => 'required',
+            'patient_currently_on_medication' => 'required',
+            'patient_have_any_known_allergies' => 'required',
+            'mobility_status_of_patient' => 'required',
+            'care_start_date' => 'required',
+            'care_end_date' => 'required',
+            'location_of_care' => 'required',
+            'emergency_contact_name' => 'required',
+            'emergency_contact_number' => 'required',
+            'primary_doctor_name' => 'required',
+            'primary_doctor_number' => 'required',
+            'primary_hospital' => 'required'
+
+            ]);
+
+            $booking = Booking::create([
+
+                'specialist_id' => $request->specialist_id,
+                'booking_person_id' => $user->id,
+                'patient_name' => $request->patient_name,
+                'patient_age' => $request->patient_age,
+                'patient_gender' => $request->patient_gender,
+                'category' => $request->category,
+                'services' => $request->services,
+                'relationship_to_booking_person' => $request->relationship_to_booking_person,
+                'price_id' => $request->price_id,
+                'booking_amount' => $request->booking_amount,
+                'patient_have_any_conditions' => $request->patient_have_any_conditions,
+                'patient_currently_on_medication' => $request->patient_currently_on_medication,
+                'patient_have_any_known_allergies' => $request->patient_have_any_known_allergies,
+                'mobility_status_of_patient' => $request->mobility_status_of_patient,
+                'care_start_date' => $request->care_start_date,
+                'care_end_date' => $request->care_end_date,
+                'location_of_care' => $request->location_of_care,
+                'emergency_contact_name' => $request->emergency_contact_name,
+                'emergency_contact_number' => $request->emergency_contact_number,
+                'primary_doctor_name' => $request->primary_doctor_name,
+                'primary_doctor_number' => $request->primary_doctor_number,
+                'primary_hospital' => $request->primary_hospital
+
+            ]);
+
+            return response()->json([
+                'status' => 'pending',   
+                'message' => 'Booking created successfully',
+            ], 200);    
+        }
+    }   
+
+
+    public function updateProfile(Request $request){
+
+        $user = auth()->user();
+
+        if($user->role === "user"){
+
+            $request->validate([
+                'name' => 'nullable',
+                'email' => 'nullable',
+                'number' => 'nullable',
+                'profilePhoto' => 'nullable',
+                'gender' => 'nullable',
+                'location' => 'nullable',
+            ]);
+
+            if ($request->hasFile('profilePhoto')) {
+                $user->profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/user', $user->profilePhoto);
+            }
+
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'number' => $request->number,
+                'gender' => $request->gender,
+                'location' => $request->location,
+            ]);
+
+            return response()->json([
+                'message' => 'User profile updated successfully',
+            ], 200); 
+        }
+
+        if($user->role === "specialist"){
+
+
+            if($user->subRole === "house-manager"){
+
+                $request->validate([
+
+                    'name' => 'nullable|string|max:255',
+                    'education' => 'nullable|string|max:255',
+                    'experience' => 'nullable|string|max:255',
+                    'location' => 'nullable|string|max:255',
+                    'preferredRole' => 'nullable|string|max:255',
+                    'languages' => 'nullable|array|min:1',
+                    'phone' => 'nullable',
+                    'salaryRange' => 'nullable|string|max:255',
+                    'serviceOffered' => 'nullable|string|max:255',
+                    'isMother' => 'nullable|boolean',
+                    'ageOfKids' => 'nullable|array|min:1',
+                    'isHandelingPet' => 'nullable|boolean',
+                    'preferBeingA' => 'nullable|string|max:255',
+                    'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'drivingLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'firstAidCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'goodConductCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+
+                ]);
+
+                if ($request->hasFile('idCopy')) {
+                    $user->idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/house-manager', $user->idCopy);
+                }
+
+                if ($request->hasFile('profilePhoto')) {
+                    $user->profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/house-manager', $user->profilePhoto);
+                }
+
+                if ($request->hasFile('drivingLicense')) {
+                    $user->drivingLicense = FileUpload::updateFile($request->file('drivingLicense'), 'uploads/house-manager', $user->drivingLicense);
+                }
+
+                $user->update([
+                    'name' => $request->name,
+                    'education' => $request->education,
+                    'experience' => $request->experience,
+                    'location' => $request->location,
+                    'preferredRole' => $request->preferredRole,
+                    'languages' => $request->languages,
+                    'number' => $request->phone,
+                    'idCopy' => $idCopy,
+                    'profilePhoto' => $profilePhoto,
+                    'drivingLicense' => $drivingLicense,
+                    'is_profile_completed' => true,
+                ]);
+
+                $houseManager = HouseManager::firstOrNew([
+                    'user_id' => $user->id,
+                ]);
+
+                if ($request->hasFile('firstAidCertificate')) {
+                    $file = FileUpload::updateFile($request->file('firstAidCertificate'), 'uploads/house-manager', $houseManager->firstAidCertificate);
+                    $houseManager->firstAidCertificate = $file;
+                }
+
+                $houseManager->fill([
+
+                    'experience' => $request->experience,
+                    'experienceYear' => $request->experienceYear,
+                    'salaryRange' => $request->salaryRange,
+                    'serviceOffered' => $request->serviceOffered,
+                    'isMother' => $request->isMother,
+                    'ageOfKids' => $request->ageOfKids,
+                    'isHandelingPet' => $request->isHandelingPet,
+                    'preferBeingA' => $request->preferBeingA,
+
+                ]);
+
+            }
+
+
+        }
+
+    }
 
 }

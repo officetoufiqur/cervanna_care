@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('bathingYears')->nullable();
             $table->string('feedingYears')->nullable();
             $table->integer('serviceFee')->nullable();
+            $table->string('skills')->nullable();
             $table->timestamps();
         });
     }

@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Booking extends Model
+{
+    protected $fillable = [
+            'specialist_id',
+            'booking_person_id',
+            'patient_name',
+            'patient_age',
+            'patient_gender',
+            'category',
+            'services',
+            'relationship_to_booking_person',
+            'price_id',
+            'booking_amount',
+            'patient_have_any_conditions',
+            'patient_currently_on_medication',
+            'patient_have_any_known_allergies',
+            'mobility_status_of_patient',
+            'care_start_date',
+            'care_end_date',
+            'location_of_care',
+            'emergency_contact_name',
+            'emergency_contact_number',
+            'primary_doctor_name',
+            'primary_doctor_number',
+            'primary_hospital',
+            'booking_status',
+    ];
+
+    protected $casts = [
+        'patient_have_any_conditions' => 'array',
+        'services' => 'array',
+        'booking_start_date' => 'datetime',
+        'booking_end_date' => 'datetime',
+    ];
+}

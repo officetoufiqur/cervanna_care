@@ -33,4 +33,10 @@ class AgencyEmployee extends Model
     {
         return $this->belongsTo(Agency::class, 'agency_id', 'id');
     }
+
+    protected $casts = [
+        'languages' => 'array',
+        'kidAges' => 'array'
+    ];
+
 }

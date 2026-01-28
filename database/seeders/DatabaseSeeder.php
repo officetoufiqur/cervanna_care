@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             ContactUsSeeder::class,
             BlogSeeder::class,
             SkillSeeder::class,
+            PriceSeeder::class,
         ]);
 
          User::factory()->create([
