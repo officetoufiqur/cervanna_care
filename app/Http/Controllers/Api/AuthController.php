@@ -7,16 +7,15 @@ use App\Http\Controllers\Controller;
 use App\Mail\OtpMail;
 use App\Models\Agency;
 use App\Models\AgencyEmployee;
+use App\Models\Booking;
+use App\Models\CareInstitution;
 use App\Models\HouseManager;
+use App\Models\InstitutionNurse;
 use App\Models\Nurse;
 use App\Models\NurseAssistant;
 use App\Models\Physiotherapist;
-use App\Models\SkillService;
 use App\Models\SpecialNeed;
 use App\Models\User;
-use App\Models\CareInstitution;
-use App\Models\InstitutionNurse;
-use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -114,7 +113,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->where('role', '!=', 'admin')->first();
 
-        if (!$user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid credentials',
@@ -135,6 +134,7 @@ class AuthController extends Controller
                 'data' => [
                     'token' => $user->createToken('auth_token')->plainTextToken,
                     'is_profile_completed' => false,
+                    'is_profile_verified' => $user->is_profile_verified,
                     'role' => $user->role,
                     'subRole' => $user->subRole,
                 ],
@@ -147,6 +147,7 @@ class AuthController extends Controller
             'data' => [
                 'token' => $user->createToken('auth_token')->plainTextToken,
                 'is_profile_completed' => true,
+                'is_profile_verified' => $user->is_profile_verified,
                 'role' => $user->role,
                 'subRole' => $user->subRole,
             ],
@@ -200,6 +201,11 @@ class AuthController extends Controller
                     $drivingLicense = FileUpload::storeFile($request->file('drivingLicense'), 'uploads/house-manager');
                 }
 
+                $goodConductCertificate = null;
+                if ($request->hasFile('goodConductCertificate')) {
+                    $goodConductCertificate = FileUpload::storeFile($request->file('goodConductCertificate'), 'uploads/house-manager');
+                }
+
                 $user->update([
                     'name' => $request->name,
                     'education' => $request->education,
@@ -211,6 +217,7 @@ class AuthController extends Controller
                     'idCopy' => $idCopy,
                     'profilePhoto' => $profilePhoto,
                     'drivingLicense' => $drivingLicense,
+                    'goodConductCertificate' => $goodConductCertificate,
                     'is_profile_completed' => true,
                 ]);
 
@@ -271,6 +278,7 @@ class AuthController extends Controller
 
                     'number_two' => 'nullable|digits:10',
                     'isNursingInKenya' => 'nullable',
+                    'registrationNumber' => 'nullable',
                     'skills' => 'nullable|array|min:1',
                     'mobilityYears' => 'nullable',
                     'bathingYears' => 'nullable',
@@ -354,6 +362,7 @@ class AuthController extends Controller
                 $nurse->fill([
 
                     'isNursingInKenya' => $request->isNursingInKenya,
+                    'registrationNumber' => $request->registrationNumber,
                     'mobilityYears' => $request->mobilityYears,
                     'bathingYears' => $request->bathingYears,
                     'feedingYears' => $request->feedingYears,
@@ -932,13 +941,12 @@ class AuthController extends Controller
                 ]);
 
                 $careInstitution->save();
-       
 
                 if ($request->filled('institutionNurses')) {
 
                     foreach ($request->institutionNurses as $index => $nurseData) {
 
-                        $institutionNurse = new InstitutionNurse();
+                        $institutionNurse = new InstitutionNurse;
                         $institutionNurse->care_institution_id = $careInstitution->id;
                         $institutionNurse->fill($nurseData);
 
@@ -968,11 +976,11 @@ class AuthController extends Controller
 
                 }
 
-                $user->update([ 
+                $user->update([
 
                     'is_profile_completed' => true,
                 ]);
-                
+
             });
 
             return response()->json([
@@ -980,7 +988,7 @@ class AuthController extends Controller
                 'is_profile_completed' => $user->is_profile_completed,
                 'is_profile_verified' => false,
             ], 200);
-        } 
+        }
 
     }
 
@@ -994,77 +1002,78 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function getProfile(Request $request){
+    public function getProfile(Request $request)
+    {
 
         $user = auth()->user();
 
-        if($user->role === "user"){
+        if ($user->role === 'user') {
 
-            $user = User::select('id','name', 'email', 'number', 'profilePhoto', 'is_profile_completed', 'role')->find($user->id);
+            $user = User::select('id', 'name', 'email', 'number', 'profilePhoto', 'is_profile_completed', 'role')->find($user->id);
 
             return response()->json([
                 'status' => true,
                 'message' => 'User profile fetched successfully',
                 'data' => $user,
-            ], 200); 
+            ], 200);
         }
 
-        if($user->role === "specialist"){
+        if ($user->role === 'specialist') {
 
-            if($user->subRole === "house-manager"){
+            if ($user->subRole === 'house-manager') {
                 $user = User::with('houseManager')->find($user->id);
+
                 return response()->json([
                     'status' => true,
                     'message' => 'House manager profile fetched successfully',
                     'houseManager' => $user,
-                ], 200); 
+                ], 200);
             }
 
-            if($user->subRole === "nurse"){
+            if ($user->subRole === 'nurse') {
                 $user = User::with('nurse')->find($user->id);
 
                 return response()->json([
                     'status' => true,
                     'message' => 'Nurse profile fetched successfully',
                     'nurse' => $user,
-                ], 200); 
+                ], 200);
             }
 
-            if($user->subRole === "physiotherapist"){
+            if ($user->subRole === 'physiotherapist') {
                 $user = User::with('physiotherapist')->find($user->id);
 
                 return response()->json([
                     'status' => true,
                     'message' => 'Physiotherapist profile fetched successfully',
                     'physiotherapist' => $user,
-                ], 200); 
+                ], 200);
             }
 
-            if($user->subRole === "nurse-aide-or-assistant"){
+            if ($user->subRole === 'nurse-aide-or-assistant') {
                 $user = User::with('nurseAssistant')->find($user->id);
 
                 return response()->json([
                     'status' => true,
                     'message' => 'Nurse assistant profile fetched successfully',
                     'nurseAssistant' => $user,
-                ], 200); 
+                ], 200);
             }
 
-            if($user->subRole === "special-need-caregivers"){
+            if ($user->subRole === 'special-need-caregivers') {
                 $user = User::with('specialNeed')->find($user->id);
 
                 return response()->json([
                     'status' => true,
                     'message' => 'Special need profile fetched successfully',
                     'specialNeed' => $user,
-                ], 200); 
+                ], 200);
             }
-        }   
+        }
 
+        if ($user->role === 'agency') {
 
-        if($user->role === "agency"){
-
-            $user = User::select('id','name', 'email','is_profile_completed', 'role')->find($user->id);
+            $user = User::select('id', 'name', 'email', 'is_profile_completed', 'role')->find($user->id);
             $agency = Agency::where('user_id', $user->id)->first();
             $agencyEmployees = AgencyEmployee::where('agency_id', $agency->id)->get();
 
@@ -1073,13 +1082,13 @@ class AuthController extends Controller
                 'message' => 'Agency profile fetched successfully',
                 'agency' => $user,
                 'agency' => $agency,
-                'agencyEmployees' => $agencyEmployees, 
-            ], 200); 
+                'agencyEmployees' => $agencyEmployees,
+            ], 200);
         }
 
-        if($user->role === "care_institutions"){
+        if ($user->role === 'care_institutions') {
 
-            $user = User::select('id','email', 'number', 'profilePhoto', 'is_profile_completed', 'role')->find($user->id);
+            $user = User::select('id', 'email', 'number', 'profilePhoto', 'is_profile_completed', 'role')->find($user->id);
             $careInstitution = CareInstitution::where('user_id', $user->id)->first();
             $institutionNurses = [];
 
@@ -1096,42 +1105,40 @@ class AuthController extends Controller
                 'user' => $user,
                 'careInstitution' => $careInstitution,
                 'institutionNurses' => $institutionNurses,
-            ], 200); 
+            ], 200);
         }
 
-
     }
-
 
     public function booking(Request $request)
     {
         $user = auth()->user();
 
-        if($user->role === "user"){
+        if ($user->role === 'user') {
 
             $request->validate([
 
-            'specialist_id' => 'required',
-            'patient_name' => 'required',
-            'patient_age' => 'required',
-            'patient_gender' => 'required',
-            'category' => 'required',
-            'services' => 'required',
-            'relationship_to_booking_person' => 'required',
-            'price_id' => 'required',
-            'booking_amount' => 'required',
-            'patient_have_any_conditions' => 'required',
-            'patient_currently_on_medication' => 'required',
-            'patient_have_any_known_allergies' => 'required',
-            'mobility_status_of_patient' => 'required',
-            'care_start_date' => 'required',
-            'care_end_date' => 'required',
-            'location_of_care' => 'required',
-            'emergency_contact_name' => 'required',
-            'emergency_contact_number' => 'required',
-            'primary_doctor_name' => 'required',
-            'primary_doctor_number' => 'required',
-            'primary_hospital' => 'required'
+                'specialist_id' => 'required',
+                'patient_name' => 'required',
+                'patient_age' => 'required',
+                'patient_gender' => 'required',
+                'patient_currently_on_medication_data' => 'required',
+                'patient_have_any_known_allergies_details' => 'required',
+                'relationship_to_booking_person' => 'required',
+                'price_id' => 'required',
+                'booking_amount' => 'required',
+                'patient_have_any_conditions' => 'required',
+                'patient_currently_on_medication' => 'required',
+                'patient_have_any_known_allergies' => 'required',
+                'mobility_status_of_patient' => 'required',
+                'care_start_date' => 'required',
+                'care_end_date' => 'required',
+                'location_of_care' => 'required',
+                'emergency_contact_name' => 'required',
+                'emergency_contact_number' => 'required',
+                'primary_doctor_name' => 'required',
+                'primary_doctor_number' => 'required',
+                'primary_hospital' => 'required',
 
             ]);
 
@@ -1142,8 +1149,8 @@ class AuthController extends Controller
                 'patient_name' => $request->patient_name,
                 'patient_age' => $request->patient_age,
                 'patient_gender' => $request->patient_gender,
-                'category' => $request->category,
-                'services' => $request->services,
+                'patient_currently_on_medication_data' => $request->patient_currently_on_medication_data,
+                'patient_have_any_known_allergies_details' => $request->patient_have_any_known_allergies_details,
                 'relationship_to_booking_person' => $request->relationship_to_booking_person,
                 'price_id' => $request->price_id,
                 'booking_amount' => $request->booking_amount,
@@ -1158,23 +1165,23 @@ class AuthController extends Controller
                 'emergency_contact_number' => $request->emergency_contact_number,
                 'primary_doctor_name' => $request->primary_doctor_name,
                 'primary_doctor_number' => $request->primary_doctor_number,
-                'primary_hospital' => $request->primary_hospital
+                'primary_hospital' => $request->primary_hospital,
 
             ]);
 
             return response()->json([
-                'status' => 'pending',   
+                'status' => 'pending',
                 'message' => 'Booking created successfully',
-            ], 200);    
+            ], 200);
         }
-    }   
+    }
 
-
-    public function updateProfile(Request $request){
+    public function updateProfile(Request $request)
+    {
 
         $user = auth()->user();
 
-        if($user->role === "user"){
+        if ($user->role === 'user') {
 
             $request->validate([
                 'name' => 'nullable',
@@ -1199,13 +1206,12 @@ class AuthController extends Controller
 
             return response()->json([
                 'message' => 'User profile updated successfully',
-            ], 200); 
+            ], 200);
         }
 
-        if($user->role === "specialist"){
+        if ($user->role === 'specialist') {
 
-
-            if($user->subRole === "house-manager"){
+            if ($user->subRole === 'house-manager') {
 
                 $request->validate([
 
@@ -1280,9 +1286,7 @@ class AuthController extends Controller
 
             }
 
-
         }
 
-    }
-
+    }   
 }

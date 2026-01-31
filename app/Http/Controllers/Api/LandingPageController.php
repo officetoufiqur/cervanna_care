@@ -18,6 +18,10 @@ use App\Models\Skill;
 use App\Models\Works;
 use App\Models\Price;
 use App\Trait\ApiResponse;
+use App\Models\User;
+use App\Models\AgencyEmployee;
+use App\Models\InstitutionNurse;
+use Illuminate\Http\Request;
 
 class LandingPageController extends Controller
 {
@@ -146,4 +150,73 @@ class LandingPageController extends Controller
             'Prices data fetched successfully',
         );
     }
+
+    // public function specialist()
+    // {
+    //     $specialist = User::where('role', 'specialist')->where('is_profile_completed', true)
+    //         ->select('id', 'name', 'role', 'subRole', 'education', 'location', 'profilePhoto', 'preferred')
+    //         ->with([
+    //             'houseManager:id,user_id,experience,serviceOffered',
+    //             'nurse:id,user_id,skills',
+    //             'nurseAssistant:id,user_id,skills'
+    //         ])->get();
+            
+    //     $employeAgencies = AgencyEmployee::with('agency:id,name,educationLevel,experience,liveType,profilePhoto')->get();
+    //     $institutionalNurses = InstitutionalNurse::with('agency:id,name,education,experience,services,profilePhoto')->get();
+
+    //     return $this->successResponse(
+    //         $specialist,
+    //         $employeAgencies,
+    //         $institutionalNurses,
+    //         'Specialist data fetched successfully',
+    //     );
+    // }
+
+    public function specialist(Request $request)
+    {
+        $limit = $request->get('limit', 20);
+
+        $preferred = $request->preferred; 
+        $subRole = $request->subRole;     
+
+        $specialist = User::where('role', 'specialist')
+            ->where('is_profile_completed', true)
+            ->when($preferred, fn($q) => $q->whereIn('preferred', (array)$preferred))
+            ->when($subRole, fn($q) => $q->where('subRole', $subRole))
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get();
+
+
+        $employeAgencies = collect();
+
+        if (!$subRole || $subRole === 'houseManager') {
+            $employeAgencies = AgencyEmployee::inRandomOrder()
+                ->limit($limit)
+                ->get()
+                ->each->setAttribute('subRole', 'houseManager');
+        }
+
+        $institutionalNurses = collect();
+
+        if (!$subRole || $subRole === 'nurse') {
+            $institutionalNurses = InstitutionNurse::inRandomOrder()
+                ->limit($limit)
+                ->get()
+                ->each->setAttribute('subRole', 'nurse');
+        }
+
+        $combined = collect()
+            ->concat($specialist)
+            ->concat($employeAgencies)
+            ->concat($institutionalNurses)
+            ->shuffle()
+            ->values();
+
+        return $this->successResponse($combined, 'Filtered results');
+    }
+
+
+
+
 }

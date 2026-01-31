@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ChooseController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventController;
@@ -10,17 +11,17 @@ use App\Http\Controllers\FoundationController;
 use App\Http\Controllers\OurCoreController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\WorksController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
-
-use Illuminate\Support\Facades\Artisan;
 
 Route::get('/storage-link', function () {
     Artisan::call('optimize:clear');
     Artisan::call('storage:link');
 
-    return "Storage link created successfully";
+    return 'Storage link created successfully';
 });
 
 Route::get('/', function () {
@@ -29,9 +30,15 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'is_not_admin', 'verified'])->name('dashboard');
+// Route::get('dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth', 'is_not_admin', 'verified'])->name('dashboard');
+
+Route::middleware(['auth', 'is_not_admin', 'verified'])->group(function () {
+    Route::controller(DashboardController::class)->group(function () {
+        Route::get('/dashboard', 'index')->name('dashboard');
+    });
+});
 
 Route::middleware(['auth', 'is_not_admin'])->group(function () {
     Route::controller(BannerController::class)->group(function () {
@@ -74,6 +81,7 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
     Route::resource('/contacts', ContactController::class);
     Route::get('/contacts/header/edit/{id}', [ContactController::class, 'contactEdit'])->name('contact.edit');
     Route::post('/contact/header/update/{id}', [ContactController::class, 'contactUpdate'])->name('contact.update');
+    Route::get('/booking', [BookingController::class, 'index']);
 
 });
 

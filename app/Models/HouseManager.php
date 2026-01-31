@@ -25,7 +25,9 @@ class HouseManager extends Model
     ];
 
     protected $casts = [
+        'isMother' => 'boolean',
         'ageOfKids' => 'array',
+        'isHandelingPet' => 'boolean',
     ];
 
     public function user()
