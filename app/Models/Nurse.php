@@ -10,6 +10,7 @@ class Nurse extends Model
         'user_id',
         'number',
         'isNursingInKenya',
+        'registrationNumber',
         'educationCertificate',
         'mobilityYears',
         'bathingYears',

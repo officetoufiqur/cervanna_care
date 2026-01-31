@@ -66,6 +66,11 @@ const mainNavItems: NavItem[] = [
     href: '/events',
     icon: CalendarCheckIcon,
   },
+    {
+    title: 'Booking',
+    href: '/booking',
+    icon: CalendarCheckIcon,
+  },
   {
     title: 'Contact',
     icon: SquareUserRoundIcon,

@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('patient_name')->nullable();
             $table->string('patient_age')->nullable();
             $table->string('patient_gender')->nullable();
-            $table->string('category')->nullable();
-            $table->string('services')->nullable();
             $table->string('relationship_to_booking_person')->nullable();
             $table->foreignId('price_id')->constrained('prices')->cascadeOnDelete()->nullable();
             $table->string('booking_amount')->nullable();
@@ -35,6 +33,8 @@ return new class extends Migration
             $table->string('primary_doctor_name')->nullable();
             $table->string('primary_doctor_number')->nullable();
             $table->text('primary_hospital')->nullable();
+            $table->text('patient_currently_on_medication_data')->nullable();
+            $table->text('patient_have_any_known_allergies_details')->nullable();
             $table->string('booking_status')->default('pending');
             $table->timestamps();
         });
