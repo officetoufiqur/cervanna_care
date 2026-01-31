@@ -37,7 +37,19 @@ class Booking extends Model
         return $this->belongsTo(User::class, 'booking_person_id', 'id');
     }
 
+    public function specialist()
+    {
+        return $this->belongsTo(User::class, 'specialist_id', 'id');
+    }
+
+    public function price()
+    {
+        return $this->belongsTo(Price::class, 'price_id', 'id');
+    }
+
     protected $casts = [
         'patient_have_any_conditions' => 'array',
+        'patient_currently_on_medication' => 'boolean',
+        'patient_have_any_conditions' => 'boolean',
     ];
 }

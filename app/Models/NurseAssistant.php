@@ -13,6 +13,8 @@ class NurseAssistant extends Model
         'bathingYears',
         'feedingYears',
         'serviceFee',
+        'serviceFeeDay',
+        'serviceFeeMonth',
         'skills',
     ];
 

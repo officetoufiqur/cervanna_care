@@ -13,6 +13,8 @@ class SpecialNeed extends Model
         'registrationNumber',
         'practiceLicense',
         'serviceFee',
+        'serviceFeeDay',
+        'serviceFeeMonth',
     ];
 
     public function user()

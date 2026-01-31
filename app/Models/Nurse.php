@@ -16,6 +16,8 @@ class Nurse extends Model
         'bathingYears',
         'feedingYears',
         'serviceFee',
+        'serviceFeeDay',
+        'serviceFeeMonth',
         'skills',
     ];
 
@@ -26,6 +28,7 @@ class Nurse extends Model
 
     protected $casts = [
         'skills' => 'array',
+        'isNursingInKenya' => 'boolean',
     ];
 
 }

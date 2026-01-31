@@ -14,6 +14,7 @@ use App\Http\Controllers\WorksController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PriceController;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
@@ -68,6 +69,7 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
     });
 
     Route::resource('/works', WorksController::class);
+    Route::resource('/price', PriceController::class)->names('price');
 
     Route::controller(AboutController::class)->group(function () {
         Route::get('/about', 'index')->name('about.index');
@@ -81,7 +83,9 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
     Route::resource('/contacts', ContactController::class);
     Route::get('/contacts/header/edit/{id}', [ContactController::class, 'contactEdit'])->name('contact.edit');
     Route::post('/contact/header/update/{id}', [ContactController::class, 'contactUpdate'])->name('contact.update');
-    Route::get('/booking', [BookingController::class, 'index']);
+    Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');
+    Route::get('/booking/edit/{id}', [BookingController::class, 'edit'])->name('booking.edit');
+    Route::put('/booking/update/{id}', [BookingController::class, 'updateStatus'])->name('booking.update');
 
 });
 

@@ -21,8 +21,10 @@ return new class extends Migration
             $table->string('mobilityYears')->nullable();
             $table->string('bathingYears')->nullable();
             $table->string('feedingYears')->nullable();
-            $table->integer('serviceFee')->nullable();
-            $table->string('skills')->nullable();
+            $table->string('serviceFee')->nullable();
+            $table->string('serviceFeeDay')->nullable();
+            $table->string('serviceFeeMonth')->nullable();
+            $table->json('skills')->nullable();
             $table->timestamps();
         });
     }
@@ -33,5 +35,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('nurses');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'skills' => 'array',
+        ];
     }
 };

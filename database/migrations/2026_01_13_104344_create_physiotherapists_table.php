@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('registrationNumber')->nullable();
             $table->string('practiceLicense')->nullable();
             $table->integer('serviceFee')->nullable();
+            $table->string('serviceFeeDay')->nullable();
+            $table->string('serviceFeeMonth')->nullable();
             $table->timestamps();
         });
     }

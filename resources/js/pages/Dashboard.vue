@@ -30,14 +30,14 @@ const props = defineProps({
     agency: Number,
     careInstitution: Number,
     users: Array<Users>,
-})
+});
 
 
 
 const column = [
     { label: 'Name', key: 'name' },
     { label: 'Email', key: 'email' },
-]
+];
 
 
 </script>
@@ -49,15 +49,15 @@ const column = [
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
             <div class="grid auto-rows-min gap-4 md:grid-cols-3 px-4">
-                <Card title="Total Booking" :value="0" />
+                <Card title="Total Booking" :value="booking" />
                 <Card title="Users" :value="user" />
-                <Card title="Nurses" value="0" />
-                <Card title="House Managers" value="0" />
-                <Card title="Physiotherapists" value="0" />
-                <Card title="Nurse Aides or Assistants" value="0" />
-                <Card title="Caregivers" value="0" />
-                <Card title="Agency" value="0" />
-                <Card title="Care Institutions" value="0" />
+                <Card title="Nurses" :value="nurse" />
+                <Card title="House Managers" :value="houseManager" />
+                <Card title="Physiotherapists" :value="physiotherapist" />
+                <Card title="Nurse Aides or Assistants" :value="nurseAide" />
+                <Card title="Caregivers" :value="caregiver" />
+                <Card title="Agency" :value="agency" />
+                <Card title="Care Institutions" :value="careInstitution" />
             </div>
             <!-- <div class="flex items-center justify-center space-x-4 px-4">
                 <div class="w-full h-[44vh] rounded-xl border border-sidebar-border/70 p-5">

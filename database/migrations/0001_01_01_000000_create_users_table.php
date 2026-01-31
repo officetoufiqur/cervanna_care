@@ -41,7 +41,7 @@ return new class extends Migration
             $table->boolean('homeBasedCare')->default(false);
             $table->integer('homeBasedYearsOfExperience')->nullable();
             $table->string('homeBasedReferenceContact')->nullable();
-            $table->string('preferred')->nullable();
+            $table->json('preferred')->nullable();
             $table->boolean('is_profile_completed')->default(false);
             $table->boolean('is_profile_verified')->default(false);
             $table->rememberToken();
