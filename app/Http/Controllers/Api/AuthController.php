@@ -267,6 +267,7 @@ class AuthController extends Controller
                     'canDrive' => 'nullable|boolean',
                     'bio' => 'nullable',
                     'education' => 'nullable|string|max:255',
+                    'preferred' => 'nullable|array',
 
                     'hospitalBasedCare' => 'nullable',
                     'hospitalBasedYearsOfExperience' => 'nullable',
@@ -283,7 +284,9 @@ class AuthController extends Controller
                     'mobilityYears' => 'nullable',
                     'bathingYears' => 'nullable',
                     'feedingYears' => 'nullable',
-                    'serviceFee' => 'nullable|integer',
+                    'serviceFee' => 'nullable',
+                    'serviceFeeDay' => 'nullable',
+                    'serviceFeeMonth' => 'nullable',
 
                     'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
@@ -332,6 +335,7 @@ class AuthController extends Controller
                     'education' => $request->education,
                     'location' => $request->location,
                     'number_two' => $request->number_two,
+                    'preferred' => $request->preferred,
 
                     'hospitalBasedCare' => $request->hospitalBasedCare,
                     'hospitalBasedYearsOfExperience' => $request->hospitalBasedYearsOfExperience,
@@ -367,6 +371,8 @@ class AuthController extends Controller
                     'bathingYears' => $request->bathingYears,
                     'feedingYears' => $request->feedingYears,
                     'serviceFee' => $request->serviceFee,
+                    'serviceFeeDay' => $request->serviceFeeDay,
+                    'serviceFeeMonth' => $request->serviceFeeMonth,
                     'skills' => $request->skills,
 
                 ]);
@@ -406,6 +412,8 @@ class AuthController extends Controller
                     'isRegisterPCK' => 'nullable|boolean',
                     'registrationNumber' => 'nullable|string|max:255',
                     'serviceFee' => 'nullable|numeric',
+                    'serviceFeeDay' => 'nullable',
+                    'serviceFeeMonth' => 'nullable',
 
                     'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
@@ -530,6 +538,8 @@ class AuthController extends Controller
                     'bathingYears' => 'nullable',
                     'feedingYears' => 'nullable',
                     'serviceFee' => 'nullable',
+                    'serviceFeeDay' => 'nullable',
+                    'serviceFeeMonth' => 'nullable',
 
                     'idCopy' => 'nullable',
                     'profilePhoto' => 'nullable',
@@ -647,6 +657,8 @@ class AuthController extends Controller
                     'isRegisterPCK' => 'nullable',
                     'registrationNumber' => 'nullable',
                     'serviceFee' => 'nullable',
+                    'serviceFeeDay' => 'nullable',
+                    'serviceFeeMonth' => 'nullable',
 
                     'idCopy' => 'nullable',
                     'profilePhoto' => 'nullable',
@@ -908,6 +920,8 @@ class AuthController extends Controller
                 'institutionNurses.*.bathingYears' => 'nullable|string|max:255',
                 'institutionNurses.*.feedingYears' => 'nullable|string|max:255',
                 'institutionNurses.*.serviceFee' => 'nullable|integer',
+                'institutionNurses.*.serviceFeeDay' => 'nullable',
+                'institutionNurses.*.serviceFeeMonth' => 'nullable',
                 'institutionNurses.*.bio' => 'nullable|string|max:255',
                 'institutionNurses.*.idCopy' => 'nullable|image|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                 'institutionNurses.*.profilePhoto' => 'nullable|image|mimes:pdf,jpg,jpeg,png,webp|max:2048',

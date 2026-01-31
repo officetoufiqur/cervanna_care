@@ -13,10 +13,16 @@ class Physiotherapist extends Model
         'practiceLicense',
         'eduCertificate',
         'serviceFee',
+        'serviceFeeDay',
+        'serviceFeeMonth',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    protected $casts = [
+        'isRegisterPCK' => 'boolean',
+    ];
 }

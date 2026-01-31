@@ -18,12 +18,9 @@ const props = defineProps<{
     bookings: {
         id: number;
         patient_name: string;
-        patient_age: string;
-        patient_gender: string;
-        relationship_to_booking_person: string;
+        specialist_id: string;
+        booking_person_id: string;
         booking_amount: string;
-        patient_have_any_conditions: string;
-        mobility_status_of_patient: string;
         care_start_date: string;
         care_end_date: string;
         booking_status: string;
@@ -37,16 +34,12 @@ const columns = [
 
     { label: 'ID', key: 'id' },
     { label: 'Patient Name', key: 'patient_name' },
-    { label: 'Patient Age', key: 'patient_age' },
-    { label: 'Patient Gender', key: 'patient_gender' },
-    { label: 'Relationship', key: 'relationship_to_booking_person' },
-    { label: 'Booking Amount', key: 'booking_amount' },
-    { label: 'Has Conditions', key: 'patient_have_any_conditions' },
-    { label: 'Mobility Status', key: 'mobility_status_of_patient' },
-    { label: 'Care Start Date', key: 'care_start_date' },
-    { label: 'Care End Date', key: 'care_end_date' },
-    { label: 'Booking Status', key: 'booking_status' },
-
+    { label: 'Specialist', key: 'specialist.name' },
+    { label: 'Booking Person', key: 'user.name' },
+    { label: 'Start Date', key: 'care_start_date' },
+    { label: 'End Date', key: 'care_end_date' },
+    { label: 'Amount', key: 'booking_amount' },
+    { label: 'Status', key: 'booking_status' },
 
     { label: 'Action', key: 'action' }
 
@@ -66,35 +59,19 @@ const data = ref(props.bookings);
     <AppLayout :breadcrumbs="breadcrumbs">
         <FlashMessage :message="props.flash.message" />
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-10">
-            <FilterTable :rows="data" :columns="columns" title="Booking List" create-btn create-text="Create Booking"
+            <FilterTable :rows="data" :columns="columns" title="Booking List" 
                 create-url="#">
 
                 <template #patient_name="{ item }">
                     <span>{{ item.patient_name}}</span>
                 </template>
 
-                <template #patient_age="{ item }">
-                    <span>{{ item.patient_age}}</span>
+                <template #specialist.name="{ item }">
+                    <span>{{ item.specialist.name}}</span>
                 </template>
 
-                <template #patient_gender="{ item }">
-                    <span>{{ item.patient_gender}}</span>
-                </template>
-
-                <template #relationship_to_booking_person="{ item }">
-                    <span>{{ item.relationship_to_booking_person}}</span>
-                </template>
-
-                <template #booking_amount="{ item }">
-                    <span>{{ item.booking_amount}}</span>
-                </template>
-
-                <template #patient_have_any_conditions="{ item }">
-                    <span>{{ item.patient_have_any_conditions}}</span>
-                </template>
-
-                <template #mobility_status_of_patient="{ item }">
-                    <span>{{ item.mobility_status_of_patient}}</span>
+                <template #user.name="{ item }">
+                    <span>{{ item.user.name}}</span>
                 </template>
 
                 <template #care_start_date="{ item }">
@@ -105,13 +82,19 @@ const data = ref(props.bookings);
                     <span>{{ item.care_end_date}}</span>
                 </template>
 
+                <template #booking_amount="{ item }">
+                    <span>{{ item.booking_amount}}</span>
+                </template>
+
                 <template #booking_status="{ item }">
-                    <span>{{ item.booking_status}}</span>
+                    <span v-if="item.booking_status === 'pending'" class="bg-yellow-500 text-white px-2 pt-1 pb-1 rounded-full">{{ item.booking_status}}</span>
+                    <span v-if="item.booking_status === 'approved'" class="bg-green-500 text-white px-2 pt-1 pb-1 rounded-full">{{ item.booking_status}}</span>
+                    <span v-if="item.booking_status === 'rejected'" class="bg-red-500 text-white px-2 pt-1 pb-1 rounded-full">{{ item.booking_status}}</span>
                 </template>
 
                 <template #action="{ item }">
                     <div class="flex items-center gap-2">
-                        <Link :href="`#`"
+                        <Link :href="`/booking/edit/${item.id}`"
                             class="bg-[#0AB39C] text-sm cursor-pointer text-white rounded font-medium hover:bg-[#0AB39C] py-2 px-3">
                             <SquarePenIcon class="w-5 h-5" />
                         </Link>

@@ -29,6 +29,8 @@ class InstitutionNurse extends Model
         'bathingYears',
         'feedingYears',
         'serviceFee',
+        'serviceFeeDay',
+        'serviceFeeMonth',
         'bio',
         'idCopy',
         'profilePhoto',

@@ -35,6 +35,8 @@ return new class extends Migration
             $table->string('bathingYears')->nullable();
             $table->string('feedingYears')->nullable();
             $table->integer('serviceFee')->nullable();
+            $table->string('serviceFeeDay')->nullable();
+            $table->string('serviceFeeMonth')->nullable();
             $table->text('bio')->nullable();
             $table->string('idCopy')->nullable();
             $table->string('profilePhoto')->nullable();
