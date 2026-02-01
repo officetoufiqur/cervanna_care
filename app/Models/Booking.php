@@ -13,13 +13,13 @@ class Booking extends Model
         'patient_age',
         'patient_gender',
         'patient_currently_on_medication_data',
+        'patient_currently_on_medication',
+        'patient_have_any_known_allergies',
         'patient_have_any_known_allergies_details',
         'relationship_to_booking_person',
         'price_id',
         'booking_amount',
         'patient_have_any_conditions',
-        'patient_currently_on_medication',
-        'patient_have_any_known_allergies',
         'mobility_status_of_patient',
         'care_start_date',
         'care_end_date',
@@ -50,6 +50,5 @@ class Booking extends Model
     protected $casts = [
         'patient_have_any_conditions' => 'array',
         'patient_currently_on_medication' => 'boolean',
-        'patient_have_any_conditions' => 'boolean',
     ];
 }
