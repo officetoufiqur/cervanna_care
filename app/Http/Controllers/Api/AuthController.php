@@ -87,7 +87,9 @@ class AuthController extends Controller
         $user->email_verified_at = now();
         if ($user->role === 'user') {
             $user->is_profile_completed = true;
+            $user->is_profile_verified = true;
         }
+        
         $user->save();
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -621,6 +623,8 @@ class AuthController extends Controller
                     'bathingYears' => $request->bathingYears,
                     'feedingYears' => $request->feedingYears,
                     'serviceFee' => $request->serviceFee,
+                    'serviceFeeMonth' => $request->serviceFeeMonth,
+                    'serviceFeeDay' => $request->serviceFeeDay,
                     'skills' => $request->skills,
                 ]);
 
@@ -716,7 +720,6 @@ class AuthController extends Controller
                     'preferred' => $request->preferred,
                     'isRegisterPCK' => $request->isRegisterPCK,
                     'registrationNumber' => $request->registrationNumber,
-                    'serviceFee' => $request->serviceFee,
 
                     'idCopy' => $idCopy,
                     'profilePhoto' => $profilePhoto,
@@ -747,7 +750,8 @@ class AuthController extends Controller
                     'isRegisterPCK' => $request->isRegisterPCK,
                     'registrationNumber' => $request->registrationNumber,
                     'serviceFee' => $request->serviceFee,
-
+                    'serviceFeeMonth' => $request->serviceFeeMonth,
+                    'serviceFeeDay' => $request->serviceFeeDay,
                 ]);
 
                 $specialNeed->save();
