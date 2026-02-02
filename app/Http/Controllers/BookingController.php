@@ -11,7 +11,7 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with(['user:id,name', 'specialist:id,name'])->get();
+        $bookings = Booking::with(['user:id,name', 'specialist:id,name'])->orderBy('id', 'desc')->get();
 
         return Inertia::render('Booking/Index', [
             'bookings' => $bookings,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\About;
+use App\Models\AgencyEmployee;
 use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\Choose;
@@ -11,16 +12,15 @@ use App\Models\ContactUs;
 use App\Models\Event;
 use App\Models\Faq;
 use App\Models\Foundation;
+use App\Models\InstitutionNurse;
 use App\Models\NewsLetter;
 use App\Models\OurCore;
+use App\Models\Price;
 use App\Models\Service;
 use App\Models\Skill;
-use App\Models\Works;
-use App\Models\Price;
-use App\Trait\ApiResponse;
 use App\Models\User;
-use App\Models\AgencyEmployee;
-use App\Models\InstitutionNurse;
+use App\Models\Works;
+use App\Trait\ApiResponse;
 use Illuminate\Http\Request;
 
 class LandingPageController extends Controller
@@ -160,7 +160,7 @@ class LandingPageController extends Controller
     //             'nurse:id,user_id,skills',
     //             'nurseAssistant:id,user_id,skills'
     //         ])->get();
-            
+
     //     $employeAgencies = AgencyEmployee::with('agency:id,name,educationLevel,experience,liveType,profilePhoto')->get();
     //     $institutionalNurses = InstitutionalNurse::with('agency:id,name,education,experience,services,profilePhoto')->get();
 
@@ -174,14 +174,20 @@ class LandingPageController extends Controller
 
     public function specialist(Request $request)
     {
-        $limit = $request->get('limit', 20);
+        $limit = $request->limit ?? 10;
 
-        $preferred = $request->preferred; 
-        $subRole = $request->subRole;     
+        $preferred = $request->preferred;
+        $subRole = $request->subRole;
 
         $specialist = User::where('role', 'specialist')
             ->where('is_profile_completed', true)
-            ->when($preferred, fn($q) => $q->whereIn('preferred', (array)$preferred))
+            ->when($preferred, function ($q) use ($preferred) {
+                $q->where(function ($inner) use ($preferred) {
+                    foreach ((array)$preferred as $item) {
+                        $inner->orWhereJsonContains('preferred', $item);
+                    }
+                });
+            })
             ->when($subRole, fn($q) => $q->where('subRole', $subRole))
             ->inRandomOrder()
             ->limit($limit)
@@ -190,7 +196,7 @@ class LandingPageController extends Controller
 
         $employeAgencies = collect();
 
-        if (!$subRole || $subRole === 'houseManager') {
+        if (! $subRole || $subRole === 'houseManager') {
             $employeAgencies = AgencyEmployee::inRandomOrder()
                 ->limit($limit)
                 ->get()
@@ -199,7 +205,7 @@ class LandingPageController extends Controller
 
         $institutionalNurses = collect();
 
-        if (!$subRole || $subRole === 'nurse') {
+        if (! $subRole || $subRole === 'nurse') {
             $institutionalNurses = InstitutionNurse::inRandomOrder()
                 ->limit($limit)
                 ->get()
@@ -215,8 +221,4 @@ class LandingPageController extends Controller
 
         return $this->successResponse($combined, 'Filtered results');
     }
-
-
-
-
 }
