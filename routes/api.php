@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\LandingPageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,5 +34,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'getProfile']);
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
-    Route::post('/booking', [AuthController::class, 'booking']);
+
+    Route::controller(BookingController::class)->group(function () {
+        Route::post('/booking', 'booking');
+        Route::get('/user-booking', 'getBooking');
+        Route::get('/specialist-booking', 'getSpecialistBooking');
+    });
+
 });

@@ -66,7 +66,7 @@ const mainNavItems: NavItem[] = [
     href: '/events',
     icon: CalendarCheckIcon,
   },
-    {
+  {
     title: 'Booking',
     icon: Book,
     subMenu: [
@@ -78,6 +78,20 @@ const mainNavItems: NavItem[] = [
      title: 'Booking',
      href: '/booking',
     },
+    ]
+  },
+  {
+    title: 'User Management',
+    icon: SquareUserRoundIcon,
+    subMenu: [
+      {
+        title: 'User',
+        href: '/all-user',
+      },
+      {
+        title: 'Specialist',
+        href: '/all-specialist',
+      },
     ]
   },
 

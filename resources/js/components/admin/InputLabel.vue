@@ -7,6 +7,7 @@ defineProps<{
   name?: string;
   placeholder?: string;
   modelValue?: string;
+  readonly?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -31,6 +32,7 @@ function updateValue(event: Event) {
       :placeholder="placeholder"
       :value="modelValue"
       @input="updateValue"
+      :readonly="readonly"
       class="border border-gray-300 rounded px-3 py-2.5 w-full mt-1"
     />
   </div>

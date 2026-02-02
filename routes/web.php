@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PriceController;
+use App\Http\Controllers\UserController;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
@@ -75,6 +76,17 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
         Route::get('/about', 'index')->name('about.index');
         Route::get('/about/edit/{id}', 'edit')->name('about.edit');
         Route::post('/about/update/{id}', 'update')->name('about.update');
+    });
+
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/all-user', 'userIndex')->name('all-user.index');
+        Route::get('/user/edit/{id}', 'userEdit')->name('user.edit');
+        Route::put('/user/update/{id}', 'userUpdate')->name('user.update');
+
+        Route::get('/all-specialist', 'specialistIndex')->name('specialist.index');
+        Route::get('/specialist/edit/{id}', 'specialistEdit')->name('specialist.edit');
+        Route::put('/specialist/update/{id}', 'specialistUpdate')->name('specialist.update');
+
     });
 
     Route::resource('/our-cores', OurCoreController::class);
