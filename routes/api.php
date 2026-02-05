@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'getProfile']);
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
+    Route::get('/notifications', [AuthController::class, 'getNotifications']);
 
     Route::controller(BookingController::class)->group(function () {
         Route::post('/booking', 'booking');

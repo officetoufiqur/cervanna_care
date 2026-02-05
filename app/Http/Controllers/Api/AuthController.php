@@ -175,7 +175,7 @@ class AuthController extends Controller
                     'location' => 'nullable|string|max:255',
                     'preferredRole' => 'nullable|string|max:255',
                     'languages' => 'nullable|array|min:1',
-                    'phone' => 'nullable',
+                    'number_two' => 'nullable',
                     'salaryRange' => 'nullable|string|max:255',
                     'preferred' => 'nullable|array',
                     'isMother' => 'nullable|boolean',
@@ -218,7 +218,7 @@ class AuthController extends Controller
                     'preferredRole' => $request->preferredRole,
                     'languages' => $request->languages,
                     'preferred' => $request->preferred,
-                    'number' => $request->phone,
+                    'number_two' => $request->number_two,
                     'idCopy' => $idCopy,
                     'profilePhoto' => $profilePhoto,
                     'drivingLicense' => $drivingLicense,
@@ -254,6 +254,8 @@ class AuthController extends Controller
                     'is_profile_verified' => false,
                     'message' => 'House Manager Profile created successfully',
                 ], 200);
+
+               $user->notify(new UserNotification('Specialist booking successfull', $user->specialist_id, $user->id));
 
             }
 
@@ -294,6 +296,7 @@ class AuthController extends Controller
 
                     'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'practiceLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'goodConductCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'drivingLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'referenceLetter' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
@@ -365,6 +368,12 @@ class AuthController extends Controller
                 if ($request->hasFile('educationCertificate')) {
                     $educationCertificate = FileUpload::storeFile($request->file('educationCertificate'), 'uploads/nurse');
                     $nurse->educationCertificate = $educationCertificate;
+                }
+
+                $practiceLicense = null;
+                if ($request->hasFile('practiceLicense')) {
+                    $practiceLicense = FileUpload::storeFile($request->file('practiceLicense'), 'uploads/nurse');
+                    $nurse->practiceLicense = $practiceLicense;
                 }
 
                 $nurse->fill([
@@ -1874,6 +1883,17 @@ class AuthController extends Controller
             ], 200);
         }
 
+    }
+
+    public function getNotifications()
+    {
+        $user = auth()->user();
+        $notifications = $user->notifications;
+        return response()->json([
+            'status' => true,
+            'message' => 'Notifications retrieved successfully',
+            'data' => $notifications,
+        ], 200);
     }
 
 }
