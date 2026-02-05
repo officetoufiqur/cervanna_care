@@ -20,6 +20,7 @@ Route::controller(LandingPageController::class)->group(function () {
     Route::get('/skills', 'skillNurse');
     Route::get('/price', 'prices');
     Route::get('/specialist', 'specialist');
+    Route::post('/subscribe', 'subscribe');
 });
 
 Route::controller(AuthController::class)->group(function () {

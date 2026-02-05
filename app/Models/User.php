@@ -110,5 +110,15 @@ class User extends Authenticatable
         return $this->hasOne(SpecialNeed::class);
     }
 
+    public function agency()
+    {
+        return $this->hasOne(Agency::class);
+    }
+
+    public function careInstitution()
+    {
+        return $this->hasOne(CareInstitution::class);
+    }
+
 
 }

@@ -15,6 +15,7 @@ use App\Models\Nurse;
 use App\Models\NurseAssistant;
 use App\Models\Physiotherapist;
 use App\Models\SpecialNeed;
+use App\Models\Subscribe;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -176,7 +177,7 @@ class AuthController extends Controller
                     'languages' => 'nullable|array|min:1',
                     'phone' => 'nullable',
                     'salaryRange' => 'nullable|string|max:255',
-                    'serviceOffered' => 'nullable|string|max:255',
+                    'preferred' => 'nullable|array',
                     'isMother' => 'nullable|boolean',
                     'ageOfKids' => 'nullable|array|min:1',
                     'isHandelingPet' => 'nullable|boolean',
@@ -216,6 +217,7 @@ class AuthController extends Controller
                     'location' => $request->location,
                     'preferredRole' => $request->preferredRole,
                     'languages' => $request->languages,
+                    'preferred' => $request->preferred,
                     'number' => $request->phone,
                     'idCopy' => $idCopy,
                     'profilePhoto' => $profilePhoto,
@@ -238,7 +240,6 @@ class AuthController extends Controller
                     'experience' => $request->experience,
                     'experienceYear' => $request->experienceYear,
                     'salaryRange' => $request->salaryRange,
-                    'serviceOffered' => $request->serviceOffered,
                     'isMother' => $request->isMother,
                     'ageOfKids' => $request->ageOfKids,
                     'isHandelingPet' => $request->isHandelingPet,
@@ -280,7 +281,7 @@ class AuthController extends Controller
                     'homeBasedYearsOfExperience' => 'nullable',
                     'homeBasedReferenceContact' => 'nullable|string|max:255',
 
-                    'number_two' => 'nullable|digits:10',
+                    'number_two' => 'nullable',
                     'isNursingInKenya' => 'nullable',
                     'registrationNumber' => 'nullable',
                     'skills' => 'nullable|array|min:1',
@@ -402,7 +403,7 @@ class AuthController extends Controller
                     'canDrive' => 'nullable|boolean',
                     'bio' => 'nullable',
                     'education' => 'nullable|string|max:255',
-                    'number_two' => 'nullable|digits:10',
+                    'number_two' => 'nullable',
 
                     'hospitalBasedCare' => 'nullable',
                     'hospitalBasedYearsOfExperience' => 'nullable',
@@ -1028,7 +1029,7 @@ class AuthController extends Controller
 
         if ($user->role === 'user') {
 
-            $user = User::select('id', 'name', 'email', 'number', 'profilePhoto', 'is_profile_completed', 'role')->find($user->id);
+            $user = User::select('id', 'name', 'email', 'number', 'profilePhoto', 'is_profile_completed','location','gender', 'role')->find($user->id);
 
             return response()->json([
                 'status' => true,
@@ -1129,8 +1130,6 @@ class AuthController extends Controller
 
     }
 
-
-
     public function updateProfile(Request $request)
     {
 
@@ -1153,13 +1152,14 @@ class AuthController extends Controller
 
             $user->update([
                 'name' => $request->name,
-                'email' => $request->email,
+                'email' => $request->email ?? $user->email,
                 'number' => $request->number,
                 'gender' => $request->gender,
                 'location' => $request->location,
             ]);
 
             return response()->json([
+                'status' => true,
                 'message' => 'User profile updated successfully',
             ], 200);
         }
@@ -1170,19 +1170,19 @@ class AuthController extends Controller
 
                 $request->validate([
 
-                    'name' => 'nullable|string|max:255',
-                    'education' => 'nullable|string|max:255',
-                    'experience' => 'nullable|string|max:255',
-                    'location' => 'nullable|string|max:255',
-                    'preferredRole' => 'nullable|string|max:255',
+                    'name' => 'nullable',
+                    'education' => 'nullable',
+                    'experience' => 'nullable',
+                    'location' => 'nullable',
+                    'preferredRole' => 'nullable',
                     'languages' => 'nullable|array|min:1',
                     'phone' => 'nullable',
-                    'salaryRange' => 'nullable|string|max:255',
-                    'serviceOffered' => 'nullable|string|max:255',
+                    'salaryRange' => 'nullable',
+                    'serviceOffered' => 'nullable',
                     'isMother' => 'nullable|boolean',
-                    'ageOfKids' => 'nullable|array|min:1',
+                    'ageOfKids' => 'nullable|array',
                     'isHandelingPet' => 'nullable|boolean',
-                    'preferBeingA' => 'nullable|string|max:255',
+                    'preferBeingA' => 'nullable',
                     'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'drivingLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
@@ -1214,7 +1214,8 @@ class AuthController extends Controller
                     'idCopy' => $idCopy,
                     'profilePhoto' => $profilePhoto,
                     'drivingLicense' => $drivingLicense,
-                    'is_profile_completed' => true,
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => $user->is_profile_verified,
                 ]);
 
                 $houseManager = HouseManager::firstOrNew([
@@ -1239,9 +1240,640 @@ class AuthController extends Controller
 
                 ]);
 
+                $houseManager->update();
+
+                return response()->json([
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => $user->is_profile_verified,
+                    'message' => 'House Manager Profile updated successfully',
+                ], 200);
+            }
+
+            if ($user->subRole === 'nurse') {
+
+                $request->validate([
+
+                    'name' => 'nullable',
+                    'location' => 'nullable',
+                    'age' => 'nullable',
+                    'experience' => 'nullable',
+                    'gender' => 'nullable',
+                    'preferredRole' => 'nullable',
+                    'languages' => 'nullable|array',
+                    'canDrive' => 'nullable|boolean',
+                    'bio' => 'nullable',
+                    'education' => 'nullable',
+                    'preferred' => 'nullable|array',
+
+                    'hospitalBasedCare' => 'nullable',
+                    'hospitalBasedYearsOfExperience' => 'nullable',
+                    'hospitalBasedReferenceContact' => 'nullable',
+
+                    'homeBasedCare' => 'nullable',
+                    'homeBasedYearsOfExperience' => 'nullable',
+                    'homeBasedReferenceContact' => 'nullable',
+
+                    'number_two' => 'nullable',
+                    'isNursingInKenya' => 'nullable',
+                    'registrationNumber' => 'nullable',
+                    'skills' => 'nullable|array',
+                    'mobilityYears' => 'nullable',
+                    'bathingYears' => 'nullable',
+                    'feedingYears' => 'nullable',
+                    'serviceFee' => 'nullable',
+                    'serviceFeeDay' => 'nullable',
+                    'serviceFeeMonth' => 'nullable',
+
+                    'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'goodConductCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'drivingLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'referenceLetter' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'educationCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+
+                ]);
+
+                $idCopy = null;
+                if ($request->hasFile('idCopy')) {
+                    $idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/nurse', $user->idCopy);
+                }
+
+                $profilePhoto = null;
+                if ($request->hasFile('profilePhoto')) {
+                    $profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/nurse', $user->profilePhoto);
+                }
+
+                $drivingLicense = null;
+                if ($request->hasFile('drivingLicense')) {
+                    $drivingLicense = FileUpload::updateFile($request->file('drivingLicense'), 'uploads/nurse', $user->drivingLicense);
+                }
+
+                $goodConductCertificate = null;
+                if ($request->hasFile('goodConductCertificate')) {
+                    $goodConductCertificate = FileUpload::updateFile($request->file('goodConductCertificate'), 'uploads/nurse', $user->goodConductCertificate);
+                }
+
+                $referenceLetter = null;
+                if ($request->hasFile('referenceLetter')) {
+                    $referenceLetter = FileUpload::updateFile($request->file('referenceLetter'), 'uploads/nurse', $user->referenceLetter);  
+                }
+
+                $user->update([
+
+                    'name' => $request->name,
+                    'age' => $request->age,
+                    'experience' => $request->experience,
+                    'gender' => $request->gender,
+                    'preferredRole' => $request->preferredRole,
+                    'languages' => $request->languages,
+                    'canDrive' => $request->canDrive,
+                    'bio' => $request->bio,
+                    'education' => $request->education,
+                    'location' => $request->location,
+                    'number_two' => $request->number_two,
+                    'preferred' => $request->preferred,
+
+                    'hospitalBasedCare' => $request->hospitalBasedCare,
+                    'hospitalBasedYearsOfExperience' => $request->hospitalBasedYearsOfExperience,
+                    'hospitalBasedReferenceContact' => $request->hospitalBasedReferenceContact,
+
+                    'homeBasedCare' => $request->homeBasedCare,
+                    'homeBasedYearsOfExperience' => $request->homeBasedYearsOfExperience,
+                    'homeBasedReferenceContact' => $request->homeBasedReferenceContact,
+
+                    'idCopy' => $idCopy,
+                    'profilePhoto' => $profilePhoto,
+                    'goodConductCertificate' => $goodConductCertificate,
+                    'drivingLicense' => $drivingLicense,
+                    'referenceLetter' => $referenceLetter,
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => $user->is_profile_verified,
+                ]);
+
+                $nurse = Nurse::firstOrNew([
+                    'user_id' => $user->id,
+                ]);
+
+                $educationCertificate = null;
+                if ($request->hasFile('educationCertificate')) {
+                    $educationCertificate = FileUpload::updateFile($request->file('educationCertificate'), 'uploads/nurse', $nurse->educationCertificate);
+                    $nurse->educationCertificate = $educationCertificate;
+                }
+
+                $nurse->fill([
+
+                    'isNursingInKenya' => $request->isNursingInKenya,
+                    'registrationNumber' => $request->registrationNumber,
+                    'mobilityYears' => $request->mobilityYears,
+                    'bathingYears' => $request->bathingYears,
+                    'feedingYears' => $request->feedingYears,
+                    'serviceFee' => $request->serviceFee,
+                    'serviceFeeDay' => $request->serviceFeeDay,
+                    'serviceFeeMonth' => $request->serviceFeeMonth,
+                    'skills' => $request->skills,
+
+                ]);
+
+                $nurse->update();
+
+                return response()->json([
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => $user->is_profile_verified,
+                    'message' => 'Nurse Profile updated successfully',
+                ], 200);
+            }
+
+            if ($user->subRole === 'physiotherapist') {
+
+                $request->validate([
+
+                    'name' => 'nullable',
+                    'location' => 'nullable',
+                    'age' => 'nullable',
+                    'experience' => 'nullable',
+                    'gender' => 'nullable',
+                    'languages' => 'nullable|array',
+                    'canDrive' => 'nullable|boolean',
+                    'bio' => 'nullable',
+                    'education' => 'nullable',
+                    'number_two' => 'nullable',
+
+                    'hospitalBasedCare' => 'nullable',
+                    'hospitalBasedYearsOfExperience' => 'nullable',
+                    'hospitalBasedReferenceContact' => 'nullable',
+
+                    'homeBasedCare' => 'nullable',
+                    'homeBasedYearsOfExperience' => 'nullable',
+                    'homeBasedReferenceContact' => 'nullable',
+                    'preferred' => 'nullable|array|min:1',
+                    'isRegisterPCK' => 'nullable|boolean',
+                    'registrationNumber' => 'nullable',
+                    'serviceFee' => 'nullable',
+                    'serviceFeeDay' => 'nullable',
+                    'serviceFeeMonth' => 'nullable',
+
+                    'idCopy' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'goodConductCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'drivingLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'referenceLetter' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'eduCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'practiceLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                ]);
+
+                $idCopy = null;
+                if ($request->hasFile('idCopy')) {
+                    $idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/physiotherapist', $user->idCopy);
+                }
+
+                $profilePhoto = null;
+                if ($request->hasFile('profilePhoto')) {
+                    $profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/physiotherapist', $user->profilePhoto);
+                }
+
+                $drivingLicense = null;
+                if ($request->hasFile('drivingLicense')) {
+                    $drivingLicense = FileUpload::updateFile($request->file('drivingLicense'), 'uploads/physiotherapist', $user->drivingLicense);
+                }
+
+                $goodConductCertificate = null;
+                if ($request->hasFile('goodConductCertificate')) {
+                    $goodConductCertificate = FileUpload::updateFile($request->file('goodConductCertificate'), 'uploads/physiotherapist', $user->goodConductCertificate);
+                }
+
+                $referenceLetter = null;
+                if ($request->hasFile('referenceLetter')) {
+                    $referenceLetter = FileUpload::updateFile($request->file('referenceLetter'), 'uploads/physiotherapist', $user->referenceLetter);
+                }
+
+                $user->update([
+
+                    'name' => $request->name,
+                    'age' => $request->age,
+                    'experience' => $request->experience,
+                    'gender' => $request->gender,
+                    'languages' => $request->languages,
+                    'canDrive' => $request->canDrive,
+                    'bio' => $request->bio,
+                    'education' => $request->education,
+                    'location' => $request->location,
+                    'preferred' => $request->preferred,
+                    'number_two' => $request->number_two,
+
+                    'hospitalBasedCare' => $request->hospitalBasedCare,
+                    'hospitalBasedYearsOfExperience' => $request->hospitalBasedYearsOfExperience,
+                    'hospitalBasedReferenceContact' => $request->hospitalBasedReferenceContact,
+
+                    'homeBasedCare' => $request->homeBasedCare,
+                    'homeBasedYearsOfExperience' => $request->homeBasedYearsOfExperience,
+                    'homeBasedReferenceContact' => $request->homeBasedReferenceContact,
+
+                    'idCopy' => $idCopy,
+                    'profilePhoto' => $profilePhoto,
+                    'goodConductCertificate' => $goodConductCertificate,
+                    'drivingLicense' => $drivingLicense,
+                    'referenceLetter' => $referenceLetter,
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => $user->is_profile_verified,
+                ]);
+
+                $physiotherapist = Physiotherapist::firstOrNew([
+                    'user_id' => $user->id,
+                ]);
+
+                $eduCertificate = null;
+                if ($request->hasFile('eduCertificate')) {
+                    $eduCertificate = FileUpload::updateFile($request->file('eduCertificate'), 'uploads/physiotherapist', $physiotherapist->eduCertificate);
+                    $physiotherapist->eduCertificate = $eduCertificate;
+                }
+
+                $practiceLicense = null;
+                if ($request->hasFile('practiceLicense')) {
+                    $practiceLicense = FileUpload::updateFile($request->file('practiceLicense'), 'uploads/physiotherapist', $physiotherapist->practiceLicense);
+                    $physiotherapist->practiceLicense = $practiceLicense;
+
+                }
+
+                $physiotherapist->fill([
+                    'isRegisterPCK' => $request->isRegisterPCK,
+                    'registrationNumber' => $request->registrationNumber,
+                    'serviceFee' => $request->serviceFee,
+                ]);
+
+                $physiotherapist->update();
+
+                return response()->json([
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => $user->is_profile_verified,
+                    'message' => 'Physiotherapist Profile updated successfully',
+                ], 200);
+            }
+
+            if ($user->subRole === 'nurse-aide-or-assistant') {
+
+                $request->validate([
+
+                    'name' => 'nullable',
+                    'location' => 'nullable',
+                    'age' => 'nullable',
+                    'experience' => 'nullable',
+                    'gender' => 'nullable',
+                    'languages' => 'nullable',
+                    'canDrive' => 'nullable',
+                    'bio' => 'nullable',
+                    'education' => 'nullable',
+                    'hospitalBasedCare' => 'nullable',
+                    'hospitalBasedYearsOfExperience' => 'nullable',
+                    'hospitalBasedReferenceContact' => 'nullable',
+                    'homeBasedCare' => 'nullable',
+                    'homeBasedYearsOfExperience' => 'nullable',
+                    'homeBasedReferenceContact' => 'nullable',
+                    'preferred' => 'nullable',
+
+                    'number_two' => 'nullable',
+                    'skills' => 'nullable',
+                    'mobilityYears' => 'nullable',
+                    'bathingYears' => 'nullable',
+                    'feedingYears' => 'nullable',
+                    'serviceFee' => 'nullable',
+                    'serviceFeeDay' => 'nullable',
+                    'serviceFeeMonth' => 'nullable',
+
+                    'idCopy' => 'nullable',
+                    'profilePhoto' => 'nullable',
+                    'goodConductCertificate' => 'nullable',
+                    'drivingLicense' => 'nullable',
+                    'referenceLetter' => 'nullable',
+                    'educationCertificate' => 'nullable',
+
+                ]);
+
+                $idCopy = null;
+                if ($request->hasFile('idCopy')) {
+                    $idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/nurse_assistant', $user->idCopy);
+                }
+
+                $profilePhoto = null;
+                if ($request->hasFile('profilePhoto')) {
+                    $profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/nurse_assistant', $user->profilePhoto);
+                }
+
+                $drivingLicense = null;
+                if ($request->hasFile('drivingLicense')) {
+                    $drivingLicense = FileUpload::updateFile($request->file('drivingLicense'), 'uploads/nurse_assistant', $user->drivingLicense);
+                }
+
+                $goodConductCertificate = null;
+                if ($request->hasFile('goodConductCertificate')) {
+                    $goodConductCertificate = FileUpload::updateFile($request->file('goodConductCertificate'), 'uploads/nurse_assistant', $user->goodConductCertificate);
+                }
+
+                $referenceLetter = null;
+                if ($request->hasFile('referenceLetter')) {
+                    $referenceLetter = FileUpload::updateFile($request->file('referenceLetter'), 'uploads/nurse_assistant', $user->referenceLetter);
+                }
+
+                $user->update([
+
+                    'name' => $request->name,
+                    'age' => $request->age,
+                    'experience' => $request->experience,
+                    'gender' => $request->gender,
+                    'languages' => $request->languages,
+                    'canDrive' => $request->canDrive,
+                    'bio' => $request->bio,
+                    'education' => $request->education,
+                    'location' => $request->location,
+                    'number_two' => $request->number_two,
+                    'preferred' => $request->preferred,
+
+                    'hospitalBasedCare' => $request->hospitalBasedCare,
+                    'hospitalBasedYearsOfExperience' => $request->hospitalBasedYearsOfExperience,
+                    'hospitalBasedReferenceContact' => $request->hospitalBasedReferenceContact,
+
+                    'homeBasedCare' => $request->homeBasedCare,
+                    'homeBasedYearsOfExperience' => $request->homeBasedYearsOfExperience,
+                    'homeBasedReferenceContact' => $request->homeBasedReferenceContact,
+
+                    'idCopy' => $idCopy,
+                    'profilePhoto' => $profilePhoto,
+                    'goodConductCertificate' => $goodConductCertificate,
+                    'drivingLicense' => $drivingLicense,
+                    'referenceLetter' => $referenceLetter,
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => $user->is_profile_verified,
+                ]);
+
+                $nurse_assistant = NurseAssistant::firstOrNew([
+                    'user_id' => $user->id,
+                ]);
+
+                $educationCertificate = null;
+                if ($request->hasFile('educationCertificate')) {
+                    $educationCertificate = FileUpload::updateFile($request->file('educationCertificate'), 'uploads/nurse_assistant', $nurse_assistant->educationCertificate);
+                    $nurse_assistant->educationCertificate = $educationCertificate;
+                }
+
+                $nurse_assistant->fill([
+
+                    'mobilityYears' => $request->mobilityYears,
+                    'bathingYears' => $request->bathingYears,
+                    'feedingYears' => $request->feedingYears,
+                    'serviceFee' => $request->serviceFee,
+                    'serviceFeeMonth' => $request->serviceFeeMonth,
+                    'serviceFeeDay' => $request->serviceFeeDay,
+                    'skills' => $request->skills,
+                ]);
+
+                $nurse_assistant->update();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Nurse Ade Assistant Profile updated successfully',
+                ], 200);
+            }
+
+            if ($user->subRole === 'special-need-caregivers') {
+
+                $request->validate([
+
+                    'name' => 'nullable',
+                    'location' => 'nullable',
+                    'age' => 'nullable',
+                    'number_two' => 'nullable',
+                    'experience' => 'nullable',
+                    'gender' => 'nullable',
+                    'languages' => 'nullable',
+                    'canDrive' => 'nullable',
+                    'bio' => 'nullable',
+                    'education' => 'nullable',
+                    'hospitalBasedCare' => 'nullable',
+                    'hospitalBasedYearsOfExperience' => 'nullable',
+                    'hospitalBasedReferenceContact' => 'nullable',
+                    'homeBasedCare' => 'nullable',
+                    'homeBasedYearsOfExperience' => 'nullable',
+                    'homeBasedReferenceContact' => 'nullable',
+                    'preferred' => 'nullable',
+                    'isRegisterPCK' => 'nullable',
+                    'registrationNumber' => 'nullable',
+                    'serviceFee' => 'nullable',
+                    'serviceFeeDay' => 'nullable',
+                    'serviceFeeMonth' => 'nullable',
+
+                    'idCopy' => 'nullable',
+                    'profilePhoto' => 'nullable',
+                    'goodConductCertificate' => 'nullable',
+                    'drivingLicense' => 'nullable',
+                    'referenceLetter' => 'nullable',
+                    'educationCertificate' => 'nullable',
+                    'practiceLicense' => 'nullable',
+
+                ]);
+
+                $idCopy = null; 
+                if ($request->hasFile('idCopy')) {
+                    $idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/specialNeed', $user->idCopy);
+                }
+
+                $profilePhoto = null;
+                if ($request->hasFile('profilePhoto')) {
+                    $profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/specialNeed', $user->profilePhoto);
+                }
+
+                $drivingLicense = null;
+                if ($request->hasFile('drivingLicense')) {
+                    $drivingLicense = FileUpload::updateFile($request->file('drivingLicense'), 'uploads/specialNeed', $user->drivingLicense);
+                }
+
+                $goodConductCertificate = null;
+                if ($request->hasFile('goodConductCertificate')) {
+                    $goodConductCertificate = FileUpload::updateFile($request->file('goodConductCertificate'), 'uploads/specialNeed', $user->goodConductCertificate);
+                }
+
+                $referenceLetter = null;
+                if ($request->hasFile('referenceLetter')) {
+                    $referenceLetter = FileUpload::updateFile($request->file('referenceLetter'), 'uploads/specialNeed', $user->referenceLetter);
+                }
+
+                $user->update([
+
+                    'name' => $request->name,
+                    'location' => $request->location,
+                    'age' => $request->age,
+                    'number_two' => $request->number_two,
+                    'experience' => $request->experience,
+                    'gender' => $request->gender,
+                    'languages' => $request->languages,
+                    'canDrive' => $request->canDrive,
+                    'bio' => $request->bio,
+                    'education' => $request->education,
+                    'hospitalBasedCare' => $request->hospitalBasedCare,
+                    'hospitalBasedYearsOfExperience' => $request->hospitalBasedYearsOfExperience,
+                    'hospitalBasedReferenceContact' => $request->hospitalBasedReferenceContact,
+                    'homeBasedCare' => $request->homeBasedCare,
+                    'homeBasedYearsOfExperience' => $request->homeBasedYearsOfExperience,
+                    'homeBasedReferenceContact' => $request->homeBasedReferenceContact,
+                    'preferred' => $request->preferred,
+                    'isRegisterPCK' => $request->isRegisterPCK,
+                    'registrationNumber' => $request->registrationNumber,
+
+                    'idCopy' => $idCopy,
+                    'profilePhoto' => $profilePhoto,
+                    'goodConductCertificate' => $goodConductCertificate,
+                    'drivingLicense' => $drivingLicense,
+                    'referenceLetter' => $referenceLetter,
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => $user->is_profile_verified,
+                ]);
+
+                $specialNeed = SpecialNeed::firstOrNew([
+                    'user_id' => $user->id,
+                ]);
+
+                $educationCertificate = null;
+                if ($request->hasFile('educationCertificate')) {
+                    $educationCertificate = FileUpload::updateFile($request->file('educationCertificate'), 'uploads/specialNeed', $specialNeed->educationCertificate);
+                    $specialNeed->educationCertificate = $educationCertificate;
+                }
+
+                $practiceLicense = null;
+                if ($request->hasFile('practiceLicense')) {
+                    $practiceLicense = FileUpload::updateFile($request->file('practiceLicense'), 'uploads/specialNeed', $specialNeed->practiceLicense);
+                    $specialNeed->practiceLicense = $practiceLicense;
+                }
+
+                $specialNeed->fill([
+
+                    'isRegisterPCK' => $request->isRegisterPCK,
+                    'registrationNumber' => $request->registrationNumber,
+                    'serviceFee' => $request->serviceFee,
+                    'serviceFeeMonth' => $request->serviceFeeMonth,
+                    'serviceFeeDay' => $request->serviceFeeDay,
+                ]);
+
+                $specialNeed->update();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Special Caregiver Profile updated successfully',
+                ], 200);
             }
 
         }
 
-    }   
+        if($user->role === 'agency'){
+
+            $agency = Agency::where('user_id', $user->id)->first();
+            $request->validate([
+                'companyName' => 'nullable',
+                'kraPin' => 'nullable',
+                'companyRegistrationNumber' => 'nullable',
+                'number' => 'nullable',
+                'businessLocation' => 'nullable',
+                'registrationDocument' => 'nullable',
+                'agency_services' => 'nullable',
+                'placementFee' => 'nullable',
+                'replacementWindow' => 'nullable',
+                'numberOfReplacement' => 'nullable',
+            ]);
+
+            DB::transaction(function () use ($request, $user) {
+
+                $agency = Agency::firstOrNew([
+                    'user_id' => $user->id,
+                ]);
+
+                $registrationDocument = null;
+                if ($request->hasFile('registrationDocument')) {
+                    $registrationDocument = FileUpload::updateFile(
+                        $request->file('registrationDocument'),
+                        'uploads/agency',
+                        $agency->registrationDocument
+                    );
+
+                    $agency->registrationDocument = $registrationDocument;
+                }
+
+                $agency->fill([
+                    'companyName' => $request->companyName,
+                    'kraPin' => $request->kraPin,
+                    'companyRegistrationNumber' => $request->companyRegistrationNumber,
+                    'number' => $request->number,
+                    'agency_services' => $request->agency_services,
+                    'businessLocation' => $request->businessLocation,
+                    'placementFee' => $request->placementFee,
+                    'replacementWindow' => $request->replacementWindow,
+                    'numberOfReplacement' => $request->numberOfReplacement,
+                ]);
+
+                $agency->update();
+            });
+
+            $user->update([
+                'is_profile_completed' => $user->is_profile_completed,
+                'is_profile_verified' => $user->is_profile_verified,
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Agency profile updated successfully',
+            ], 200);
+        }  
+        
+        if($user->role === 'care_institutions') {
+            $careInstitution = CareInstitution::where('user_id', $user->id)->first();
+            $request->validate([
+
+                'companyName' => 'nullable',
+                'kraPin' => 'nullable',
+                'companyRegistrationNumber' => 'nullable',
+                'number' => 'nullable',
+                'businessLocation' => 'nullable',
+                'registrationDocument' => 'nullable',
+            ]);
+
+            DB::transaction(function () use ($request, $user) {
+
+                $careInstitution = CareInstitution::firstOrNew([
+                    'user_id' => $user->id,
+                ]);
+
+                $registrationDocument = null;
+                if ($request->hasFile('registrationDocument')) {
+                    $registrationDocument = FileUpload::storeFile(
+                        $request->file('registrationDocument'),
+                        'uploads/careInstitution'
+                    );
+
+                    $careInstitution->registrationDocument = $registrationDocument;
+                }
+
+                $careInstitution->fill([
+                    'companyName' => $request->companyName,
+                    'kraPin' => $request->kraPin,
+                    'companyRegistrationNumber' => $request->companyRegistrationNumber,
+                    'number' => $request->number,
+                    'businessLocation' => $request->businessLocation,
+                    'placementFee' => $request->placementFee,
+                    'replacementWindow' => $request->replacementWindow,
+                    'numberOfReplacement' => $request->numberOfReplacement,
+                ]);
+
+                $careInstitution->save();
+
+                $user->update([
+                    'is_profile_completed' => $user->is_profile_completed,
+                    'is_profile_verified' => $user->is_profile_verified,
+                ]);
+
+            });
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Care institution profile update successfully',
+            ], 200);
+        }
+
+    }
+
 }
