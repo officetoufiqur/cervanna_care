@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Notifications\UserNotification;
 
 class UserController extends Controller
 {
@@ -35,6 +36,8 @@ class UserController extends Controller
         $user->update([
             'is_profile_verified' => $request->is_profile_verified,
         ]);
+
+        $user->notify(new UserNotification('Profile status updated successfully', $user->id));
 
         return redirect()->route('all-user.index')->with('message', 'User updated successfully');
     }
@@ -97,6 +100,8 @@ class UserController extends Controller
             'is_profile_verified' => $request->is_profile_verified,
         ]);
 
+        $specialist->notify(new UserNotification('Profile status updated successfully', $specialist->id));
+
         return redirect()->route('specialist.index')->with('message', 'Specialist updated successfully');
     }
 
@@ -131,6 +136,8 @@ class UserController extends Controller
         $agency->update([
             'is_profile_verified' => $request->is_profile_verified,
         ]);
+
+        $agency->notify(new UserNotification('Profile status updated successfully', $agency->id));
 
         return redirect()->route('agency.index')->with('message', 'Agency updated successfully');
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Notifications\UserNotification;
 
 class BookingController extends Controller
 {
@@ -67,6 +68,8 @@ class BookingController extends Controller
 
             ]);
 
+            $user->notify(new UserNotification('Specialist booking successfull', $user->specialist_id, $user->id));
+
             return response()->json([
                 'status' => 'pending',
                 'message' => 'Booking created successfully',
@@ -112,5 +115,17 @@ class BookingController extends Controller
                 'message' => 'You are not authorized to access this resource',
             ], 401);
         }
+    }
+
+    public function getSchedule(Request $request)
+    {
+        $user = auth()->user();
+
+        $schedules = Schedule::with(['user:id,name','timeSlot:id,start_time,end_time'])->where('user_id', $user->id)->get();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Schedules fetched successfully',
+            'data' => $schedules,
+            ], 200);
     }
 }

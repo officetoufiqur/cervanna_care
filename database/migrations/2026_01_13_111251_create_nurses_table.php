@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('number')->nullable();
             $table->string('isNursingInKenya')->nullable();
+            $table->string('practiceLicense')->nullable();
             $table->string('registrationNumber')->nullable();
             $table->string('educationCertificate')->nullable();
             $table->string('mobilityYears')->nullable();

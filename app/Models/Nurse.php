@@ -12,6 +12,7 @@ class Nurse extends Model
         'isNursingInKenya',
         'registrationNumber',
         'educationCertificate',
+        'practiceLicense',
         'mobilityYears',
         'bathingYears',
         'feedingYears',
