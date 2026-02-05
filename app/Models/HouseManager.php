@@ -15,7 +15,7 @@ class HouseManager extends Model
         'experience',
         'experienceYear',
         'salaryRange',
-        'serviceOffered',
+        // 'serviceOffered',
         'isMother',
         'ageOfKids',
         'isHandelingPet',

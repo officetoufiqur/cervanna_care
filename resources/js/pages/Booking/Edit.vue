@@ -95,115 +95,115 @@ const submit = () => {
                         <div class="space-y-4">
                                 <div>
                                     <InputLabel forr="specialist_id" :label="'Specialist'" v-model="form.specialist_id" type="text"
-                                        :placeholder="'Specialist'" />
+                                        :placeholder="'Specialist'" readonly />
                                     <span class="text-red-500 text-sm" v-if="form.errors.specialist_id">{{ form.errors.specialist_id }}</span>
                                 </div>
                                 <div>
                                     <InputLabel forr="patient_name" :label="'Patient Name'" v-model="form.patient_name" type="text"
-                                        :placeholder="'Patient Name'" />
+                                        :placeholder="'Patient Name'" readonly />
                                     <span class="text-red-500 text-sm" v-if="form.errors.patient_name">{{ form.errors.patient_name }}</span>
                                 </div>
 
                                 <div>
                                     <InputLabel forr="relationship_to_booking_person" :label="'Relationship to Booking Person'" v-model="form.relationship_to_booking_person" type="text"
-                                        :placeholder="'Relationship to Booking Person'" />
+                                        :placeholder="'Relationship to Booking Person'" readonly />
                                     <span class="text-red-500 text-sm" v-if="form.errors.relationship_to_booking_person">{{ form.errors.relationship_to_booking_person }}</span>
                                 </div>
                                 <div>
                                     <InputLabel forr="price_id" :label="'Price'" v-model="form.price_id" type="text"
-                                        :placeholder="'Price'" />
+                                        :placeholder="'Price'" readonly />
                                     <span class="text-red-500 text-sm" v-if="form.errors.price_id">{{ form.errors.price_id }}</span>
                                 </div>
                                 <div>
                                     <InputLabel forr="booking_amount" :label="'Booking Amount'" v-model="form.booking_amount" type="text"
-                                        :placeholder="'Booking Amount'" />
+                                        :placeholder="'Booking Amount'" readonly />
                                     <span class="text-red-500 text-sm" v-if="form.errors.booking_amount">{{ form.errors.booking_amount }}</span>
                                 </div>
                                 <div>
                                     <InputLabel forr="patient_have_any_known_allergies" :label="'Patient Have Any Known Allergies'" v-model="form.patient_have_any_known_allergies" type="text"
-                                        :placeholder="'Patient Have Any Known Allergies'" />
+                                        :placeholder="'Patient Have Any Known Allergies'" readonly/>
                                     <span class="text-red-500 text-sm" v-if="form.errors.patient_have_any_known_allergies">{{ form.errors.patient_have_any_known_allergies }}</span>
                                 </div>
                                 <div>
                                     <InputLabel forr="care_start_date" :label="'Care Start Date'" v-model="form.care_start_date" type="text"
-                                        :placeholder="'Care Start Date'" />
+                                        :placeholder="'Care Start Date'" readonly />
                                     <span class="text-red-500 text-sm" v-if="form.errors.care_start_date">{{ form.errors.care_start_date }}</span>
                                 </div>
                             <div>
                                 <InputLabel forr="patient_currently_on_medication" :label="'Patient Currently On Medication'" v-model="form.patient_currently_on_medication" type="text"
-                                    :placeholder="'Patient Currently On Medication'" />
+                                    :placeholder="'Patient Currently On Medication'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.patient_currently_on_medication">{{ form.errors.patient_currently_on_medication }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="location_of_care" :label="'Location of Care'" v-model="form.location_of_care" type="text"
-                                    :placeholder="'Location of Care'" />
+                                    :placeholder="'Location of Care'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.location_of_care">{{ form.errors.location_of_care }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="primary_doctor_name" :label="'Primary Doctor Name'" v-model="form.primary_doctor_name" type="text"
-                                    :placeholder="'Primary Doctor Name'" />
+                                    :placeholder="'Primary Doctor Name'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.primary_doctor_name">{{ form.errors.primary_doctor_name }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="patient_currently_on_medication_data" :label="'Patient Currently On Medication Data'" v-model="form.patient_currently_on_medication_data" type="text"
-                                    :placeholder="'Patient Currently On Medication Data'" />
+                                    :placeholder="'Patient Currently On Medication Data'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.patient_currently_on_medication_data">{{ form.errors.patient_currently_on_medication_data }}</span>
                             </div>
                         </div> 
                         <div class="space-y-4">
                             <div>
                                 <InputLabel forr="booking_person_id" :label="'Booking Person'" v-model="form.booking_person_id" type="text"
-                                    :placeholder="'Booking Person'" />
+                                    :placeholder="'Booking Person'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.booking_person_id">{{ form.errors.booking_person_id }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="patient_age" :label="'Patient Age'" v-model="form.patient_age" type="text"
-                                    :placeholder="'Patient Age'" />
+                                    :placeholder="'Patient Age'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.patient_age">{{ form.errors.patient_age }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="patient_gender" :label="'Patient Gender'" v-model="form.patient_gender" type="text"
-                                    :placeholder="'Patient Gender'" />
+                                    :placeholder="'Patient Gender'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.patient_gender">{{ form.errors.patient_gender }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="patient_have_any_conditions" :label="'Patient Have Any Conditions'" v-model="form.patient_have_any_conditions" type="text"
-                                    :placeholder="'Patient Have Any Conditions'" />
+                                    :placeholder="'Patient Have Any Conditions'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.patient_have_any_conditions">{{ form.errors.patient_have_any_conditions }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="mobility_status_of_patient" :label="'Mobility Status of Patient'" v-model="form.mobility_status_of_patient" type="text"
-                                    :placeholder="'Mobility Status of Patient'" />
+                                    :placeholder="'Mobility Status of Patient'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.mobility_status_of_patient">{{ form.errors.mobility_status_of_patient }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="care_end_date" :label="'Care End Date'" v-model="form.care_end_date" type="text"
-                                    :placeholder="'Care End Date'" />
+                                    :placeholder="'Care End Date'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.care_end_date">{{ form.errors.care_end_date }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="emergency_contact_name" :label="'Emergency Contact Name'" v-model="form.emergency_contact_name" type="text"
-                                    :placeholder="'Emergency Contact Name'" />
+                                    :placeholder="'Emergency Contact Name'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.emergency_contact_name">{{ form.errors.emergency_contact_name }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="emergency_contact_number" :label="'Emergency Contact Number'" v-model="form.emergency_contact_number" type="text"
-                                    :placeholder="'Emergency Contact Number'" />
+                                    :placeholder="'Emergency Contact Number'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.emergency_contact_number">{{ form.errors.emergency_contact_number }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="primary_doctor_number" :label="'Primary Doctor Number'" v-model="form.primary_doctor_number" type="text"
-                                    :placeholder="'Primary Doctor Number'" />
+                                    :placeholder="'Primary Doctor Number'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.primary_doctor_number">{{ form.errors.primary_doctor_number }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="primary_hospital" :label="'Primary Hospital'" v-model="form.primary_hospital" type="text"
-                                    :placeholder="'Primary Hospital'" />
+                                    :placeholder="'Primary Hospital'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.primary_hospital">{{ form.errors.primary_hospital }}</span>
                             </div>
                             <div>
                                 <InputLabel forr="patient_have_any_known_allergies_details" :label="'Patient Have Any Known Allergies Details'" v-model="form.patient_have_any_known_allergies_details" type="text"
-                                    :placeholder="'Patient Have Any Known Allergies Details'" />
+                                    :placeholder="'Patient Have Any Known Allergies Details'" readonly />
                                 <span class="text-red-500 text-sm" v-if="form.errors.patient_have_any_known_allergies_details">{{ form.errors.patient_have_any_known_allergies_details }}</span>
                             </div>
 

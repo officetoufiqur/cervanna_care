@@ -17,13 +17,12 @@ return new class extends Migration
             $table->string('experience')->nullable();
             $table->string('experienceYear')->nullable();
             $table->string('salaryRange')->nullable();
-            $table->string('serviceOffered');
             $table->boolean('isMother')->default(false);
-            $table->string('ageOfKids');
+            $table->string('ageOfKids')->nullable();
             $table->boolean('isHandelingPet')->default(false);
-            $table->string('preferBeingA');
-            $table->string('firstAidCertificate');
-            $table->string('goodConductCertificate');
+            $table->string('preferBeingA')->nullable();
+            $table->string('firstAidCertificate')->nullable();
+            $table->string('goodConductCertificate')->nullable();
             $table->timestamps();
         });
     }

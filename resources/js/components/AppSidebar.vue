@@ -92,6 +92,10 @@ const mainNavItems: NavItem[] = [
         title: 'Specialist',
         href: '/all-specialist',
       },
+      {
+        title: 'Agency & Institution',
+        href: '/all-agency',
+      },
     ]
   },
 
@@ -104,6 +108,11 @@ const mainNavItems: NavItem[] = [
         href: '/contacts',
       },
     ]
+  },
+  {
+    title: 'Subscribe',
+    href: '/subscribe',
+    icon: SquareUserRoundIcon,
   }
 ];
 

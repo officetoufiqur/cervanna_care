@@ -20,6 +20,7 @@ use App\Models\Service;
 use App\Models\Skill;
 use App\Models\User;
 use App\Models\Works;
+use App\Models\Subscribe;
 use App\Trait\ApiResponse;
 use Illuminate\Http\Request;
 
@@ -220,5 +221,27 @@ class LandingPageController extends Controller
             ->values();
 
         return $this->successResponse($combined, 'Filtered results');
+    }
+
+    public function subscribe(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $subscribe = Subscribe::firstOrNew([
+            'email' => $request->email,
+        ]);
+
+        $subscribe->fill([
+            'status' => true,
+        ]);
+
+        $subscribe->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Subscribed successfully',
+        ], 200);
     }
 }

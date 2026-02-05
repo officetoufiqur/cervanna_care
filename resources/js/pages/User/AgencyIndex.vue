@@ -9,20 +9,21 @@ import { ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Specialist',
-        href: '/all-specialist',
+        title: 'Agency & Institution',
+        href: '/all-agency',
     },
 ];
 
 const props = defineProps<{
-    specialists: {
+    agencies: {
         id: number;
-        name: string;
-        email: string;
-        profileImage: string;
-        number: string;
+        agency?: {
+            companyName: string;
+        };
+        care_institution?: {
+            companyName: string;
+        };
         role: string;
-        subRole: string;
         is_profile_completed: boolean;
         is_profile_verified: boolean;
         created_at: string;
@@ -36,10 +37,7 @@ const columns = [
 
     { label: 'ID', key: 'id' },
     { label: 'Name', key: 'name' },
-    { label: 'Email', key: 'email' },
-    { label: 'Number', key: 'number' },
     { label: 'Role', key: 'role' },
-    { label: 'Sub Role', key: 'subRole' },
     { label: 'Profile Complete', key: 'is_profile_completed' },
     { label: 'Profile Verified', key: 'is_profile_verified' },
     { label: 'Created At', key: 'created_at' },
@@ -47,7 +45,7 @@ const columns = [
 
 ];
 
-const data = ref(props.specialists);
+const data = ref(props.agencies);
 
 const formatDate = (date: string) => {
     return new Date(date).toLocaleString(undefined, {
@@ -66,32 +64,20 @@ const formatDate = (date: string) => {
 
 <template>
 
-    <Head title="Specialists" />
+    <Head title="Agency & Institution" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <FlashMessage :message="props.flash.message" />
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-10">
-            <FilterTable :rows="data" :columns="columns" title="Specialist List" 
+            <FilterTable :rows="data" :columns="columns" title="Agency & Institution List"
                 create-url="#">
 
                 <template #name="{ item }">
-                    <span>{{ item.name}}</span>
-                </template>
-
-                <template #email="{ item }">
-                    <span>{{ item.email}}</span>
-                </template>
-
-                <template #number="{ item }">
-                    <span>{{ item.number}}</span>
+                    <span>{{ item.agency?.companyName || item.care_institution?.companyName}}</span>
                 </template>
 
                 <template #role="{ item }">
                     <span>{{ item.role}}</span>
-                </template>
-
-                <template #subRole="{ item }">
-                    <span>{{ item.subRole}}</span>
                 </template>
 
 
@@ -109,14 +95,10 @@ const formatDate = (date: string) => {
 
                 <template #action="{ item }">
                     <div class="flex items-center gap-2">
-                        <Link :href="`specialist/edit/${item.id}`"
+                        <Link :href="`agency/edit/${item.id}`"
                             class="bg-[#0AB39C] text-sm cursor-pointer text-white rounded font-medium hover:bg-[#0AB39C] py-2 px-3">
                             <SquarePenIcon class="w-5 h-5" />
                         </Link>
-                        <!-- <button @click="deleteWorks(item.id)"
-                            class="bg-[#F06548] text-sm cursor-pointer text-white rounded font-medium py-2 px-3">
-                            <Trash2Icon class="w-5 h-5" />
-                        </button> -->
                     </div>
                 </template>
             </FilterTable>
