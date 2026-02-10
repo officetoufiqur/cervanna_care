@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('educationCertificate')->nullable();
+            $table->string('experience')->nullable();
             $table->boolean('isRegisterPCK')->nullable();
             $table->string('registrationNumber')->nullable();
             $table->string('practiceLicense')->nullable();

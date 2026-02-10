@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\Schedule;
 use App\Notifications\UserNotification;
 
 class BookingController extends Controller
@@ -128,4 +129,31 @@ class BookingController extends Controller
             'data' => $schedules,
             ], 200);
     }
+
+    public function storeOrUpdate(Request $request)
+    {
+        $specialistId = auth()->id(); 
+
+        $request->validate([
+            'specialist_type' => 'nullable|string',
+            'date'           => 'required|array',
+            'date.*'         => 'date',
+        ]);
+
+        $schedule = Schedule::updateOrCreate(
+            [
+                'specialist_id' => $specialistId,
+            ],
+            [
+                'specialist_type' => $request->specialist_type,
+                'date' => $request->date, 
+            ]
+        );
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Schedule saved successfully',
+        ], 200);
+    }
+
 }

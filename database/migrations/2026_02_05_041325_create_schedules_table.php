@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->string('month')->nullable();    
-            $table->string('weekdate')->nullable();
+ $table->unsignedBigInteger('specialist_id')->nullable();
+            $table->string('specialist_type')->nullable();
+            $table->string('month')->nullable(); 
+            $table->string('year')->nullable();
+            $table->date('date')->nullable();
             $table->timestamps();
         });
     }

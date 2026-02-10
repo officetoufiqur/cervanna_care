@@ -9,6 +9,7 @@ class SpecialNeed extends Model
     protected $fillable = [
         'user_id',
         'educationCertificate',
+        'experience',
         'isRegisterPCK',
         'registrationNumber',
         'practiceLicense',

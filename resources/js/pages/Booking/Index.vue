@@ -4,7 +4,7 @@ import FlashMessage from '@/components/admin/FlashMessage.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
-import { SquarePenIcon } from 'lucide-vue-next';
+import { ViewIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -96,7 +96,7 @@ const data = ref(props.bookings);
                     <div class="flex items-center gap-2">
                         <Link :href="`/booking/edit/${item.id}`"
                             class="bg-[#0AB39C] text-sm cursor-pointer text-white rounded font-medium hover:bg-[#0AB39C] py-2 px-3">
-                            <SquarePenIcon class="w-5 h-5" />
+                            <ViewIcon class="w-5 h-5" />
                         </Link>
                         <!-- <button @click="deleteWorks(item.id)"
                             class="bg-[#F06548] text-sm cursor-pointer text-white rounded font-medium py-2 px-3">

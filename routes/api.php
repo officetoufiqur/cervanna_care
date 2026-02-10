@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\LandingPageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\SingleAgencyNurseController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -37,10 +38,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
     Route::get('/notifications', [AuthController::class, 'getNotifications']);
 
+    Route::post('/institution-nurse', [SingleAgencyNurseController::class, 'storeInstitutionNurse']);
+    Route::post('/agency-employee', [SingleAgencyNurseController::class, 'storeAgencyEmployee']);
+    Route::post('/institution-nurse/{id}', [SingleAgencyNurseController::class, 'updateInstitutionNurse']);
+    Route::post('/agency-employee/{id}', [SingleAgencyNurseController::class, 'updateAgencyEmployee']);
+
     Route::controller(BookingController::class)->group(function () {
         Route::post('/booking', 'booking');
         Route::get('/user-booking', 'getBooking');
         Route::get('/specialist-booking', 'getSpecialistBooking');
+        Route::post('/schedule', 'storeOrUpdate');
     });
 
 });

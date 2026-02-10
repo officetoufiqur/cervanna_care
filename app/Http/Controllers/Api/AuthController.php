@@ -16,6 +16,7 @@ use App\Models\NurseAssistant;
 use App\Models\Physiotherapist;
 use App\Models\SpecialNeed;
 use App\Models\Subscribe;
+use App\Models\Schedule;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -333,7 +334,6 @@ class AuthController extends Controller
 
                     'name' => $request->name,
                     'age' => $request->age,
-                    'experience' => $request->experience,
                     'gender' => $request->gender,
                     'preferredRole' => $request->preferredRole,
                     'languages' => $request->languages,
@@ -380,6 +380,7 @@ class AuthController extends Controller
 
                     'isNursingInKenya' => $request->isNursingInKenya,
                     'registrationNumber' => $request->registrationNumber,
+                    'experience' => $request->experience,
                     'mobilityYears' => $request->mobilityYears,
                     'bathingYears' => $request->bathingYears,
                     'feedingYears' => $request->feedingYears,
@@ -466,7 +467,6 @@ class AuthController extends Controller
 
                     'name' => $request->name,
                     'age' => $request->age,
-                    'experience' => $request->experience,
                     'gender' => $request->gender,
                     'languages' => $request->languages,
                     'canDrive' => $request->canDrive,
@@ -511,8 +511,11 @@ class AuthController extends Controller
 
                 $physiotherapist->fill([
                     'isRegisterPCK' => $request->isRegisterPCK,
+                    'experience' => $request->experience,
                     'registrationNumber' => $request->registrationNumber,
                     'serviceFee' => $request->serviceFee,
+                    'serviceFeeMonth' => $request->serviceFeeMonth,
+                    'serviceFeeDay' => $request->serviceFeeDay,
                 ]);
 
                 $physiotherapist->save();
@@ -631,6 +634,7 @@ class AuthController extends Controller
                 $nurse_assistant->fill([
 
                     'mobilityYears' => $request->mobilityYears,
+                    'experience' => $request->experience,
                     'bathingYears' => $request->bathingYears,
                     'feedingYears' => $request->feedingYears,
                     'serviceFee' => $request->serviceFee,
@@ -716,7 +720,6 @@ class AuthController extends Controller
                     'location' => $request->location,
                     'age' => $request->age,
                     'number_two' => $request->number_two,
-                    'experience' => $request->experience,
                     'gender' => $request->gender,
                     'languages' => $request->languages,
                     'canDrive' => $request->canDrive,
@@ -759,6 +762,7 @@ class AuthController extends Controller
                 $specialNeed->fill([
 
                     'isRegisterPCK' => $request->isRegisterPCK,
+                    'experience' => $request->experience,
                     'registrationNumber' => $request->registrationNumber,
                     'serviceFee' => $request->serviceFee,
                     'serviceFeeMonth' => $request->serviceFeeMonth,
@@ -924,6 +928,8 @@ class AuthController extends Controller
                 'institutionNurses.*.languages' => 'nullable|array|min:1',
                 'institutionNurses.*.educationCertificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                 'institutionNurses.*.isNursingInKenya' => 'nullable|boolean',
+                'institutionNurses.*.practiceLicense' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                'institutionNurses.*.registrationNumber' => 'nullable|string|max:255',
                 'institutionNurses.*.hospitalBasedCare' => 'nullable|boolean',
                 'institutionNurses.*.services' => 'nullable|array|min:1',
                 'institutionNurses.*.hospitalBasedYearsOfExperience' => 'nullable|integer',
@@ -978,6 +984,13 @@ class AuthController extends Controller
                         $institutionNurse = new InstitutionNurse;
                         $institutionNurse->care_institution_id = $careInstitution->id;
                         $institutionNurse->fill($nurseData);
+
+                        if ($request->hasFile("practiceLicense.$index")) {
+                            $institutionNurse->practiceLicense = FileUpload::storeFile(
+                                $request->file("practiceLicense.$index"),
+                                'uploads/institutionNurse'
+                            );
+                        }
 
                         if ($request->hasFile("institutionNurses.$index.idCopy")) {
                             $institutionNurse->idCopy = FileUpload::storeFile(
@@ -1051,11 +1064,13 @@ class AuthController extends Controller
 
             if ($user->subRole === 'house-manager') {
                 $user = User::with('houseManager')->find($user->id);
+                $shedule = Schedule::where('specialist_id', $user->id)->get();
 
                 return response()->json([
                     'status' => true,
                     'message' => 'House manager profile fetched successfully',
                     'houseManager' => $user,
+                    'schedule' => $shedule,
                 ], 200);
             }
 
@@ -1102,14 +1117,17 @@ class AuthController extends Controller
 
         if ($user->role === 'agency') {
 
-            $user = User::select('id', 'name', 'email', 'is_profile_completed', 'role')->find($user->id);
+            $user = User::select('id', 'name','number', 'email', 'is_profile_verified', 'is_profile_completed', 'role')->find($user->id);
             $agency = Agency::where('user_id', $user->id)->first();
-            $agencyEmployees = AgencyEmployee::where('agency_id', $agency->id)->get();
+            $agencyEmployees = [];
+            if($agency){
+                $agencyEmployees = AgencyEmployee::where('agency_id', $agency->id)->get();
+            }
 
             return response()->json([
                 'status' => true,
                 'message' => 'Agency profile fetched successfully',
-                'agency' => $user,
+                'user' => $user,
                 'agency' => $agency,
                 'agencyEmployees' => $agencyEmployees,
             ], 200);
@@ -1185,7 +1203,8 @@ class AuthController extends Controller
                     'location' => 'nullable',
                     'preferredRole' => 'nullable',
                     'languages' => 'nullable|array|min:1',
-                    'phone' => 'nullable',
+                    'number' => 'nullable',
+                    'number_two' => 'nullable',
                     'salaryRange' => 'nullable',
                     'serviceOffered' => 'nullable',
                     'isMother' => 'nullable|boolean',
@@ -1215,14 +1234,11 @@ class AuthController extends Controller
                 $user->update([
                     'name' => $request->name,
                     'education' => $request->education,
-                    'experience' => $request->experience,
                     'location' => $request->location,
                     'preferredRole' => $request->preferredRole,
                     'languages' => $request->languages,
-                    'number' => $request->phone,
-                    'idCopy' => $idCopy,
-                    'profilePhoto' => $profilePhoto,
-                    'drivingLicense' => $drivingLicense,
+                    'number' => $request->number,
+                    'number_two' => $request->number_two,
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
                 ]);
@@ -1297,41 +1313,38 @@ class AuthController extends Controller
                     'profilePhoto' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'goodConductCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'drivingLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+                    'practiceLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'referenceLetter' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                     'educationCertificate' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
 
                 ]);
 
-                $idCopy = null;
+
                 if ($request->hasFile('idCopy')) {
                     $idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/nurse', $user->idCopy);
+                    $user->idCopy = $idCopy;
                 }
-
-                $profilePhoto = null;
                 if ($request->hasFile('profilePhoto')) {
                     $profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/nurse', $user->profilePhoto);
+                    $user->profilePhoto = $profilePhoto;
                 }
-
-                $drivingLicense = null;
                 if ($request->hasFile('drivingLicense')) {
                     $drivingLicense = FileUpload::updateFile($request->file('drivingLicense'), 'uploads/nurse', $user->drivingLicense);
+                    $user->drivingLicense = $drivingLicense;
                 }
-
-                $goodConductCertificate = null;
                 if ($request->hasFile('goodConductCertificate')) {
                     $goodConductCertificate = FileUpload::updateFile($request->file('goodConductCertificate'), 'uploads/nurse', $user->goodConductCertificate);
+                    $user->goodConductCertificate = $goodConductCertificate;
                 }
-
-                $referenceLetter = null;
                 if ($request->hasFile('referenceLetter')) {
                     $referenceLetter = FileUpload::updateFile($request->file('referenceLetter'), 'uploads/nurse', $user->referenceLetter);  
+                    $user->referenceLetter = $referenceLetter;
                 }
 
                 $user->update([
 
                     'name' => $request->name,
                     'age' => $request->age,
-                    'experience' => $request->experience,
                     'gender' => $request->gender,
                     'preferredRole' => $request->preferredRole,
                     'languages' => $request->languages,
@@ -1350,11 +1363,6 @@ class AuthController extends Controller
                     'homeBasedYearsOfExperience' => $request->homeBasedYearsOfExperience,
                     'homeBasedReferenceContact' => $request->homeBasedReferenceContact,
 
-                    'idCopy' => $idCopy,
-                    'profilePhoto' => $profilePhoto,
-                    'goodConductCertificate' => $goodConductCertificate,
-                    'drivingLicense' => $drivingLicense,
-                    'referenceLetter' => $referenceLetter,
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
                 ]);
@@ -1369,9 +1377,16 @@ class AuthController extends Controller
                     $nurse->educationCertificate = $educationCertificate;
                 }
 
+                $practiceLicense = null;
+                if ($request->hasFile('practiceLicense')) {
+                    $practiceLicense = FileUpload::updateFile($request->file('practiceLicense'), 'uploads/nurse', $nurse->practiceLicense);
+                    $nurse->practiceLicense = $practiceLicense;
+                }
+
                 $nurse->fill([
 
                     'isNursingInKenya' => $request->isNursingInKenya,
+                    'experience' => $request->experience,
                     'registrationNumber' => $request->registrationNumber,
                     'mobilityYears' => $request->mobilityYears,
                     'bathingYears' => $request->bathingYears,
@@ -1430,36 +1445,34 @@ class AuthController extends Controller
                     'practiceLicense' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                 ]);
 
-                $idCopy = null;
+            
                 if ($request->hasFile('idCopy')) {
                     $idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/physiotherapist', $user->idCopy);
+                    $user->idCopy = $idCopy;
                 }
 
-                $profilePhoto = null;
                 if ($request->hasFile('profilePhoto')) {
                     $profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/physiotherapist', $user->profilePhoto);
+                    $user->profilePhoto = $profilePhoto;
                 }
 
-                $drivingLicense = null;
                 if ($request->hasFile('drivingLicense')) {
                     $drivingLicense = FileUpload::updateFile($request->file('drivingLicense'), 'uploads/physiotherapist', $user->drivingLicense);
+                    $user->drivingLicense = $drivingLicense;
                 }
-
-                $goodConductCertificate = null;
                 if ($request->hasFile('goodConductCertificate')) {
                     $goodConductCertificate = FileUpload::updateFile($request->file('goodConductCertificate'), 'uploads/physiotherapist', $user->goodConductCertificate);
+                    $user->goodConductCertificate = $goodConductCertificate;
                 }
-
-                $referenceLetter = null;
                 if ($request->hasFile('referenceLetter')) {
                     $referenceLetter = FileUpload::updateFile($request->file('referenceLetter'), 'uploads/physiotherapist', $user->referenceLetter);
+                    $user->referenceLetter = $referenceLetter;
                 }
 
                 $user->update([
 
                     'name' => $request->name,
                     'age' => $request->age,
-                    'experience' => $request->experience,
                     'gender' => $request->gender,
                     'languages' => $request->languages,
                     'canDrive' => $request->canDrive,
@@ -1476,12 +1489,6 @@ class AuthController extends Controller
                     'homeBasedCare' => $request->homeBasedCare,
                     'homeBasedYearsOfExperience' => $request->homeBasedYearsOfExperience,
                     'homeBasedReferenceContact' => $request->homeBasedReferenceContact,
-
-                    'idCopy' => $idCopy,
-                    'profilePhoto' => $profilePhoto,
-                    'goodConductCertificate' => $goodConductCertificate,
-                    'drivingLicense' => $drivingLicense,
-                    'referenceLetter' => $referenceLetter,
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
                 ]);
@@ -1505,8 +1512,11 @@ class AuthController extends Controller
 
                 $physiotherapist->fill([
                     'isRegisterPCK' => $request->isRegisterPCK,
+                    'experience' => $request->experience,
                     'registrationNumber' => $request->registrationNumber,
                     'serviceFee' => $request->serviceFee,
+                    'serviceFeeDay' => $request->serviceFeeDay,
+                    'serviceFeeMonth' => $request->serviceFeeMonth,
                 ]);
 
                 $physiotherapist->update();
@@ -1557,36 +1567,40 @@ class AuthController extends Controller
 
                 ]);
 
-                $idCopy = null;
+                
                 if ($request->hasFile('idCopy')) {
                     $idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/nurse_assistant', $user->idCopy);
+                    $user->idCopy = $idCopy;
                 }
 
-                $profilePhoto = null;
+                
                 if ($request->hasFile('profilePhoto')) {
                     $profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/nurse_assistant', $user->profilePhoto);
+                    $user->profilePhoto = $profilePhoto;
                 }
 
-                $drivingLicense = null;
+                
                 if ($request->hasFile('drivingLicense')) {
                     $drivingLicense = FileUpload::updateFile($request->file('drivingLicense'), 'uploads/nurse_assistant', $user->drivingLicense);
+                    $user->drivingLicense = $drivingLicense;
                 }
 
-                $goodConductCertificate = null;
+                
                 if ($request->hasFile('goodConductCertificate')) {
                     $goodConductCertificate = FileUpload::updateFile($request->file('goodConductCertificate'), 'uploads/nurse_assistant', $user->goodConductCertificate);
+                    $user->goodConductCertificate = $goodConductCertificate;
                 }
 
-                $referenceLetter = null;
+                
                 if ($request->hasFile('referenceLetter')) {
                     $referenceLetter = FileUpload::updateFile($request->file('referenceLetter'), 'uploads/nurse_assistant', $user->referenceLetter);
+                    $user->referenceLetter = $referenceLetter;
                 }
 
                 $user->update([
 
                     'name' => $request->name,
                     'age' => $request->age,
-                    'experience' => $request->experience,
                     'gender' => $request->gender,
                     'languages' => $request->languages,
                     'canDrive' => $request->canDrive,
@@ -1604,11 +1618,6 @@ class AuthController extends Controller
                     'homeBasedYearsOfExperience' => $request->homeBasedYearsOfExperience,
                     'homeBasedReferenceContact' => $request->homeBasedReferenceContact,
 
-                    'idCopy' => $idCopy,
-                    'profilePhoto' => $profilePhoto,
-                    'goodConductCertificate' => $goodConductCertificate,
-                    'drivingLicense' => $drivingLicense,
-                    'referenceLetter' => $referenceLetter,
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
                 ]);
@@ -1617,7 +1626,6 @@ class AuthController extends Controller
                     'user_id' => $user->id,
                 ]);
 
-                $educationCertificate = null;
                 if ($request->hasFile('educationCertificate')) {
                     $educationCertificate = FileUpload::updateFile($request->file('educationCertificate'), 'uploads/nurse_assistant', $nurse_assistant->educationCertificate);
                     $nurse_assistant->educationCertificate = $educationCertificate;
@@ -1627,6 +1635,7 @@ class AuthController extends Controller
 
                     'mobilityYears' => $request->mobilityYears,
                     'bathingYears' => $request->bathingYears,
+                    'experience' => $request->experience,
                     'feedingYears' => $request->feedingYears,
                     'serviceFee' => $request->serviceFee,
                     'serviceFeeMonth' => $request->serviceFeeMonth,
@@ -1679,29 +1688,30 @@ class AuthController extends Controller
 
                 ]);
 
-                $idCopy = null; 
                 if ($request->hasFile('idCopy')) {
                     $idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/specialNeed', $user->idCopy);
+                    $user->idCopy = $idCopy;
                 }
 
-                $profilePhoto = null;
                 if ($request->hasFile('profilePhoto')) {
                     $profilePhoto = FileUpload::updateFile($request->file('profilePhoto'), 'uploads/specialNeed', $user->profilePhoto);
+                    $user->profilePhoto = $profilePhoto;
                 }
 
-                $drivingLicense = null;
                 if ($request->hasFile('drivingLicense')) {
                     $drivingLicense = FileUpload::updateFile($request->file('drivingLicense'), 'uploads/specialNeed', $user->drivingLicense);
+                    $user->drivingLicense = $drivingLicense;
                 }
 
-                $goodConductCertificate = null;
                 if ($request->hasFile('goodConductCertificate')) {
                     $goodConductCertificate = FileUpload::updateFile($request->file('goodConductCertificate'), 'uploads/specialNeed', $user->goodConductCertificate);
+                    $user->goodConductCertificate = $goodConductCertificate;
                 }
 
-                $referenceLetter = null;
+            
                 if ($request->hasFile('referenceLetter')) {
                     $referenceLetter = FileUpload::updateFile($request->file('referenceLetter'), 'uploads/specialNeed', $user->referenceLetter);
+                    $user->referenceLetter = $referenceLetter;
                 }
 
                 $user->update([
@@ -1725,12 +1735,6 @@ class AuthController extends Controller
                     'preferred' => $request->preferred,
                     'isRegisterPCK' => $request->isRegisterPCK,
                     'registrationNumber' => $request->registrationNumber,
-
-                    'idCopy' => $idCopy,
-                    'profilePhoto' => $profilePhoto,
-                    'goodConductCertificate' => $goodConductCertificate,
-                    'drivingLicense' => $drivingLicense,
-                    'referenceLetter' => $referenceLetter,
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
                 ]);
@@ -1739,13 +1743,12 @@ class AuthController extends Controller
                     'user_id' => $user->id,
                 ]);
 
-                $educationCertificate = null;
                 if ($request->hasFile('educationCertificate')) {
                     $educationCertificate = FileUpload::updateFile($request->file('educationCertificate'), 'uploads/specialNeed', $specialNeed->educationCertificate);
                     $specialNeed->educationCertificate = $educationCertificate;
                 }
 
-                $practiceLicense = null;
+
                 if ($request->hasFile('practiceLicense')) {
                     $practiceLicense = FileUpload::updateFile($request->file('practiceLicense'), 'uploads/specialNeed', $specialNeed->practiceLicense);
                     $specialNeed->practiceLicense = $practiceLicense;

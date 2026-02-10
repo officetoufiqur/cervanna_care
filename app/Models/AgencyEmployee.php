@@ -35,6 +35,8 @@ class AgencyEmployee extends Model
     }
 
     protected $casts = [
+        'isMother' => 'boolean',
+        'handlePets' => 'boolean',
         'languages' => 'array',
         'kidAges' => 'array'
     ];

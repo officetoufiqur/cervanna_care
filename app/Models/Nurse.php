@@ -9,6 +9,7 @@ class Nurse extends Model
     protected $fillable = [
         'user_id',
         'number',
+        'experience',
         'isNursingInKenya',
         'registrationNumber',
         'educationCertificate',

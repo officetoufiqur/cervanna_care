@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Button from '@/components/admin/Button.vue';
-import InputLabel from '@/components/admin/InputLabel.vue';
 import LinkButton from '@/components/admin/LinkButton.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
@@ -8,9 +6,9 @@ import { Head, useForm } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Edit Booking',
+        title: 'Booking Details',
         href: '/booking',
-    },          
+    },
 ];
 
 interface Booking {
@@ -23,7 +21,7 @@ interface Booking {
     relationship_to_booking_person: string;
     price_id: string;
     booking_amount: string;
-    patient_have_any_conditions: string;
+    patient_have_any_conditions: Array<string>; 
     patient_currently_on_medication: string;
     patient_have_any_known_allergies: string;
     mobility_status_of_patient: string;
@@ -38,6 +36,9 @@ interface Booking {
     patient_currently_on_medication_data: string;
     patient_have_any_known_allergies_details: string;
     booking_status: string;
+    specialist: { name: string };
+    user: { name: string };
+    price: { name: string };
 }
 
 const props = defineProps<{
@@ -45,183 +46,246 @@ const props = defineProps<{
 }>()
 
 const form = useForm({
-
-    id: props.booking.id,
-    specialist_id: props.booking.specialist.name,
-    booking_person_id: props.booking.user.name,
-    patient_name: props.booking.patient_name,
-    patient_age: props.booking.patient_age,
-    patient_gender: props.booking.patient_gender,
-    relationship_to_booking_person: props.booking.relationship_to_booking_person,
-    price_id: props.booking.price.name,
-    booking_amount: props.booking.booking_amount,
-    patient_have_any_conditions: props.booking.patient_have_any_conditions,
-    patient_currently_on_medication: props.booking.patient_currently_on_medication,
-    patient_have_any_known_allergies: props.booking.patient_have_any_known_allergies,
-    mobility_status_of_patient: props.booking.mobility_status_of_patient,
-    care_start_date: props.booking.care_start_date,
-    care_end_date: props.booking.care_end_date,
-    location_of_care: props.booking.location_of_care,
-    emergency_contact_name: props.booking.emergency_contact_name,
-    emergency_contact_number: props.booking.emergency_contact_number,
-    primary_doctor_name: props.booking.primary_doctor_name,
-    primary_doctor_number: props.booking.primary_doctor_number,
-    primary_hospital: props.booking.primary_hospital,
-    patient_currently_on_medication_data: props.booking.patient_currently_on_medication_data,
-    patient_have_any_known_allergies_details: props.booking.patient_have_any_known_allergies_details,
     booking_status: props.booking.booking_status,
 });
 
-const submit = () => {
-    form.put('/booking/update/' + props.booking.id);
-}
+
+const hasCondition = (condition: string) => {
+    return props.booking.patient_have_any_conditions?.some(
+        (c: string) => c.toLowerCase() === condition.toLowerCase()
+    );
+};
 
 </script>
 
 <template>
-
-    <Head title="Booking Update" />
+    <Head title="Booking Details" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="pt-10 lg:px-20 px-5">
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-medium mb-4">Booking Update</h1>
+        <div class="pt-10 lg:px-20 px-5 pb-20">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl font-medium">Booking Details</h1>
                 <LinkButton :label="'Back'" :url="'/booking'" />
             </div>
 
-            <div class="border border-gray-200 p-10 mt-3 shadow rounded">
-                <form @submit.prevent="submit">
-                   <div class="space-y-3 grid grid-cols-2 gap-5">
-                        <div class="space-y-4">
-                                <div>
-                                    <InputLabel forr="specialist_id" :label="'Specialist'" v-model="form.specialist_id" type="text"
-                                        :placeholder="'Specialist'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.specialist_id">{{ form.errors.specialist_id }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="patient_name" :label="'Patient Name'" v-model="form.patient_name" type="text"
-                                        :placeholder="'Patient Name'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.patient_name">{{ form.errors.patient_name }}</span>
-                                </div>
-
-                                <div>
-                                    <InputLabel forr="relationship_to_booking_person" :label="'Relationship to Booking Person'" v-model="form.relationship_to_booking_person" type="text"
-                                        :placeholder="'Relationship to Booking Person'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.relationship_to_booking_person">{{ form.errors.relationship_to_booking_person }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="price_id" :label="'Price'" v-model="form.price_id" type="text"
-                                        :placeholder="'Price'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.price_id">{{ form.errors.price_id }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="booking_amount" :label="'Booking Amount'" v-model="form.booking_amount" type="text"
-                                        :placeholder="'Booking Amount'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.booking_amount">{{ form.errors.booking_amount }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="patient_have_any_known_allergies" :label="'Patient Have Any Known Allergies'" v-model="form.patient_have_any_known_allergies" type="text"
-                                        :placeholder="'Patient Have Any Known Allergies'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.patient_have_any_known_allergies">{{ form.errors.patient_have_any_known_allergies }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="care_start_date" :label="'Care Start Date'" v-model="form.care_start_date" type="text"
-                                        :placeholder="'Care Start Date'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.care_start_date">{{ form.errors.care_start_date }}</span>
-                                </div>
-                            <div>
-                                <InputLabel forr="patient_currently_on_medication" :label="'Patient Currently On Medication'" v-model="form.patient_currently_on_medication" type="text"
-                                    :placeholder="'Patient Currently On Medication'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.patient_currently_on_medication">{{ form.errors.patient_currently_on_medication }}</span>
+            <div class="bg-white border border-gray-200 p-8 shadow-sm rounded-lg max-w-6xl mx-auto">
+                
+                <div class="mb-8 border-b border-gray-100 pb-6">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">1. Patient / Care Recipient Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <input type="text" :value="booking.patient_name" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                            <input type="text" :value="booking.patient_age" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 text-gray-600">
+                                    <input type="radio" :checked="booking.patient_gender === 'male'" :disabled="booking.patient_gender !== 'male'" class="text-blue-600 bg-gray-800"> Male
+                                </label>
+                                <label class="flex items-center gap-2 text-gray-600">
+                                    <input type="radio" :checked="booking.patient_gender === 'female'" :disabled="booking.patient_gender !== 'female'" class="text-blue-600 bg-gray-100"> Female
+                                </label>
+                                <label class="flex items-center gap-2 text-gray-600">
+                                    <input type="radio" :checked="booking.patient_gender === 'others'" :disabled="booking.patient_gender !== 'others'" class="text-blue-600 bg-gray-100"> Others
+                                </label>
                             </div>
-                            <div>
-                                <InputLabel forr="location_of_care" :label="'Location of Care'" v-model="form.location_of_care" type="text"
-                                    :placeholder="'Location of Care'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.location_of_care">{{ form.errors.location_of_care }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="primary_doctor_name" :label="'Primary Doctor Name'" v-model="form.primary_doctor_name" type="text"
-                                    :placeholder="'Primary Doctor Name'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.primary_doctor_name">{{ form.errors.primary_doctor_name }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="patient_currently_on_medication_data" :label="'Patient Currently On Medication Data'" v-model="form.patient_currently_on_medication_data" type="text"
-                                    :placeholder="'Patient Currently On Medication Data'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.patient_currently_on_medication_data">{{ form.errors.patient_currently_on_medication_data }}</span>
-                            </div>
-                        </div> 
-                        <div class="space-y-4">
-                            <div>
-                                <InputLabel forr="booking_person_id" :label="'Booking Person'" v-model="form.booking_person_id" type="text"
-                                    :placeholder="'Booking Person'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.booking_person_id">{{ form.errors.booking_person_id }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="patient_age" :label="'Patient Age'" v-model="form.patient_age" type="text"
-                                    :placeholder="'Patient Age'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.patient_age">{{ form.errors.patient_age }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="patient_gender" :label="'Patient Gender'" v-model="form.patient_gender" type="text"
-                                    :placeholder="'Patient Gender'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.patient_gender">{{ form.errors.patient_gender }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="patient_have_any_conditions" :label="'Patient Have Any Conditions'" v-model="form.patient_have_any_conditions" type="text"
-                                    :placeholder="'Patient Have Any Conditions'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.patient_have_any_conditions">{{ form.errors.patient_have_any_conditions }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="mobility_status_of_patient" :label="'Mobility Status of Patient'" v-model="form.mobility_status_of_patient" type="text"
-                                    :placeholder="'Mobility Status of Patient'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.mobility_status_of_patient">{{ form.errors.mobility_status_of_patient }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="care_end_date" :label="'Care End Date'" v-model="form.care_end_date" type="text"
-                                    :placeholder="'Care End Date'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.care_end_date">{{ form.errors.care_end_date }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="emergency_contact_name" :label="'Emergency Contact Name'" v-model="form.emergency_contact_name" type="text"
-                                    :placeholder="'Emergency Contact Name'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.emergency_contact_name">{{ form.errors.emergency_contact_name }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="emergency_contact_number" :label="'Emergency Contact Number'" v-model="form.emergency_contact_number" type="text"
-                                    :placeholder="'Emergency Contact Number'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.emergency_contact_number">{{ form.errors.emergency_contact_number }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="primary_doctor_number" :label="'Primary Doctor Number'" v-model="form.primary_doctor_number" type="text"
-                                    :placeholder="'Primary Doctor Number'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.primary_doctor_number">{{ form.errors.primary_doctor_number }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="primary_hospital" :label="'Primary Hospital'" v-model="form.primary_hospital" type="text"
-                                    :placeholder="'Primary Hospital'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.primary_hospital">{{ form.errors.primary_hospital }}</span>
-                            </div>
-                            <div>
-                                <InputLabel forr="patient_have_any_known_allergies_details" :label="'Patient Have Any Known Allergies Details'" v-model="form.patient_have_any_known_allergies_details" type="text"
-                                    :placeholder="'Patient Have Any Known Allergies Details'" readonly />
-                                <span class="text-red-500 text-sm" v-if="form.errors.patient_have_any_known_allergies_details">{{ form.errors.patient_have_any_known_allergies_details }}</span>
-                            </div>
-
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Relationship to Booker</label>
+                            <input type="text" :value="booking.relationship_to_booking_person" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600 focus:outline-none" />
                         </div>
                     </div>
-                    <div class="mt-5 mb-8">
-                        <select className="form-control" name="booking_status" id="booking_status" v-model="form.booking_status">
-                            <option value="">Select Booking Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="approved">Approved</option>
-                            <option value="rejected">Rejected</option>
-                        </select>
-                        <span class="text-red-500 text-sm" v-if="form.errors.booking_status">{{ form.errors.booking_status }}</span>
-                    </div>
-                    <Button :label="`Update`" :type="`submit`" />
-                </form>
-            </div>
+                </div>
+                 <div class="mb-8">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">2. Specialist & User Info</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 rounded mt-4">
+                         <div>
+                            <span class="block text-xs font-bold text-gray-500 uppercase">Booked Specialist</span>
+                            <span class="text-gray-800 font-medium">{{ booking.specialist.name }}</span>
+                         </div>
 
+                         <div>
+                            <span class="block text-xs font-bold text-gray-500 uppercase">Who Booked</span>
+                            <span class="text-gray-800 font-medium">{{ booking.user.name }}</span>
+                         </div>
+                     </div>
+                </div>
+                <div class="mb-8 border-b border-gray-100 pb-6">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">3. Health & Medical Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div v-for="condition in ['Diabetes', 'Hypertension', 'Asthma', 'Heart Disease', 'Stroke History', 'Cancer', 'Epilepsy', 'Mental Health Condition', 'Mobility Limitations']" :key="condition" class="flex items-center gap-2">
+                                <input
+                                type="checkbox"
+                                :checked="hasCondition(condition)"
+                                :disabled="!hasCondition(condition)"
+                                class="rounded border-gray-300 text-blue-600 bg-gray-50"
+                                />
+                                <span class="text-gray-600">{{ condition }}</span>
+                        </div>
+                        <!-- <div class="col-span-full mt-2">
+                             <label class="block text-sm font-medium text-gray-700 mb-1">Full Condition Record:</label>
+                             <textarea readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600 text-sm h-20">{{ booking.patient_have_any_conditions }}</textarea>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div class="mb-8 border-b border-gray-100 pb-6">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">4. Medication & Allergies</h2>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Is the patient currently on medication?</label>
+                        <div class="flex gap-4 mb-2">
+                            <label class="flex items-center gap-2 text-gray-600">
+                                <input
+                                    type="radio"
+                                    name="on_medication"
+                                    :checked="booking.patient_currently_on_medication"
+                                    :disabled="!booking.patient_currently_on_medication"
+                                >
+                                Yes
+                            </label>
+
+                            <label class="flex items-center gap-2 text-gray-600">
+                                <input
+                                    type="radio"
+                                    name="on_medication"
+                                    :checked="!booking.patient_currently_on_medication"
+                                    :disabled="booking.patient_currently_on_medication"
+                                >
+                                No
+                            </label>
+                        </div>
+
+
+                        <div v-if="booking.patient_currently_on_medication_data" class="ml-0 md:ml-4">
+                            <input type="text" :value="booking.patient_currently_on_medication_data" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600 text-sm" placeholder="Medication details" />
+                        </div>
+
+                        
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Does the patient have any known allergies?</label>
+                        <input type="text" :value="booking.patient_have_any_known_allergies" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600 mb-2" />
+                        <div v-if="booking.patient_have_any_known_allergies_details">
+                             <input type="text" :value="booking.patient_have_any_known_allergies_details" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600 text-sm" placeholder="Allergy details" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Mobility status of patient:</label>
+                        <div class="flex flex-wrap gap-4">
+                            <label v-for="status in ['fully-mobile', 'needs-assistance', 'wheelchair-bound', 'bedridden']" :key="status" class="flex items-center gap-2 text-gray-600">
+                                <input type="radio" :checked="booking.mobility_status_of_patient === status" :disabled="booking.mobility_status_of_patient !== status"> {{ status }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8 border-b border-gray-100 pb-6">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">5. Care Schedule & Environment</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                        <div>
+                             <label class="block text-sm font-medium text-gray-700 mb-1">Care Start Date</label>
+                             <input type="text" :value="booking.care_start_date" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
+                        </div>
+                        <div>
+                             <label class="block text-sm font-medium text-gray-700 mb-1">Care End Date</label>
+                             <input type="text" :value="booking.care_end_date" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
+                        </div>
+
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Total Amount</label>
+                        <input type="text" :value="booking.booking_amount" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
+                    </div>
+
+                    
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Location of care:</label>
+                        <div class="flex gap-4">
+                             <label v-for="loc in ['Private Home', 'Hospital', 'Hospice Facility']" :key="loc" class="flex items-center gap-2 text-gray-600">
+                                <input type="radio" :checked="booking.location_of_care === loc" :disabled="booking.location_of_care !== loc"> {{ loc }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Care Duration:</label>
+                        <div class="flex gap-4">
+                             <label v-for="loc in ['Daily', 'Live-in']" :key="loc" class="flex items-center gap-2 text-gray-600">
+                                <input type="radio" :checked="booking.location_of_care === loc" :disabled="booking.location_of_care !== loc"> {{ loc }}
+                            </label>
+                        </div>
+                    </div>
+
+
+                     
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">6. Emergency & Consent</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Emergency Contact Name</label>
+                            <input type="text" :value="booking.emergency_contact_name" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
+                         </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Emergency Contact Phone</label>
+                            <input type="text" :value="booking.emergency_contact_number" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
+                         </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Primary Doctor Name</label>
+                            <input type="text" :value="booking.primary_doctor_name" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
+                         </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Primary Doctor Contact</label>
+                            <input type="text" :value="booking.primary_doctor_number" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
+                         </div>
+                          <div class="col-span-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Primary Hospital</label>
+                            <input type="text" :value="booking.primary_hospital" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
+                         </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-gray-200">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Booking Status</label>
+                        <input type="text" :value="booking.booking_status" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
+                    </div>
+                </div>
+
+                <!-- <div class="mt-8 pt-6 border-t border-gray-200">
+                    <form @submit.prevent="submit" class="flex items-end gap-4">
+                        <div class="flex-grow">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Booking Status</label>
+                            <select class="w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500" name="booking_status" id="booking_status" v-model="form.booking_status">
+                                <option value="">Select Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <span class="text-red-500 text-sm" v-if="form.errors.booking_status">{{ form.errors.booking_status }}</span>
+                        </div>
+                        <div>
+                             <Button :label="`Update Status`" :type="`submit`" />
+                        </div>
+                    </form>
+                </div> -->
+
+            </div>
         </div>
     </AppLayout>
 </template>
