@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('languages')->nullable();  
             $table->string('educationCertificate')->nullable();
             $table->boolean('isNursingInKenya')->default(false);
+            $table->string('practiceLicense')->nullable();
+            $table->string('registrationNumber')->nullable();
             $table->boolean('hospitalBasedCare')->default(false);
             $table->integer('hospitalBasedYearsOfExperience')->nullable();
             $table->string('hospitalBasedReferenceContact')->nullable();

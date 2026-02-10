@@ -19,6 +19,8 @@ class InstitutionNurse extends Model
         'languages',
         'educationCertificate',
         'isNursingInKenya',
+        'practiceLicense',
+        'registrationNumber',
         'hospitalBasedCare',
         'hospitalBasedYearsOfExperience',
         'hospitalBasedReferenceContact',
@@ -44,6 +46,9 @@ class InstitutionNurse extends Model
 
 
     protected $casts = [
+        'isNursingInKenya' => 'boolean',
+        'hospitalBasedCare' => 'boolean',
+        'homeBasedCare' => 'boolean',
         'experience' => 'array',
         'languages' => 'array',
         'services' => 'array',

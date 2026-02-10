@@ -42,14 +42,7 @@ class UserController extends Controller
         return redirect()->route('all-user.index')->with('message', 'User updated successfully');
     }
 
-    public function specialistIndex()
-    {
-        $specialists = User::where('role', 'specialist')->orderBy('id', 'desc')->get();
 
-        return Inertia::render('User/SpecialistIndex', [
-            'specialists' => $specialists,
-        ]);
-    }
 
     public function specialistEdit($id)
     {
@@ -141,4 +134,5 @@ class UserController extends Controller
 
         return redirect()->route('agency.index')->with('message', 'Agency updated successfully');
     }
+    
 }
