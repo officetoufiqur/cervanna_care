@@ -39,7 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications', [AuthController::class, 'getNotifications']);
 
     Route::post('/institution-nurse', [SingleAgencyNurseController::class, 'storeInstitutionNurse']);
+    Route::delete('/institution-nurse/{id}', [SingleAgencyNurseController::class, 'deleteInstitutionNurse']);
+
     Route::post('/agency-employee', [SingleAgencyNurseController::class, 'storeAgencyEmployee']);
+    Route::delete('/agency-employee/{id}', [SingleAgencyNurseController::class, 'deleteAgencyEmployee']);
+
     Route::post('/institution-nurse/{id}', [SingleAgencyNurseController::class, 'updateInstitutionNurse']);
     Route::post('/agency-employee/{id}', [SingleAgencyNurseController::class, 'updateAgencyEmployee']);
 

@@ -10,6 +10,7 @@ use App\Helpers\FileUpload;
 use App\Models\Agency;
 use App\Models\CareInstitution;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class SingleAgencyNurseController extends Controller
 {
@@ -206,6 +207,38 @@ class SingleAgencyNurseController extends Controller
             'status' => true,
             'message' => 'Agency employee updated successfully',
             'data' => $agencyEmployee,
+        ], 200);
+    }
+
+    public function deleteAgencyEmployee($id)
+    {
+        $agencyEmployee = AgencyEmployee::findOrFail($id);
+
+        if($agencyEmployee->idCopy){
+           Storage::delete('uploads/employees/'.$agencyEmployee->idCopy);
+        }
+
+        if($agencyEmployee->profilePhoto){
+            Storage::delete('uploads/employees/'.$agencyEmployee->profilePhoto);
+        }
+
+        if($agencyEmployee->drivingLicense){
+            Storage::delete('uploads/employees/'.$agencyEmployee->drivingLicense);
+        }
+
+        if($agencyEmployee->goodConductCertificate){
+            Storage::delete('uploads/employees/'.$agencyEmployee->goodConductCertificate);
+        }
+
+        if($agencyEmployee->aidCertificate){
+            Storage::delete('uploads/employees/'.$agencyEmployee->aidCertificate);
+        }
+
+        $agencyEmployee->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Agency employee deleted successfully',
         ], 200);
     }
 
@@ -422,5 +455,29 @@ class SingleAgencyNurseController extends Controller
             'message' => 'Institution nurse updated successfully',
         ], 200);
     }
+
+    public function deleteInstitutionNurse($id)
+    {
+        $institutionNurse = InstitutionNurse::findOrFail($id);
+
+        if($institutionNurse->idCopy){
+            Storage::delete('uploads/institutionNurses/'.$institutionNurse->idCopy);
+        }
+
+        if($institutionNurse->profilePhoto){
+            Storage::delete('uploads/institutionNurses/'.$institutionNurse->profilePhoto);
+        }
+
+        if($institutionNurse->educationCertificate){
+            Storage::delete('uploads/institutionNurses/'.$institutionNurse->educationCertificate);
+        }
+
+        $institutionNurse->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Institution nurse deleted successfully',
+        ], 200);
+    }   
 
 }
