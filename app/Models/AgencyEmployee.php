@@ -13,6 +13,7 @@ class AgencyEmployee extends Model
         'location',
         'experience',
         'salaryRange',
+        'type',
         'isMother',
         'kidAges',
         'handlePets',

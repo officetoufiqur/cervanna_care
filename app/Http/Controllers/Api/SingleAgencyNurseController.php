@@ -259,7 +259,6 @@ class SingleAgencyNurseController extends Controller
 
         $request->validate([
 
-            'care_institution_id' => 'required',
             'fullName' => 'nullable|string|max:255',
             'age' => 'nullable|integer',
             'location' => 'nullable|string|max:255',
@@ -270,6 +269,8 @@ class SingleAgencyNurseController extends Controller
             'preferredRole' => 'nullable|string|max:255',
             'languages' => 'nullable|array|min:1',
             'isNursingInKenya' => 'nullable|boolean',
+            'practiceLicense' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+            'registrationNumber' => 'nullable',
             'hospitalBasedCare' => 'nullable|boolean',
             'services' => 'nullable|array|min:1',
             'hospitalBasedYearsOfExperience' => 'nullable|integer',
@@ -301,6 +302,7 @@ class SingleAgencyNurseController extends Controller
         $institutionNurse->preferredRole = $request->preferredRole;
         $institutionNurse->languages = $request->languages;
         $institutionNurse->isNursingInKenya = $request->isNursingInKenya;
+        $institutionNurse->registrationNumber = $request->registrationNumber;
         $institutionNurse->hospitalBasedCare = $request->hospitalBasedCare;
         $institutionNurse->services = $request->services;
         $institutionNurse->hospitalBasedYearsOfExperience = $request->hospitalBasedYearsOfExperience;
@@ -316,6 +318,13 @@ class SingleAgencyNurseController extends Controller
         $institutionNurse->serviceFeeMonth = $request->serviceFeeMonth;
         $institutionNurse->bio = $request->bio;
 
+        if ($request->hasFile('practiceLicense')) {
+            $institutionNurse->practiceLicense = FileUpload::storeFile(
+                $request->file('practiceLicense'),
+                'uploads/institutionNurses'
+            );
+        }
+        
         if ($request->hasFile('idCopy')) {
             $institutionNurse->idCopy = FileUpload::storeFile(
                 $request->file('idCopy'),
@@ -371,6 +380,8 @@ class SingleAgencyNurseController extends Controller
             'preferredRole' => 'nullable|string|max:255',
             'languages' => 'nullable|array|min:1',
             'isNursingInKenya' => 'nullable|boolean',
+            'practiceLicense' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+            'registrationNumber' => 'nullable|string|max:255',
             'hospitalBasedCare' => 'nullable|boolean',
             'services' => 'nullable|array|min:1',
             'hospitalBasedYearsOfExperience' => 'nullable|integer',
@@ -403,6 +414,7 @@ class SingleAgencyNurseController extends Controller
         $institutionNurse->preferredRole = $request->preferredRole;
         $institutionNurse->languages = $request->languages;
         $institutionNurse->isNursingInKenya = $request->isNursingInKenya;
+        $institutionNurse->registrationNumber = $request->registrationNumber;
         $institutionNurse->hospitalBasedCare = $request->hospitalBasedCare;
         $institutionNurse->hospitalBasedYearsOfExperience = $request->hospitalBasedYearsOfExperience;
         $institutionNurse->hospitalBasedReferenceContact = $request->hospitalBasedReferenceContact;
@@ -418,6 +430,15 @@ class SingleAgencyNurseController extends Controller
         $institutionNurse->bio = $request->bio;
         $institutionNurse->services = $request->services;
 
+
+        if ($request->hasFile('practiceLicense')) {
+            $practiceLicense = FileUpload::updateFile(
+                $request->file('practiceLicense'),
+                'uploads/institutionNurses',
+                $institutionNurse->practiceLicense
+            );
+            $institutionNurse->practiceLicense = $practiceLicense;
+        }
 
         if ($request->hasFile('idCopy')) {
             $idCopy = FileUpload::updateFile(

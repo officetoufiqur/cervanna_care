@@ -14,6 +14,7 @@ class InstitutionNurse extends Model
         'experience',
         'gender',
         'education',
+        'type',
         'canDrive',
         'preferredRole',
         'languages',
@@ -47,6 +48,7 @@ class InstitutionNurse extends Model
 
     protected $casts = [
         'isNursingInKenya' => 'boolean',
+        'canDrive' => 'boolean',
         'hospitalBasedCare' => 'boolean',
         'homeBasedCare' => 'boolean',
         'experience' => 'array',

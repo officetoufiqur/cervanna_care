@@ -19,4 +19,9 @@ class Schedule extends Model
         'date' => 'array',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

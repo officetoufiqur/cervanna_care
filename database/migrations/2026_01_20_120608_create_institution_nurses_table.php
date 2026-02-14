@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('experience')->nullable();
             $table->string('gender')->nullable();
+            $table->string('type')->default('institution-nurse');
             $table->string('education')->nullable();
             $table->boolean('canDrive')->default(false);
             $table->string('preferredRole')->nullable();

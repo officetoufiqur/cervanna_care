@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('educationLevel')->nullable();
             $table->string('location')->nullable();
+            $table->string('type')->default('agency-employee');
             $table->string('experience')->nullable();
             $table->string('salaryRange')->nullable();
             $table->boolean('isMother')->nullable();

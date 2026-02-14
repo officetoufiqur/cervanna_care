@@ -16,6 +16,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const form = useForm({
+
+    type: 'house-manager',
     name: '',
     email: '',
     password: '',
