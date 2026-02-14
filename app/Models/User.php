@@ -32,6 +32,7 @@ class User extends Authenticatable
         'location',
         'role',
         'subRole',
+        'type',
         'gender',
         'languages',
         'preferredRole',
@@ -119,6 +120,11 @@ class User extends Authenticatable
     public function careInstitution()
     {
         return $this->hasOne(CareInstitution::class);
+    }
+
+    public function schedule()
+    {
+        return $this->hasMany(Schedule::class, 'specialist_id', 'id');
     }
 
 

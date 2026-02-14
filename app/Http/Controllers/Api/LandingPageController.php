@@ -181,7 +181,8 @@ class LandingPageController extends Controller
         $subRole = $request->subRole;
 
         $specialist = User::where('role', 'specialist')
-            ->where('is_profile_completed', true)
+            ->with('schedule')
+            ->where('is_profile_verified', true)
             ->when($preferred, function ($q) use ($preferred) {
                 $q->where(function ($inner) use ($preferred) {
                     foreach ((array)$preferred as $item) {
@@ -197,11 +198,11 @@ class LandingPageController extends Controller
 
         $employeAgencies = collect();
 
-        if (! $subRole || $subRole === 'houseManager') {
+        if (! $subRole || $subRole === 'house-manager') {
             $employeAgencies = AgencyEmployee::inRandomOrder()
                 ->limit($limit)
                 ->get()
-                ->each->setAttribute('subRole', 'houseManager');
+                ->each->setAttribute('subRole', 'house-manager');
         }
 
         $institutionalNurses = collect();

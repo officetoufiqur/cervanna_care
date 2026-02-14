@@ -225,6 +225,7 @@ class AuthController extends Controller
                     'drivingLicense' => $drivingLicense,
                     'goodConductCertificate' => $goodConductCertificate,
                     'is_profile_completed' => true,
+                    'type' => 'house-manager',
                 ]);
 
                 $houseManager = HouseManager::firstOrNew([
@@ -291,7 +292,6 @@ class AuthController extends Controller
                     'mobilityYears' => 'nullable',
                     'bathingYears' => 'nullable',
                     'feedingYears' => 'nullable',
-                    'serviceFee' => 'nullable',
                     'serviceFeeDay' => 'nullable',
                     'serviceFeeMonth' => 'nullable',
 
@@ -358,6 +358,7 @@ class AuthController extends Controller
                     'drivingLicense' => $drivingLicense,
                     'referenceLetter' => $referenceLetter,
                     'is_profile_completed' => true,
+                    'type' => 'nurse',
                 ]);
 
                 $nurse = Nurse::firstOrNew([
@@ -490,6 +491,7 @@ class AuthController extends Controller
                     'drivingLicense' => $drivingLicense,
                     'referenceLetter' => $referenceLetter,
                     'is_profile_completed' => true,
+                    'type' => 'physiotherapist',
                 ]);
 
                 $physiotherapist = Physiotherapist::firstOrNew([
@@ -619,6 +621,7 @@ class AuthController extends Controller
                     'drivingLicense' => $drivingLicense,
                     'referenceLetter' => $referenceLetter,
                     'is_profile_completed' => true,
+                    'type' => 'nurse-aide-or-assistant',
                 ]);
 
                 $nurse_assistant = NurseAssistant::firstOrNew([
@@ -741,6 +744,7 @@ class AuthController extends Controller
                     'drivingLicense' => $drivingLicense,
                     'referenceLetter' => $referenceLetter,
                     'is_profile_completed' => true,
+                    'type' => 'special-need-caregivers',
                 ]);
 
                 $specialNeed = SpecialNeed::firstOrNew([
@@ -1241,6 +1245,7 @@ class AuthController extends Controller
                     'number_two' => $request->number_two,
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
+                    'type' => 'house-manager',
                 ]);
 
                 $houseManager = HouseManager::firstOrNew([
@@ -1365,6 +1370,7 @@ class AuthController extends Controller
 
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
+                    'type' => 'nurse',
                 ]);
 
                 $nurse = Nurse::firstOrNew([
@@ -1491,6 +1497,7 @@ class AuthController extends Controller
                     'homeBasedReferenceContact' => $request->homeBasedReferenceContact,
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
+                    'type' => 'physiotherapist',
                 ]);
 
                 $physiotherapist = Physiotherapist::firstOrNew([
@@ -1620,6 +1627,7 @@ class AuthController extends Controller
 
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
+                    'type' => 'nurse-aide-or-assistant',
                 ]);
 
                 $nurse_assistant = NurseAssistant::firstOrNew([
@@ -1737,6 +1745,7 @@ class AuthController extends Controller
                     'registrationNumber' => $request->registrationNumber,
                     'is_profile_completed' => $user->is_profile_completed,
                     'is_profile_verified' => $user->is_profile_verified,
+                    'type' => 'special-need-caregivers',
                 ]);
 
                 $specialNeed = SpecialNeed::firstOrNew([

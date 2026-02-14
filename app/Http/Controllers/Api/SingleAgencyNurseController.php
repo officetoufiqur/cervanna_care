@@ -10,6 +10,7 @@ use App\Helpers\FileUpload;
 use App\Models\Agency;
 use App\Models\CareInstitution;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class SingleAgencyNurseController extends Controller
 {
@@ -209,6 +210,38 @@ class SingleAgencyNurseController extends Controller
         ], 200);
     }
 
+    public function deleteAgencyEmployee($id)
+    {
+        $agencyEmployee = AgencyEmployee::findOrFail($id);
+
+        if($agencyEmployee->idCopy){
+           Storage::delete('uploads/employees/'.$agencyEmployee->idCopy);
+        }
+
+        if($agencyEmployee->profilePhoto){
+            Storage::delete('uploads/employees/'.$agencyEmployee->profilePhoto);
+        }
+
+        if($agencyEmployee->drivingLicense){
+            Storage::delete('uploads/employees/'.$agencyEmployee->drivingLicense);
+        }
+
+        if($agencyEmployee->goodConductCertificate){
+            Storage::delete('uploads/employees/'.$agencyEmployee->goodConductCertificate);
+        }
+
+        if($agencyEmployee->aidCertificate){
+            Storage::delete('uploads/employees/'.$agencyEmployee->aidCertificate);
+        }
+
+        $agencyEmployee->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Agency employee deleted successfully',
+        ], 200);
+    }
+
     // Institution Nurse
     public function storeInstitutionNurse(Request $request)
     {
@@ -226,7 +259,6 @@ class SingleAgencyNurseController extends Controller
 
         $request->validate([
 
-            'care_institution_id' => 'required',
             'fullName' => 'nullable|string|max:255',
             'age' => 'nullable|integer',
             'location' => 'nullable|string|max:255',
@@ -237,6 +269,8 @@ class SingleAgencyNurseController extends Controller
             'preferredRole' => 'nullable|string|max:255',
             'languages' => 'nullable|array|min:1',
             'isNursingInKenya' => 'nullable|boolean',
+            'practiceLicense' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+            'registrationNumber' => 'nullable',
             'hospitalBasedCare' => 'nullable|boolean',
             'services' => 'nullable|array|min:1',
             'hospitalBasedYearsOfExperience' => 'nullable|integer',
@@ -268,6 +302,7 @@ class SingleAgencyNurseController extends Controller
         $institutionNurse->preferredRole = $request->preferredRole;
         $institutionNurse->languages = $request->languages;
         $institutionNurse->isNursingInKenya = $request->isNursingInKenya;
+        $institutionNurse->registrationNumber = $request->registrationNumber;
         $institutionNurse->hospitalBasedCare = $request->hospitalBasedCare;
         $institutionNurse->services = $request->services;
         $institutionNurse->hospitalBasedYearsOfExperience = $request->hospitalBasedYearsOfExperience;
@@ -283,6 +318,13 @@ class SingleAgencyNurseController extends Controller
         $institutionNurse->serviceFeeMonth = $request->serviceFeeMonth;
         $institutionNurse->bio = $request->bio;
 
+        if ($request->hasFile('practiceLicense')) {
+            $institutionNurse->practiceLicense = FileUpload::storeFile(
+                $request->file('practiceLicense'),
+                'uploads/institutionNurses'
+            );
+        }
+        
         if ($request->hasFile('idCopy')) {
             $institutionNurse->idCopy = FileUpload::storeFile(
                 $request->file('idCopy'),
@@ -338,6 +380,8 @@ class SingleAgencyNurseController extends Controller
             'preferredRole' => 'nullable|string|max:255',
             'languages' => 'nullable|array|min:1',
             'isNursingInKenya' => 'nullable|boolean',
+            'practiceLicense' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
+            'registrationNumber' => 'nullable|string|max:255',
             'hospitalBasedCare' => 'nullable|boolean',
             'services' => 'nullable|array|min:1',
             'hospitalBasedYearsOfExperience' => 'nullable|integer',
@@ -370,6 +414,7 @@ class SingleAgencyNurseController extends Controller
         $institutionNurse->preferredRole = $request->preferredRole;
         $institutionNurse->languages = $request->languages;
         $institutionNurse->isNursingInKenya = $request->isNursingInKenya;
+        $institutionNurse->registrationNumber = $request->registrationNumber;
         $institutionNurse->hospitalBasedCare = $request->hospitalBasedCare;
         $institutionNurse->hospitalBasedYearsOfExperience = $request->hospitalBasedYearsOfExperience;
         $institutionNurse->hospitalBasedReferenceContact = $request->hospitalBasedReferenceContact;
@@ -385,6 +430,15 @@ class SingleAgencyNurseController extends Controller
         $institutionNurse->bio = $request->bio;
         $institutionNurse->services = $request->services;
 
+
+        if ($request->hasFile('practiceLicense')) {
+            $practiceLicense = FileUpload::updateFile(
+                $request->file('practiceLicense'),
+                'uploads/institutionNurses',
+                $institutionNurse->practiceLicense
+            );
+            $institutionNurse->practiceLicense = $practiceLicense;
+        }
 
         if ($request->hasFile('idCopy')) {
             $idCopy = FileUpload::updateFile(
@@ -422,5 +476,29 @@ class SingleAgencyNurseController extends Controller
             'message' => 'Institution nurse updated successfully',
         ], 200);
     }
+
+    public function deleteInstitutionNurse($id)
+    {
+        $institutionNurse = InstitutionNurse::findOrFail($id);
+
+        if($institutionNurse->idCopy){
+            Storage::delete('uploads/institutionNurses/'.$institutionNurse->idCopy);
+        }
+
+        if($institutionNurse->profilePhoto){
+            Storage::delete('uploads/institutionNurses/'.$institutionNurse->profilePhoto);
+        }
+
+        if($institutionNurse->educationCertificate){
+            Storage::delete('uploads/institutionNurses/'.$institutionNurse->educationCertificate);
+        }
+
+        $institutionNurse->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Institution nurse deleted successfully',
+        ], 200);
+    }   
 
 }

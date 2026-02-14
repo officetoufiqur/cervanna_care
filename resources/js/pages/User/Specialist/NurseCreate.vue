@@ -15,7 +15,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const form = useForm({
-
+    type: 'nurse',
     email: '',
     password: '',
     role: 'specialist',
@@ -44,7 +44,7 @@ const form = useForm({
     number_two : '',
     isNursingInKenya : '',
     registrationNumber : '',
-    skills : '',
+    skills: [] as string[],
     mobilityYears : '',
     bathingYears : '',
     feedingYears : '',
@@ -61,15 +61,18 @@ const form = useForm({
 
 });
 
+const props = defineProps({
+    skills: Array,
+});
+
+
 const submit = () => {
     form.post('/specialist/store', {
         forceFormData: true,
     });
 };
 
-const props = defineProps({
-    skills: Array,
-});
+
 
 const languageOptions = ['English', 'Swahili', 'French', 'German', 'Arabic', 'Chinese', 'Other'];
 const preferred = ['Pre and post pregnancy care', 'Post surgery cage', 'Palliative care', 'Elderly care'];
@@ -397,20 +400,58 @@ onMounted(() => {
                              </div>
 
                             <div class="mb-6">
-                                <label class="text-lg font-medium text-slate-700 mb-2 block">What are your preferred areas of intervention</label>
-                                <div class="flex flex-wrap gap-x-6 gap-y-3">
-                                    <div v-for="skill in skills" :key="skill.id" class="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
-                                            :id="skill.id"
-                                            :value="skill.id"
-                                            v-model="form.skills"
-                                            class="w-5 h-5 rounded border-gray-300 text-[#72275B] focus:ring-[#72275B] accent-[#72275B]"
-                                        />
-                                        <label :for="skill.name" class="text-gray-600 font-medium cursor-pointer">{{ skill.name }}</label>
+                                <label class="text-lg font-medium text-slate-700 mb-2 block">Skills & Services</label>
+                                <div
+                                    v-for="skill in skills"
+                                    :key="skill.id"
+                                    class="flex items-center space-x-2"
+                            >
+                                <input
+                                    type="checkbox"
+                                    :id="'skill-' + skill.id"
+                                    :value="skill.name"
+                                    v-model="form.skills"
+                                    class="w-5 h-5 rounded border-gray-300 text-[#72275B]"
+                                />
+
+                                <label :for="'skill-' + skill.id">
+                                    {{ skill.name }}
+                                </label>
+                            </div>
+                            </div>
+
+
+
+                            <div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <InputLabel forr="mobilityYears" :label="'Mobility Years'" v-model="form.mobilityYears" type="number" :placeholder="'Enter Mobility Years'" />
+                                        <span class="text-red-500 text-sm" v-if="form.errors.mobilityYears">{{ form.errors.mobilityYears }}</span>
                                     </div>
+                                    <div>
+                                        <InputLabel forr="bathingYears"  :label="'Bathing Years'" id="bathingYears" v-model="form.bathingYears" type="number" :placeholder="'Enter Bathing Years'" />
+                                        <span class="text-red-500 text-sm" v-if="form.errors.bathingYears">{{ form.errors.bathingYears }}</span>
+                                    </div>
+
                                 </div>
-                             </div>
+                            </div>
+                            <div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <InputLabel forr="feedingYears" :label="'Feeding Assistance (Years)'" v-model="form.feedingYears" type="number" :placeholder="'Enter Feeding Assistance (Years)'" />
+                                        <span class="text-red-500 text-sm" v-if="form.errors.feedingYears">{{ form.errors.feedingYears }}</span>
+                                    </div>
+                                    <div>
+                                        <InputLabel forr="serviceFeeDay"  :label="'Service Fee (Day)'" id="serviceFeeDay" v-model="form.serviceFeeDay" type="number" :placeholder="'Enter Service Fee (Day)'" />
+                                        <span class="text-red-500 text-sm" v-if="form.errors.serviceFeeDay">{{ form.errors.serviceFeeDay }}</span>
+                                    </div>
+                                    <div>
+                                        <InputLabel forr="serviceFeeMonth"  :label="'Service Fee (Month)'" id="serviceFeeMonth" v-model="form.serviceFeeMonth" type="number" :placeholder="'Enter Service Fee (Month)'" />
+                                        <span class="text-red-500 text-sm" v-if="form.errors.serviceFeeMonth">{{ form.errors.serviceFeeMonth }}</span>
+                                    </div>
+
+                                </div>
+                            </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
