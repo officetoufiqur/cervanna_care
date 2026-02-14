@@ -1080,41 +1080,49 @@ class AuthController extends Controller
 
             if ($user->subRole === 'nurse') {
                 $user = User::with('nurse')->find($user->id);
+                $shedule = Schedule::where('specialist_id', $user->id)->get();
 
                 return response()->json([
                     'status' => true,
                     'message' => 'Nurse profile fetched successfully',
                     'nurse' => $user,
+                    'schedule' => $shedule,
                 ], 200);
             }
 
             if ($user->subRole === 'physiotherapist') {
                 $user = User::with('physiotherapist')->find($user->id);
+                $shedule = Schedule::where('specialist_id', $user->id)->get();
 
                 return response()->json([
                     'status' => true,
                     'message' => 'Physiotherapist profile fetched successfully',
                     'physiotherapist' => $user,
+                    'schedule' => $shedule,
                 ], 200);
             }
 
             if ($user->subRole === 'nurse-aide-or-assistant') {
                 $user = User::with('nurseAssistant')->find($user->id);
+                $shedule = Schedule::where('specialist_id', $user->id)->get();
 
                 return response()->json([
                     'status' => true,
                     'message' => 'Nurse assistant profile fetched successfully',
                     'nurseAssistant' => $user,
+                    'schedule' => $shedule,
                 ], 200);
             }
 
             if ($user->subRole === 'special-need-caregivers') {
                 $user = User::with('specialNeed')->find($user->id);
+                $shedule = Schedule::where('specialist_id', $user->id)->get();
 
                 return response()->json([
                     'status' => true,
                     'message' => 'Special need profile fetched successfully',
                     'specialNeed' => $user,
+                    'schedule' => $shedule,
                 ], 200);
             }
         }
