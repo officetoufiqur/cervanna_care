@@ -13,32 +13,31 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Booking {
     id: number;
-    specialist_id: number;
-    booking_person_id: number;
-    patient_name: string;
-    patient_age: string;
-    patient_gender: string;
-    relationship_to_booking_person: string;
-    price_id: string;
-    booking_amount: string;
-    patient_have_any_conditions: Array<string>; 
-    patient_currently_on_medication: string;
-    patient_have_any_known_allergies: string;
-    mobility_status_of_patient: string;
-    care_start_date: string;
-    care_end_date: string;
-    location_of_care: string;
-    emergency_contact_name: string;
-    emergency_contact_number: string;
-    primary_doctor_name: string;
-    primary_doctor_number: string;
-    primary_hospital: string;
-    patient_currently_on_medication_data: string;
-    patient_have_any_known_allergies_details: string;
-    booking_status: string;
-    specialist: { name: string };
-    user: { name: string };
-    price: { name: string };
+    specialist_id?: number;
+    booking_person_id?: number;
+    patient_name?: string;
+    patient_age?: string;
+    patient_gender?: string;
+    relationship_to_booking_person?: string;
+    price_id?: string;
+    booking_amount?: string;
+    patient_have_any_conditions?: Array<string>;
+    patient_currently_on_medication?: string;
+    patient_have_any_known_allergies?: string;
+    mobility_status_of_patient?: string;
+    care_start_date?: string;
+    care_end_date?: string;
+    location_of_care?: string;
+    emergency_contact_name?: string;
+    emergency_contact_number?: string;
+    primary_doctor_name?: string;
+    primary_doctor_number?: string;
+    primary_hospital?: string;
+    patient_currently_on_medication_data?: string;
+    patient_have_any_known_allergies_details?: string;
+    booking_status?: string;
+    specialist?: { name: string };
+    user?: { name: string };
 }
 
 const props = defineProps<{
@@ -69,7 +68,7 @@ const hasCondition = (condition: string) => {
             </div>
 
             <div class="bg-white border border-gray-200 p-8 shadow-sm rounded-lg max-w-6xl mx-auto">
-                
+
                 <div class="mb-8 border-b border-gray-100 pb-6">
                     <h2 class="text-lg font-bold text-gray-800 mb-4">1. Patient / Care Recipient Details</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -106,12 +105,12 @@ const hasCondition = (condition: string) => {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-4 rounded mt-4">
                          <div>
                             <span class="block text-xs font-bold text-gray-500 uppercase">Booked Specialist</span>
-                            <span class="text-gray-800 font-medium">{{ booking.specialist.name }}</span>
+                            <span class="text-gray-800 font-medium">{{ booking.specialist?.name }}</span>
                          </div>
 
                          <div>
                             <span class="block text-xs font-bold text-gray-500 uppercase">Who Booked</span>
-                            <span class="text-gray-800 font-medium">{{ booking.user.name }}</span>
+                            <span class="text-gray-800 font-medium">{{ booking.user?.name }}</span>
                          </div>
                      </div>
                 </div>
@@ -136,7 +135,7 @@ const hasCondition = (condition: string) => {
 
                 <div class="mb-8 border-b border-gray-100 pb-6">
                     <h2 class="text-lg font-bold text-gray-800 mb-4">4. Medication & Allergies</h2>
-                    
+
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Is the patient currently on medication?</label>
                         <div class="flex gap-4 mb-2">
@@ -166,7 +165,7 @@ const hasCondition = (condition: string) => {
                             <input type="text" :value="booking.patient_currently_on_medication_data" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600 text-sm" placeholder="Medication details" />
                         </div>
 
-                        
+
                     </div>
 
                     <div class="mb-4">
@@ -189,7 +188,7 @@ const hasCondition = (condition: string) => {
 
                 <div class="mb-8 border-b border-gray-100 pb-6">
                     <h2 class="text-lg font-bold text-gray-800 mb-4">5. Care Schedule & Environment</h2>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                         <div>
                              <label class="block text-sm font-medium text-gray-700 mb-1">Care Start Date</label>
@@ -206,7 +205,7 @@ const hasCondition = (condition: string) => {
                         <input type="text" :value="booking.booking_amount" readonly class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-gray-600" />
                     </div>
 
-                    
+
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Location of care:</label>
@@ -226,12 +225,12 @@ const hasCondition = (condition: string) => {
                     </div>
 
 
-                     
+
                 </div>
 
                 <div class="mb-8">
                     <h2 class="text-lg font-bold text-gray-800 mb-4">6. Emergency & Consent</h2>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                          <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Emergency Contact Name</label>

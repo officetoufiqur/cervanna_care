@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/booking', 'booking');
         Route::get('/user-booking', 'getBooking');
         Route::get('/specialist-booking', 'getSpecialistBooking');
+        Route::post('/update-booking-status/{id}', 'updateBookingStatus');
         Route::post('/schedule', 'storeOrUpdate');
     });
 

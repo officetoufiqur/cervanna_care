@@ -69,8 +69,7 @@ const formatDate = (date: string) => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <FlashMessage :message="props.flash.message" />
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-10">
-            <FilterTable :rows="data" :columns="columns" title="User List" 
-                create-url="#">
+            <FilterTable :rows="data" :columns="columns" create-btn create-text="Create User" create-url="/user/create">
 
                 <template #name="{ item }">
                     <span>{{ item.name}}</span>

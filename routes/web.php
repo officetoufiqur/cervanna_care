@@ -82,6 +82,8 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
 
     Route::controller(UserController::class)->group(function () {
         Route::get('/all-user', 'userIndex')->name('all-user.index');
+        Route::get('/user/create', 'userCreate')->name('user.create');
+        Route::post('/user/store', 'userStore')->name('user.store');
         Route::get('/user/edit/{id}', 'userEdit')->name('user.edit');
         Route::put('/user/update/{id}', 'userUpdate')->name('user.update');
 

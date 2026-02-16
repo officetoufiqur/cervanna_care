@@ -20,7 +20,7 @@ class BookingController extends Controller
 
     public function edit($id)
     {
-      $booking = Booking::with(['user:id,name', 'price:id,name,price', 'specialist:id,name'])->find($id);      
+      $booking = Booking::with(['user:id,name', 'specialist:id,name'])->find($id);      
         return Inertia::render('Booking/Edit', [
             'booking' => $booking,
         ]);
