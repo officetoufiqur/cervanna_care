@@ -61,15 +61,7 @@ const formatDate = (date: string) => {
 
 
 
-const showCreateModal = ref(false);
 
-const openCreateModal = () => {
-    showCreateModal.value = true;
-};
-
-const closeCreateModal = () => {
-    showCreateModal.value = false;
-};
 
 
 </script>
@@ -81,13 +73,7 @@ const closeCreateModal = () => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <FlashMessage :message="props.flash.message" />
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-10">
-            <div class="flex justify-end">
-                <button @click="openCreateModal" class="bg-[#72275B] hover:bg-[#56284F] px-6 py-2 text-white rounded-md cursor-pointer">
-                    Create Specialist
-                </button>
-            </div>
-            <FilterTable :rows="data" :columns="columns" title="Specialist List">
-
+            <FilterTable :rows="data" :columns="columns"   create-btn create-text="Create Specialist" create-url="/specialist/create">
                 <template #name="{ item }">
                     <span>{{ item.name}}</span>
                 </template>
@@ -130,62 +116,6 @@ const closeCreateModal = () => {
                     </div>
                 </template>
             </FilterTable>
-        </div>
-
-        <div
-            v-if="showCreateModal"
-            class="fixed inset-0 z-50 flex items-center justify-center"
-        >
-            <!-- Overlay -->
-            <div
-                class="absolute inset-0 bg-black/50"
-                @click="closeCreateModal"
-            ></div>
-
-            <!-- Modal box -->
-            <div class="relative bg-white rounded-xl shadow-lg w-full max-w-md p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-gray-800">
-                        Create Specialist
-                    </h2>
-                    <button
-                        @click="closeCreateModal"
-                        class="text-gray-500 hover:text-gray-700 text-xl"
-                    >
-                        &times;
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-5">
-                    <Link
-                        href="/specialist/create?type=house-manager"
-                        class="w-full text-center border border-[#72275B] hover:bg-[#72275B] text-dark py-2 rounded-xl hover:text-white"
-                    >
-                        House Manager
-                    </Link>
-
-                    <Link
-                        href="/specialist/create?type=nurse"
-                        class="w-full text-center border border-[#72275B] hover:bg-[#72275B] text-dark py-2 rounded-xl hover:text-white"
-                    >
-                        Nurse
-                    </Link>
-
-                    <Link
-                        href="/specialist/create?type=physiotherapist"
-                        class="w-full text-center border border-[#72275B] hover:bg-[#72275B] text-dark py-2 rounded-xl hover:text-white"
-                    >
-                        Physiotherapist
-                    </Link>
-
-                    <Link
-                        href="/specialist/create?type=special-needs"
-                        class="w-full text-center border border-[#72275B] hover:bg-[#72275B] text-dark py-2 px-1 rounded-xl hover:text-white"
-                    >
-                        Special Needs Caregiver
-                    </Link>
-                </div>
-            </div>
         </div>
 
     </AppLayout>

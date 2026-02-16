@@ -18,6 +18,38 @@ class UserController extends Controller
         ]);
     }
 
+    public function userCreate()
+    {
+        return Inertia::render('User/Create');
+    }
+
+    public function userStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'number' => 'required',
+            // 'profileImage' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',
+            'age' => 'required',
+            'gender' => 'required',
+            'password' => 'required',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'number' => $request->number,
+            'role' => 'user',
+            'age' => $request->age,
+            'gender' => $request->gender,
+            'password' => bcrypt($request->password),
+            'is_profile_verified' => true,
+            'is_profile_completed' => true,
+        ]);
+
+        return redirect()->route('all-user.index')->with('message', 'User created successfully');
+    }
+
     public function userEdit($id)
     {
         $user = User::find($id);
@@ -30,18 +62,26 @@ class UserController extends Controller
     public function userUpdate(Request $request, $id)
     {
         $request->validate([
-            'is_profile_verified' => 'required',
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'number' => 'required',
+            // 'profileImage' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',
+            'age' => 'required',
+            'gender' => 'required',
         ]);
         $user = User::find($id);
         $user->update([
-            'is_profile_verified' => $request->is_profile_verified,
+            'name' => $request->name,
+            'email' => $request->email,
+            'number' => $request->number,
+            'age' => $request->age,
+            'gender' => $request->gender,
         ]);
 
         $user->notify(new UserNotification('Profile status updated successfully', $user->id));
 
         return redirect()->route('all-user.index')->with('message', 'User updated successfully');
     }
-
 
 
     public function specialistEdit($id)

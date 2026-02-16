@@ -22,17 +22,18 @@ class BookingController extends Controller
                 'patient_name' => 'required',
                 'patient_age' => 'required',
                 'patient_gender' => 'required',
-                'patient_currently_on_medication_data' => 'nullable',
-                'patient_have_any_known_allergies_details' => 'nullable',
                 'relationship_to_booking_person' => 'required',
-                'price_id' => 'required',
                 'booking_amount' => 'required',
-                'patient_have_any_conditions' => 'nullable',
-                'patient_currently_on_medication' => 'nullable',
-                'patient_have_any_known_allergies' => 'nullable',
+                'booking_type' => 'required',
+                'selected_dates_or_months' => 'required',
+                'total_count' => 'required',
+                'patient_have_any_conditions' => 'required',
+                'patient_currently_on_medication' => 'boolean',
+                'patient_currently_on_medication_data' => 'nullable',
+                'prescription_file' => 'nullable|file|mimes:jpeg,webp,png,jpg,pdf|max:2048',
+                'patient_have_any_known_allergies' => 'required',
+                'patient_have_any_known_allergies_details' => 'required',
                 'mobility_status_of_patient' => 'required',
-                'care_start_date' => 'required',
-                'care_end_date' => 'required',
                 'location_of_care' => 'required',
                 'emergency_contact_name' => 'required',
                 'emergency_contact_number' => 'required',
@@ -42,24 +43,30 @@ class BookingController extends Controller
 
             ]);
 
+            $prescription_file = null;
+            if ($request->hasFile('prescription_file')) {
+                $prescription_file = FileUpload::storeFile($request->file('prescription_file'), 'uploads/bookings');
+            }
+
             $booking = Booking::create([
 
                 'specialist_id' => $request->specialist_id,
-                'booking_person_id' => $user->id,
                 'patient_name' => $request->patient_name,
                 'patient_age' => $request->patient_age,
+                'booking_person_id' => $user->id,
                 'patient_gender' => $request->patient_gender,
-                'patient_currently_on_medication_data' => $request->patient_currently_on_medication_data,
-                'patient_have_any_known_allergies_details' => $request->patient_have_any_known_allergies_details,
                 'relationship_to_booking_person' => $request->relationship_to_booking_person,
-                'price_id' => $request->price_id,
                 'booking_amount' => $request->booking_amount,
+                'booking_type' => $request->booking_type,
+                'selected_dates_or_months' => $request->selected_dates_or_months,
+                'total_count' => $request->total_count,
                 'patient_have_any_conditions' => $request->patient_have_any_conditions,
                 'patient_currently_on_medication' => $request->patient_currently_on_medication,
+                'patient_currently_on_medication_data' => $request->patient_currently_on_medication_data,
+                'prescription_file' => $prescription_file,
                 'patient_have_any_known_allergies' => $request->patient_have_any_known_allergies,
+                'patient_have_any_known_allergies_details' => $request->patient_have_any_known_allergies_details,
                 'mobility_status_of_patient' => $request->mobility_status_of_patient,
-                'care_start_date' => $request->care_start_date,
-                'care_end_date' => $request->care_end_date,
                 'location_of_care' => $request->location_of_care,
                 'emergency_contact_name' => $request->emergency_contact_name,
                 'emergency_contact_number' => $request->emergency_contact_number,
@@ -72,7 +79,7 @@ class BookingController extends Controller
             $user->notify(new UserNotification('Specialist booking successfull', $user->specialist_id, $user->id));
 
             return response()->json([
-                'status' => 'pending',
+                'status' => 200,
                 'message' => 'Booking created successfully',
             ], 200);
         }
@@ -116,6 +123,47 @@ class BookingController extends Controller
                 'message' => 'You are not authorized to access this resource',
             ], 401);
         }
+    }
+
+    public function updateBookingStatus(Request $request, $id)
+    {
+        $user = auth()->user();
+
+        if ($user->role !== 'specialist') {
+            return response()->json([
+                'status' => 401,
+                'message' => 'You are not authorized to access this resource',
+            ], 401);
+        }
+
+        $request->validate([
+            'booking_status' => 'required|in:pending,accepted,rejected,completed',
+        ]);
+
+        $booking = Booking::find($id);
+
+        if (!$booking) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Booking not found',
+            ], 404);
+        }
+
+        if ($booking->specialist_id != $user->id) {
+            return response()->json([
+                'status' => 403,
+                'message' => 'You cannot update this booking',
+            ], 403);
+        }
+
+        $booking->update([
+            'booking_status' => $request->booking_status,
+        ]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Booking updated successfully',
+        ], 200);
     }
 
     public function getSchedule(Request $request)

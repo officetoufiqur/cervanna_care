@@ -21,8 +21,6 @@ const props = defineProps<{
         specialist_id: string;
         booking_person_id: string;
         booking_amount: string;
-        care_start_date: string;
-        care_end_date: string;
         booking_status: string;
     }[];
     flash: {
@@ -36,8 +34,6 @@ const columns = [
     { label: 'Patient Name', key: 'patient_name' },
     { label: 'Specialist', key: 'specialist.name' },
     { label: 'Booking Person', key: 'user.name' },
-    { label: 'Start Date', key: 'care_start_date' },
-    { label: 'End Date', key: 'care_end_date' },
     { label: 'Amount', key: 'booking_amount' },
     { label: 'Status', key: 'booking_status' },
 
@@ -59,7 +55,7 @@ const data = ref(props.bookings);
     <AppLayout :breadcrumbs="breadcrumbs">
         <FlashMessage :message="props.flash.message" />
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-10">
-            <FilterTable :rows="data" :columns="columns" title="Booking List" 
+            <FilterTable :rows="data" :columns="columns" title="Booking List"
                 create-url="#">
 
                 <template #patient_name="{ item }">
@@ -67,19 +63,11 @@ const data = ref(props.bookings);
                 </template>
 
                 <template #specialist.name="{ item }">
-                    <span>{{ item.specialist.name}}</span>
+                    <span>{{ item?.specialist?.name}}</span>
                 </template>
 
                 <template #user.name="{ item }">
-                    <span>{{ item.user.name}}</span>
-                </template>
-
-                <template #care_start_date="{ item }">
-                    <span>{{ item.care_start_date}}</span>
-                </template>
-
-                <template #care_end_date="{ item }">
-                    <span>{{ item.care_end_date}}</span>
+                    <span>{{ item?.user?.name}}</span>
                 </template>
 
                 <template #booking_amount="{ item }">
