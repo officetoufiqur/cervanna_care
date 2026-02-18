@@ -19,6 +19,7 @@ class BookingController extends Controller
             $request->validate([
 
                 'specialist_id' => 'required',
+                'specialist_type' => 'required',
                 'patient_name' => 'required',
                 'patient_age' => 'required',
                 'patient_gender' => 'required',
@@ -26,13 +27,13 @@ class BookingController extends Controller
                 'booking_amount' => 'required',
                 'booking_type' => 'required',
                 'selected_dates_or_months' => 'required',
-                'total_count' => 'required',
+                'patient_have_any_others_conditions' => 'nullable',
                 'patient_have_any_conditions' => 'required',
                 'patient_currently_on_medication' => 'boolean',
                 'patient_currently_on_medication_data' => 'nullable',
-                'prescription_file' => 'nullable|file|mimes:jpeg,webp,png,jpg,pdf|max:2048',
+                'prescription_file' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:2048',
                 'patient_have_any_known_allergies' => 'required',
-                'patient_have_any_known_allergies_details' => 'required',
+                'patient_have_any_known_allergies_details' => 'nullable',
                 'mobility_status_of_patient' => 'required',
                 'location_of_care' => 'required',
                 'emergency_contact_name' => 'required',
@@ -43,14 +44,18 @@ class BookingController extends Controller
 
             ]);
 
+ 
             $prescription_file = null;
-            if ($request->hasFile('prescription_file')) {
-                $prescription_file = FileUpload::storeFile($request->file('prescription_file'), 'uploads/bookings');
+
+            if ($request->file('prescription_file')) {
+                $prescription_file = $request->file('prescription_file')
+                    ->store('uploads/bookings', 'public');
             }
 
             $booking = Booking::create([
 
                 'specialist_id' => $request->specialist_id,
+                'specialist_type' => $request->specialist_type,
                 'patient_name' => $request->patient_name,
                 'patient_age' => $request->patient_age,
                 'booking_person_id' => $user->id,
@@ -59,7 +64,7 @@ class BookingController extends Controller
                 'booking_amount' => $request->booking_amount,
                 'booking_type' => $request->booking_type,
                 'selected_dates_or_months' => $request->selected_dates_or_months,
-                'total_count' => $request->total_count,
+                'patient_have_any_others_conditions' => $request->patient_have_any_others_conditions,
                 'patient_have_any_conditions' => $request->patient_have_any_conditions,
                 'patient_currently_on_medication' => $request->patient_currently_on_medication,
                 'patient_currently_on_medication_data' => $request->patient_currently_on_medication_data,
@@ -90,7 +95,7 @@ class BookingController extends Controller
         $user = auth()->user();
 
         if ($user->role === 'user') {
-            $bookings = Booking::with(['specialist:id,name','user:id,name'])->where('booking_person_id', $user->id)->get();
+            $bookings = Booking::with(['specialist:id,name','user:id,name'])->withCount('review')->where('booking_person_id', $user->id)->get();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Bookings fetched successfully',
@@ -110,7 +115,7 @@ class BookingController extends Controller
 
         if ($user->role === 'specialist') {
 
-            $bookings = Booking::with(['specialist:id,name','user:id,name'])->where('specialist_id', $user->id)->get();
+            $bookings = Booking::with(['specialist:id,name','user:id,name'])->withCount('review')->where('specialist_id', $user->id)->get();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Bookings fetched successfully',

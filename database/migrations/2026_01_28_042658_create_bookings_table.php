@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('specialist_id')->nullable();
+            $table->string('specialist_type')->nullable();
             $table->bigInteger('booking_person_id')->nullable();
             $table->string('patient_name')->nullable();
             $table->string('patient_age')->nullable();
@@ -22,8 +23,8 @@ return new class extends Migration
             $table->string('booking_amount')->nullable();
             $table->string('booking_type')->nullable();
             $table->string('selected_dates_or_months')->nullable();
-            $table->string('total_count')->nullable();
             $table->json('patient_have_any_conditions')->nullable();
+            $table->string('patient_have_any_others_conditions')->nullable();
             $table->boolean('patient_currently_on_medication')->nullable();
             $table->string('patient_currently_on_medication_data')->nullable();
             $table->string('prescription_file')->nullable();

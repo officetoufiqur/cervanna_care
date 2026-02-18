@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\LandingPageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SingleAgencyNurseController;
+use App\Http\Controllers\Api\ReviewController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -53,6 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/specialist-booking', 'getSpecialistBooking');
         Route::post('/update-booking-status/{id}', 'updateBookingStatus');
         Route::post('/schedule', 'storeOrUpdate');
+    });
+
+    Route::controller(ReviewController::class)->group(function () {
+        Route::post('/review', 'review');
+        Route::get('/specialist-review', 'getSpecialistReview');
     });
 
 });

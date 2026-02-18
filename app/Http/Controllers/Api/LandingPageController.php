@@ -152,70 +152,31 @@ class LandingPageController extends Controller
         );
     }
 
-    // public function specialist()
-    // {
-    //     $specialist = User::where('role', 'specialist')->where('is_profile_completed', true)
-    //         ->select('id', 'name', 'role', 'subRole', 'education', 'location', 'profilePhoto', 'preferred')
-    //         ->with([
-    //             'houseManager:id,user_id,experience,serviceOffered',
-    //             'nurse:id,user_id,skills',
-    //             'nurseAssistant:id,user_id,skills'
-    //         ])->get();
-
-    //     $employeAgencies = AgencyEmployee::with('agency:id,name,educationLevel,experience,liveType,profilePhoto')->get();
-    //     $institutionalNurses = InstitutionalNurse::with('agency:id,name,education,experience,services,profilePhoto')->get();
-
-    //     return $this->successResponse(
-    //         $specialist,
-    //         $employeAgencies,
-    //         $institutionalNurses,
-    //         'Specialist data fetched successfully',
-    //     );
-    // }
-
     public function specialist(Request $request)
     {
-        $limit = $request->limit ?? 10;
-
-        $preferred = $request->preferred;
-        $subRole = $request->subRole;
-
         $specialist = User::where('role', 'specialist')
+            ->where('is_profile_verified', 1)
             ->with('schedule')
-            ->where('is_profile_verified', true)
-            ->when($preferred, function ($q) use ($preferred) {
-                $q->where(function ($inner) use ($preferred) {
-                    foreach ((array)$preferred as $item) {
-                        $inner->orWhereJsonContains('preferred', $item);
-                    }
-                });
-            })
-            ->when($subRole, fn($q) => $q->where('subRole', $subRole))
             ->inRandomOrder()
-            ->limit($limit)
             ->get();
 
+        $employeAgencies = AgencyEmployee::inRandomOrder()
+            ->get()
+            ->map(function ($item) {
+                $item->setAttribute('subRole', 'house-manager');
+                $item->setAttribute('role', 'specialist');
+                return $item;
+            });
 
-        $employeAgencies = collect();
+        $institutionalNurses = InstitutionNurse::inRandomOrder()
+            ->get()
+            ->map(function ($item) {
+                $item->setAttribute('subRole', 'nurse');
+                $item->setAttribute('role', 'specialist');
+                return $item;
+            });
 
-        if (! $subRole || $subRole === 'house-manager') {
-            $employeAgencies = AgencyEmployee::inRandomOrder()
-                ->limit($limit)
-                ->get()
-                ->each->setAttribute('subRole', 'house-manager');
-        }
-
-        $institutionalNurses = collect();
-
-        if (! $subRole || $subRole === 'nurse') {
-            $institutionalNurses = InstitutionNurse::inRandomOrder()
-                ->limit($limit)
-                ->get()
-                ->each->setAttribute('subRole', 'nurse');
-        }
-
-        $combined = collect()
-            ->concat($specialist)
+        $combined = $specialist
             ->concat($employeAgencies)
             ->concat($institutionalNurses)
             ->shuffle()
