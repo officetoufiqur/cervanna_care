@@ -69,8 +69,7 @@ const formatDate = (date: string) => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <FlashMessage :message="props.flash.message" />
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-10">
-            <FilterTable :rows="data" :columns="columns" title="Agency & Institution List"
-                create-url="#">
+            <FilterTable :rows="data" :columns="columns" create-btn create-text="Add New" create-url="agency/create" title="Agency & Institution List">
 
                 <template #name="{ item }">
                     <span>{{ item.agency?.companyName || item.care_institution?.companyName}}</span>
@@ -79,7 +78,6 @@ const formatDate = (date: string) => {
                 <template #role="{ item }">
                     <span>{{ item.role}}</span>
                 </template>
-
 
                 <template #is_profile_completed="{ item }">
                     <span>{{ item.is_profile_completed ? 'True' : 'False'}}</span>

@@ -92,6 +92,8 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
         Route::put('/specialist/update/{id}', 'specialistUpdate')->name('specialist.update');
 
         Route::get('/all-agency', 'agencyIndex')->name('agency.index');
+        Route::get('/agency/create', 'agencyCreate')->name('agency.create');
+        Route::post('/agency/store', 'agencyStore')->name('agency.store');
         Route::get('/agency/edit/{id}', 'agencyEdit')->name('agency.edit');
         Route::put('/agency/update/{id}', 'agencyUpdate')->name('agency.update');
 

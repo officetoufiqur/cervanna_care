@@ -9,6 +9,7 @@ class Booking extends Model
     protected $fillable = [
             'booking_person_id',
             'specialist_id',
+            'specialist_type',
             'patient_name',
             'patient_age',
             'patient_gender',
@@ -16,8 +17,8 @@ class Booking extends Model
             'booking_amount',
             'booking_type',
             'selected_dates_or_months',
-            'total_count',
             'patient_have_any_conditions',
+            'patient_have_any_others_conditions',
             'patient_currently_on_medication',
             'patient_currently_on_medication_data',
             'prescription_file',
@@ -41,6 +42,11 @@ class Booking extends Model
     public function specialist()
     {
         return $this->belongsTo(User::class, 'specialist_id', 'id');
+    }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class);
     }
 
     protected $casts = [

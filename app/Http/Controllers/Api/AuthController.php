@@ -907,7 +907,7 @@ class AuthController extends Controller
                 'is_profile_completed' => $user->is_profile_completed,
                 'is_profile_verified' => false,
                 'message' => 'Agency profile and employees registered successfully',
-            ], 200);
+            ], 200); 
 
         } elseif ($user->role === 'care_institutions') {
             $request->validate([
@@ -1069,6 +1069,7 @@ class AuthController extends Controller
             if ($user->subRole === 'house-manager') {
                 $user = User::with('houseManager')->find($user->id);
                 $shedule = Schedule::where('specialist_id', $user->id)->get();
+                $review = Review::where('specialist_id', $user->id)->get();
 
                 return response()->json([
                     'status' => true,
