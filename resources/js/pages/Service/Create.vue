@@ -73,7 +73,7 @@ onMounted(() => {
                             <span class="text-red-500 text-sm" v-if="form.errors.image">{{ form.errors.image }}</span>
                         </div>
                         <div>
-                            <Label forr="icon" :label="'Icon'" />
+                            <Label forr="icon" :label="'Icon (SVG)'" />
                             <textarea name="" id="" cols="30" rows="3" v-model="form.icon" placeholder="Enter your icon" class="form-control"></textarea>
                             <span class="text-red-500 text-sm" v-if="form.errors.icon">{{ form.errors.icon }}</span>
                         </div>

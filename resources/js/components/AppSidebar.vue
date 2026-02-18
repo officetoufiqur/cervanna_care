@@ -3,7 +3,7 @@ import NavMain from '@/components/NavMain.vue';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { Book, CalendarCheckIcon, CogIcon, ConstructionIcon, HandHeartIcon, HeartHandshakeIcon, InfoIcon, LayoutGrid, MessageCircleQuestionIcon, SquareUserRoundIcon, UserRoundCheckIcon } from 'lucide-vue-next';
+import { Book, CalendarCheckIcon, CogIcon, ConstructionIcon, HandHeartIcon, HeartHandshakeIcon, InfoIcon, LandmarkIcon, LayoutGrid, MailIcon, MessageCircleQuestionIcon, SquareUserRoundIcon, UserRoundCheckIcon, UserRoundIcon, UsersIcon } from 'lucide-vue-next';
 import CogUser from './admin/icon/CogUser.vue';
 
 const mainNavItems: NavItem[] = [
@@ -86,7 +86,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'User Management',
-    icon: SquareUserRoundIcon,
+    icon: UserRoundIcon,
     subMenu: [
       {
         title: 'User',
@@ -95,17 +95,37 @@ const mainNavItems: NavItem[] = [
       {
         title: 'Specialist',
         href: '/all-specialist',
+      }
+    ]
+  },
+  {
+    title: 'Agency',
+    icon: UsersIcon,
+    subMenu: [
+      {
+        title: 'Agency',
+        href: '/all-agency',
       },
       {
-        title: 'Agency & Institution',
-        href: '/all-agency',
+        title: 'Agency Employees',
+        href: '/agency-employees',
+      }
+    ]
+  },
+  {
+    title: 'Institution',
+    icon: LandmarkIcon,
+    subMenu: [
+      {
+        title: 'Institution',
+        href: '/all-institution',
       },
     ]
   },
 
   {
     title: 'Contact',
-    icon: SquareUserRoundIcon,
+    icon: MailIcon,
     subMenu: [
       {
         title: 'Get in Touch',

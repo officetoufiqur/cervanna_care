@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AgencyEmployController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ChooseController;
@@ -9,14 +10,15 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FoundationController;
+use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\OurCoreController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorksController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\PlanController;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -99,7 +101,6 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
         Route::get('/user/edit/{id}', 'userEdit')->name('user.edit');
         Route::put('/user/update/{id}', 'userUpdate')->name('user.update');
 
-
         Route::get('/specialist/edit/{id}', 'specialistEdit')->name('specialist.edit');
         Route::put('/specialist/update/{id}', 'specialistUpdate')->name('specialist.update');
 
@@ -108,7 +109,20 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
         Route::post('/agency/store', 'agencyStore')->name('agency.store');
         Route::get('/agency/edit/{id}', 'agencyEdit')->name('agency.edit');
         Route::put('/agency/update/{id}', 'agencyUpdate')->name('agency.update');
+    });
 
+    Route::controller(AgencyEmployController::class)->group(function () {
+        Route::get('/agency-employees', 'index')->name('agency-employees.index');
+        Route::get('/agency-employee/create', 'create')->name('agency-employee.create');
+        Route::post('/agency-employee/store', 'store')->name('agency-employee.store');
+        Route::get('/agency-employee/edit/{id}', 'edit')->name('agency-employee.edit');
+        Route::put('/agency-employee/update/{id}', 'update')->name('agency-employee.update');
+    });
+
+    Route::controller(InstitutionController::class)->group(function () {
+        Route::get('/all-institution', 'index')->name('institution.index');
+        Route::get('/institution/create', 'create')->name('institution.create');
+        Route::post('/institution/store', 'store')->name('institution.store');
     });
 
     Route::controller(SpecialistController::class)->group(function () {

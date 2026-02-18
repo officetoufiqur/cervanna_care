@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use App\Notifications\UserNotification;
-use Illuminate\Support\Facades\Hash;
+use App\Helpers\FileUpload;
 use App\Models\Agency;
 use App\Models\CareInstitution;
-use App\Helpers\FileUpload;
+use App\Models\User;
+use App\Notifications\UserNotification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -67,7 +67,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'email' => 'required|email|unique:users,email,'.$id,
             'number' => 'required',
             // 'profileImage' => 'nullable|image|mimes:jpeg,webp,png,jpg,gif|max:2048',
             'age' => 'required',
@@ -87,43 +87,46 @@ class UserController extends Controller
         return redirect()->route('all-user.index')->with('message', 'User updated successfully');
     }
 
-
     public function specialistEdit($id)
     {
-       $specialist = User::find($id);
+        $specialist = User::find($id);
 
-       if($specialist->subRole === 'house-manager') {
-           $houseManager = User::with('houseManager')->find($id);
+        if ($specialist->subRole === 'house-manager') {
+            $houseManager = User::with('houseManager')->find($id);
+
             return Inertia::render('User/HouseManagerEdit', [
                 'specialist' => $houseManager,
             ]);
-       }
-       if($specialist->subRole === 'nurse') {
+        }
+        if ($specialist->subRole === 'nurse') {
             $nurse = User::with('nurse')->find($id);
+
             return Inertia::render('User/NurseEdit', [
                 'specialist' => $nurse,
             ]);
-       }
-       if($specialist->subRole === 'physiotherapist') {
+        }
+        if ($specialist->subRole === 'physiotherapist') {
             $physiotherapist = User::with('physiotherapist')->find($id);
+
             return Inertia::render('User/PhysiotherapistEdit', [
                 'specialist' => $physiotherapist,
             ]);
-       }
-       if($specialist->subRole === 'nurse-aide-or-assistant') {
-          $nurseAssistant = User::with('nurseAssistant')->find($id);
+        }
+        if ($specialist->subRole === 'nurse-aide-or-assistant') {
+            $nurseAssistant = User::with('nurseAssistant')->find($id);
+
             return Inertia::render('User/NurseAssistantEdit', [
                 'specialist' => $nurseAssistant,
             ]);
-       }
+        }
 
-       if($specialist->subRole === 'special-need-caregivers') {
-           $specialNeed = User::with('specialNeed')->find($id);
+        if ($specialist->subRole === 'special-need-caregivers') {
+            $specialNeed = User::with('specialNeed')->find($id);
+
             return Inertia::render('User/SpecialNeedEdit', [
                 'specialist' => $specialNeed,
             ]);
-       }
-
+        }
 
     }
 
@@ -144,8 +147,8 @@ class UserController extends Controller
 
     public function agencyIndex()
     {
-        $agencies = User::with(['agency', 'careInstitution'])
-            ->whereIn('role', ['agency', 'care_institutions'])
+        $agencies = User::with('agency')
+            ->where('role', 'agency')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -161,123 +164,50 @@ class UserController extends Controller
 
     public function agencyStore(Request $request)
     {
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required'
+        ]);
 
-        if ($request->role === 'agency') {
+        $user = User::create([
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'agency',
+            'number' => $request->number,
+            'otp' => '123456',
+            'is_profile_completed' => true,
+            'is_profile_verified' => true,
+        ]);
 
-                $request->validate([
+        $agency = Agency::firstOrNew([
+            'user_id' => $user->id,
+        ]);
 
-                    'email' => 'required',
-                    'password' => 'required',
-                    'number' => 'nullable',
-                    'companyName' => 'nullable',
-                    'kraPin' => 'nullable',
-                    'companyRegistrationNumber' => 'nullable',
-                    'alternative_number' => 'nullable',
-                    'role' => 'required',
-                    'businessLocation' => 'nullable',
-                    'registrationDocument' => 'nullable',
-                    'agency_services' => 'nullable',
-                    'placementFee' => 'nullable',
-                    'replacementWindow' => 'nullable',
-                    'numberOfReplacement' => 'nullable',
+        $registrationDocument = null;
+        if ($request->hasFile('registrationDocument')) {
+            $registrationDocument = FileUpload::storeFile(
+                $request->file('registrationDocument'),
+                'uploads/agency'
+            );
 
-                ]);
-
-                $user = User::create([
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                    'role' => $request->role,
-                    'number' => $request->number,
-                    'otp' => '123456',
-                    'is_profile_completed' => true,
-                    'is_profile_verified' => true,
-                ]);
-
-
-                $agency = Agency::firstOrNew([
-                    'user_id' => $user->id,
-                ]);
-
-                $registrationDocument = null;
-                if ($request->hasFile('registrationDocument')) {
-                    $registrationDocument = FileUpload::storeFile(
-                        $request->file('registrationDocument'),
-                        'uploads/agency'
-                    );
-
-                    $agency->registrationDocument = $registrationDocument;
-                }
-
-                $agency->fill([
-                    'companyName' => $request->companyName,
-                    'kraPin' => $request->kraPin,
-                    'companyRegistrationNumber' => $request->companyRegistrationNumber,
-                    'number' => $request->number,
-                    'agency_services' => $request->agency_services,
-                    'businessLocation' => $request->businessLocation,
-                    'placementFee' => $request->placementFee,
-                    'replacementWindow' => $request->replacementWindow,
-                    'numberOfReplacement' => $request->numberOfReplacement,
-                ]);
-
-                $agency->save();
-
-                return redirect()->route('agency.index')->with('message', 'Agency created successfully');
-
+            $agency->registrationDocument = $registrationDocument;
         }
-        
-        if($request->role === 'care_institutions'){
 
-            $request->validate([
-                'email' => 'required',
-                'password' => 'required',
-                'number' => 'nullable',
-                'companyName' => 'nullable',
-                'kraPin' => 'nullable',
-                'companyRegistrationNumber' => 'nullable',
-                'alternative_number' => 'nullable',
-                'role' => 'required',
-                'businessLocation' => 'nullable',
-                'registrationDocument' => 'nullable',
-            ]);
+        $agency->fill([
+            'companyName' => $request->companyName,
+            'kraPin' => $request->kraPin,
+            'companyRegistrationNumber' => $request->companyRegistrationNumber,
+            'number' => $request->number,
+            'agency_services' => $request->agency_services,
+            'businessLocation' => $request->businessLocation,
+            'placementFee' => $request->placementFee,
+            'replacementWindow' => $request->replacementWindow,
+            'numberOfReplacement' => $request->numberOfReplacement,
+        ]);
 
-            $user = User::create([
+        $agency->save();
 
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'number' => $request->number,
-                'otp' => '123456',
-                'role' => $request->role,
-                'is_profile_completed' => true,
-                'is_profile_verified' => true,
-            ]);
-
-            $careInstitution = CareInstitution::firstOrNew([
-                'user_id' => $user->id,
-            ]);
-
-            $registrationDocument = null;
-            if ($request->hasFile('registrationDocument')) {
-                $registrationDocument = FileUpload::storeFile(
-                    $request->file('registrationDocument'),
-                    'uploads/careInstitution'
-                );
-
-                $careInstitution->registrationDocument = $registrationDocument;
-            }
-
-            $careInstitution->fill([
-                'companyName' => $request->companyName,
-                'kraPin' => $request->kraPin,
-                'companyRegistrationNumber' => $request->companyRegistrationNumber,
-                'number' => $request->alternative_number,
-                'businessLocation' => $request->businessLocation,
-            ]);
-
-            $careInstitution->save();
-
-            return redirect()->route('agency.index')->with('message', 'Care institution created successfully');
-        }
+        return redirect()->route('agency.index')->with('message', 'Agency created successfully');
 
     }
 
@@ -293,9 +223,8 @@ class UserController extends Controller
 
     public function agencyUpdate(Request $request, $id)
     {
-        
-        $user = User::findOrFail($id);
 
+        $user = User::findOrFail($id);
 
         if ($request->role === 'agency') {
 
@@ -373,8 +302,6 @@ class UserController extends Controller
 
             $careInstitution = CareInstitution::where('user_id', $user->id)->firstOrFail();
 
-
-
             $registrationDocument = null;
             if ($request->hasFile('registrationDocument')) {
                 $registrationDocument = FileUpload::storeFile(
@@ -384,8 +311,6 @@ class UserController extends Controller
 
                 $careInstitution->registrationDocument = $registrationDocument;
             }
-
-
 
             $careInstitution->update([
                 'companyName' => $request->companyName,
@@ -398,6 +323,4 @@ class UserController extends Controller
             return redirect()->route('agency.index')->with('message', 'Care institution updated successfully');
         }
     }
-
-    
 }
