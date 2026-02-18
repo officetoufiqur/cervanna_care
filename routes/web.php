@@ -17,6 +17,7 @@ use App\Http\Controllers\WorksController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SpecialistController;
+use App\Http\Controllers\PlanController;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
@@ -79,6 +80,17 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
         Route::post('/about/update/{id}', 'update')->name('about.update');
         Route::get('/subscribe', 'subscriber')->name('subscribe');
     });
+
+    // Route::controller(PlanController::class)->group(function () {
+    //     Route::get('/plan', 'index')->name('plan.index');
+    //     Route::get('/plan/create', 'create')->name('plan.create');
+    //     Route::post('/plan/store', 'store')->name('plan.store');
+    //     Route::get('/plan/edit/{id}', 'edit')->name('plan.edit');
+    //     Route::put('/plan/update/{id}', 'update')->name('plan.update');
+    //     Route::delete('/plan/delete/{id}', 'delete')->name('plan.delete');
+    // });
+
+    Route::resource('/plan', PlanController::class)->names('plan');
 
     Route::controller(UserController::class)->group(function () {
         Route::get('/all-user', 'userIndex')->name('all-user.index');

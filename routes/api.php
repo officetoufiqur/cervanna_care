@@ -23,6 +23,7 @@ Route::controller(LandingPageController::class)->group(function () {
     Route::get('/price', 'prices');
     Route::get('/specialist', 'specialist');
     Route::post('/subscribe', 'subscribe');
+    Route::get('/subscription-plan', 'plans');
 });
 
 Route::controller(AuthController::class)->group(function () {

@@ -78,6 +78,10 @@ const mainNavItems: NavItem[] = [
      title: 'Booking',
      href: '/booking',
     },
+    {
+     title: 'Plan',
+     href: '/plan',
+    },
     ]
   },
   {

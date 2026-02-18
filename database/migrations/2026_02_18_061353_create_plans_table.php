@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('plans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('specialist_id')->nullable();
-            $table->string('specialist_type')->nullable();
-            $table->string('month')->nullable(); 
-            $table->string('year')->nullable();
-            $table->date('date')->nullable();
+            $table->string('name')->unique();
+            $table->decimal('price', 10, 2)->default(0.00);
+            $table->text('description')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('plans');
     }
 };
