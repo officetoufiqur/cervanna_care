@@ -13,12 +13,13 @@ import { onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Add Agency Employee',
+        title: 'Edit Agency Employee',
         href: '/agency-employee/create',
     },
 ];
 
 const props = defineProps<{
+    employee: any;
     agencies: {
         id: number;
         companyName: string;
@@ -50,21 +51,21 @@ interface AgencyEmployeeForm {
 
 
 const form = useForm<AgencyEmployeeForm>({
-    agency_id: '',
-    name: '',
-    educationLevel: '',
-    location: '',
-    experience: '',
-    salaryRange: '',
-    isMother: '',
-    kidAges: '',
-    handlePets: '',
-    preferredRole: '',
-    languages: [],
-    cooking: '',
-    housekeeping: '',
-    childcare: '',
-    preferred: '',
+    agency_id: props.employee.agency_id || '',
+    name: props.employee.name || '',
+    educationLevel: props.employee.educationLevel || '',
+    location: props.employee.location || '',
+    experience: props.employee.experience || '',
+    salaryRange: props.employee.salaryRange || '',
+    isMother: props.employee.isMother || '',
+    kidAges: props.employee.kidAges || '',
+    handlePets: props.employee.handlePets || '',
+    preferredRole: props.employee.preferredRole || '',
+    languages: props.employee.languages || [],
+    cooking: props.employee.cooking || '',
+    housekeeping: props.employee.housekeeping || '',
+    childcare: props.employee.childcare || '',
+    preferred: props.employee.preferred || '',
     idCopy: null,
     profilePhoto: null,
     drivingLicense: null,
@@ -86,11 +87,12 @@ const handleFileChange = (
 
 
 const submit = () => {
-    form.post('/agency-employee/store');
+    form.post('/agency-employee/update/' + props.employee.id);
 };
 
 onMounted(() => {
     $('.dropify').dropify({
+        defaultFile: props.employee.idCopyUrl || '',
         height: 120,
         messages: {
             default: 'Drag and drop a file here or click',

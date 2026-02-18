@@ -15,7 +15,7 @@ class AgencyEmployController extends Controller
     {
         $employees = AgencyEmployee::get();
 
-         return Inertia::render('User/Agency/Employee/Index', [
+        return Inertia::render('User/Agency/Employee/Index', [
             'employees' => $employees,
         ]);
     }
@@ -23,14 +23,15 @@ class AgencyEmployController extends Controller
     public function create()
     {
         $agency = Agency::get();
+
         return Inertia::render('User/Agency/Employee/Create', [
             'agencies' => $agency,
         ]);
     }
 
-     public function store(Request $request)
+    public function store(Request $request)
     {
-        
+
         $request->validate([
             'name' => 'nullable',
             'educationLevel' => 'nullable',
@@ -52,23 +53,23 @@ class AgencyEmployController extends Controller
             'drivingLicense' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
             'goodConductCertificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
             'aidCertificate' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
-        ]);    
+        ]);
 
         $user = Auth::user();
         $agency_id = Agency::where('user_id', $request->agency_id)->first();
 
-        if($agency_id == null){
+        if ($agency_id == null) {
             return response()->json([
                 'status' => false,
                 'message' => 'Agency not found',
             ], 404);
         }
-        $agencyEmployee = new AgencyEmployee();
+        $agencyEmployee = new AgencyEmployee;
         $agencyEmployee->agency_id = $agency_id->id;
         $agencyEmployee->name = $request->name;
         $agencyEmployee->educationLevel = $request->educationLevel;
         $agencyEmployee->location = $request->location;
-        $agencyEmployee->experience = $request->experience; 
+        $agencyEmployee->experience = $request->experience;
         $agencyEmployee->salaryRange = $request->salaryRange;
         $agencyEmployee->isMother = $request->isMother;
         $agencyEmployee->kidAges = $request->kidAges;
@@ -80,30 +81,39 @@ class AgencyEmployController extends Controller
         $agencyEmployee->childcare = $request->childcare;
         $agencyEmployee->preferred = $request->preferred;
 
-
-        if($request->hasFile('idCopy')){
+        if ($request->hasFile('idCopy')) {
             $agencyEmployee->idCopy = FileUpload::storeFile($request->file('idCopy'), 'uploads/employees');
         }
 
-        if($request->hasFile('profilePhoto')){
+        if ($request->hasFile('profilePhoto')) {
             $agencyEmployee->profilePhoto = FileUpload::storeFile($request->file('profilePhoto'), 'uploads/employees');
         }
 
-        if($request->hasFile('drivingLicense')){
+        if ($request->hasFile('drivingLicense')) {
             $agencyEmployee->drivingLicense = FileUpload::storeFile($request->file('drivingLicense'), 'uploads/employees');
         }
 
-        if($request->hasFile('goodConductCertificate')){
+        if ($request->hasFile('goodConductCertificate')) {
             $agencyEmployee->goodConductCertificate = FileUpload::storeFile($request->file('goodConductCertificate'), 'uploads/employees');
         }
 
-        if($request->hasFile('aidCertificate')){
+        if ($request->hasFile('aidCertificate')) {
             $agencyEmployee->aidCertificate = FileUpload::storeFile($request->file('aidCertificate'), 'uploads/employees');
         }
 
         $agencyEmployee->save();
 
-
         return redirect()->route('agency.employees.index')->with('success', 'Agency employee created successfully');
+    }
+
+    public function edit($id)
+    {
+        $employee = AgencyEmployee::findOrFail($id);
+        $agency = Agency::get();
+
+        return Inertia::render('User/Agency/Employee/Edit', [
+            'employee' => $employee,
+            'agencies' => $agency,
+        ]);
     }
 }
