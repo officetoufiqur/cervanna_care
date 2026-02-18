@@ -811,7 +811,7 @@ class AuthController extends Controller
                 'employees.*.cooking' => 'nullable',
                 'employees.*.housekeeping' => 'nullable',
                 'employees.*.childcare' => 'nullable',
-                'employees.*.liveType' => 'nullable',
+                'employees.*.preferred' => 'nullable',
 
                 'employees.*.idCopy' => 'nullable',
                 'employees.*.profilePhoto' => 'nullable',

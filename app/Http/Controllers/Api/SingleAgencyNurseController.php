@@ -35,7 +35,7 @@ class SingleAgencyNurseController extends Controller
             'cooking' => 'nullable',
             'housekeeping' => 'nullable',
             'childcare' => 'nullable',
-            'liveType' => 'nullable',
+            'preferred' => 'nullable',
 
             'idCopy' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
             'profilePhoto' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
@@ -69,7 +69,7 @@ class SingleAgencyNurseController extends Controller
         $agencyEmployee->cooking = $request->cooking;
         $agencyEmployee->housekeeping = $request->housekeeping;
         $agencyEmployee->childcare = $request->childcare;
-        $agencyEmployee->liveType = $request->liveType;
+        $agencyEmployee->preferred = $request->preferred;
 
 
         if($request->hasFile('idCopy')){
@@ -130,7 +130,7 @@ class SingleAgencyNurseController extends Controller
             'cooking' => 'nullable',
             'housekeeping' => 'nullable',
             'childcare' => 'nullable',
-            'liveType' => 'nullable',
+            'preferred' => 'nullable',
 
             'idCopy' => 'nullable|image|mimes:pdf,jpg,jpeg,png,webp|max:2048',
             'profilePhoto' => 'nullable|image|mimes:pdf,jpg,jpeg,png,webp|max:2048',
@@ -155,7 +155,7 @@ class SingleAgencyNurseController extends Controller
         $agencyEmployee->cooking = $request->cooking;
         $agencyEmployee->housekeeping = $request->housekeeping;
         $agencyEmployee->childcare = $request->childcare;
-        $agencyEmployee->liveType = $request->liveType;
+        $agencyEmployee->preferred = $request->preferred;
 
 
         $idCopy = null;

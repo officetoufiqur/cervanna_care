@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('cooking')->nullable();
             $table->string('housekeeping')->nullable();
             $table->string('childcare')->nullable();
-            $table->string('liveType')->nullable();
+            $table->string('preferred')->nullable();
             $table->string('idCopy')->nullable();
             $table->string('profilePhoto')->nullable();
             $table->string('drivingLicense')->nullable();
