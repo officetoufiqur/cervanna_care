@@ -18,6 +18,19 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface AgencySource {
+    companyName?: string;
+    kraPin?: string;
+    companyRegistrationNumber?: string;
+    number?: string;
+    businessLocation?: string;
+    registrationDocument?: string;
+    agency_services?: string[];
+    placementFee?: string;
+    replacementWindow?: string;
+    numberOfReplacement?: string;
+}
+
 interface Agency {
     id: number;
     agency?: {
@@ -52,7 +65,7 @@ const props = defineProps<{
     agency: Agency;
 }>();
 
-const source =
+const source: AgencySource =
     props.agency.role === 'agency'
         ? props.agency.agency ?? {}
         : props.agency.care_institution ?? {};
@@ -126,7 +139,7 @@ onMounted(() => {
                 <form @submit.prevent="submit" enctype="multipart/form-data">
                     <div class="space-y-3 grid grid-cols-1 gap-5">
                         <div class="space-y-4">
-                            <div>
+                            <div class="hidden">
                                 <InputLabel
                                     forr="role"
                                     :label="'Role'"
@@ -256,7 +269,7 @@ onMounted(() => {
 
                             <div>
                                 <label>Profile Complete</label>
-                                <select class="form-control" v-model.boolean="form.is_profile_completed">
+                                <select class="form-control" v-model="form.is_profile_completed">
                                     <option :value="false">False</option>
                                     <option :value="true">True</option>
                                 </select>
@@ -264,7 +277,7 @@ onMounted(() => {
 
                             <div class="mb-4">
                                 <label>Profile Verified</label>
-                                <select class="form-control" v-model.boolean="form.is_profile_verified">
+                                <select class="form-control" v-model="form.is_profile_verified">
                                     <option :value="false">False</option>
                                     <option :value="true">True</option>
                                 </select>

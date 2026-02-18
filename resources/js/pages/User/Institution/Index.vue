@@ -9,15 +9,15 @@ import { ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Agency',
-        href: '/all-agency',
+        title: 'Institution',
+        href: '/all-institution',
     },
 ];
 
 const props = defineProps<{
-    agencies: {
+    institutions: {
         id: number;
-        agency?: {
+        care_institution?: {
             companyName: string;
         };
         role: string;
@@ -42,7 +42,7 @@ const columns = [
 
 ];
 
-const data = ref(props.agencies);
+const data = ref(props.institutions);
 
 const formatDate = (date: string) => {
     return new Date(date).toLocaleString(undefined, {
@@ -61,15 +61,16 @@ const formatDate = (date: string) => {
 
 <template>
 
-    <Head title="Agency & Institution" />
+    <Head title="Institution" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <FlashMessage :message="props.flash.message" />
+
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-10">
-            <FilterTable :rows="data" :columns="columns" create-btn create-text="Add New" create-url="agency/create" title="Agency List">
+            <FilterTable :rows="data" :columns="columns" create-btn create-text="Add New" create-url="/institution/create" title="Institution List">
 
                 <template #name="{ item }">
-                    <span>{{ item.agency?.companyName }}</span>
+                    <span>{{ item.care_institution?.companyName}}</span>
                 </template>
 
                 <template #role="{ item }">
