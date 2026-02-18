@@ -4,19 +4,25 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\About;
+use App\Models\AgencyEmployee;
 use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\Choose;
-use App\Models\Contact;
 use App\Models\ContactUs;
 use App\Models\Event;
 use App\Models\Faq;
 use App\Models\Foundation;
+use App\Models\InstitutionNurse;
 use App\Models\NewsLetter;
 use App\Models\OurCore;
+use App\Models\Price;
 use App\Models\Service;
+use App\Models\Skill;
+use App\Models\User;
 use App\Models\Works;
+use App\Models\Subscribe;
 use App\Trait\ApiResponse;
+use Illuminate\Http\Request;
 
 class LandingPageController extends Controller
 {
@@ -124,5 +130,80 @@ class LandingPageController extends Controller
             $blogs,
             'Blogs page fetched successfully',
         );
+    }
+
+    public function skillNurse()
+    {
+        $skills = Skill::select('id', 'name', 'type')->where('status', true)->get();
+
+        return $this->successResponse(
+            $skills,
+            'Skills data fetched successfully',
+        );
+    }
+
+    public function prices()
+    {
+        $prices = Price::where('status', 'active')->select('id', 'name', 'price')->get();
+
+        return $this->successResponse(
+            $prices,
+            'Prices data fetched successfully',
+        );
+    }
+
+    public function specialist(Request $request)
+    {
+        $specialist = User::where('role', 'specialist')
+            ->where('is_profile_verified', 1)
+            ->with('schedule')
+            ->inRandomOrder()
+            ->get();
+
+        $employeAgencies = AgencyEmployee::inRandomOrder()
+            ->get()
+            ->map(function ($item) {
+                $item->setAttribute('subRole', 'house-manager');
+                $item->setAttribute('role', 'specialist');
+                return $item;
+            });
+
+        $institutionalNurses = InstitutionNurse::inRandomOrder()
+            ->get()
+            ->map(function ($item) {
+                $item->setAttribute('subRole', 'nurse');
+                $item->setAttribute('role', 'specialist');
+                return $item;
+            });
+
+        $combined = $specialist
+            ->concat($employeAgencies)
+            ->concat($institutionalNurses)
+            ->shuffle()
+            ->values();
+
+        return $this->successResponse($combined, 'Filtered results');
+    }
+
+    public function subscribe(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $subscribe = Subscribe::firstOrNew([
+            'email' => $request->email,
+        ]);
+
+        $subscribe->fill([
+            'status' => true,
+        ]);
+
+        $subscribe->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Subscribed successfully',
+        ], 200);
     }
 }

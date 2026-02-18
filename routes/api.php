@@ -1,19 +1,64 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\LandingPageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\SingleAgencyNurseController;
+use App\Http\Controllers\Api\ReviewController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
 Route::controller(LandingPageController::class)->group(function () {
-   Route::get('/home', 'home'); 
-   Route::get('/services', 'services'); 
-   Route::get('/abouts', 'abouts'); 
-   Route::get('/events', 'events'); 
-   Route::get('/contacts', 'contacts'); 
-   Route::get('/blogs', 'blogs'); 
+    Route::get('/home', 'home');
+    Route::get('/services', 'services');
+    Route::get('/abouts', 'abouts');
+    Route::get('/events', 'events');
+    Route::get('/contacts', 'contacts');
+    Route::get('/blogs', 'blogs');
+    Route::get('/skills', 'skillNurse');
+    Route::get('/price', 'prices');
+    Route::get('/specialist', 'specialist');
+    Route::post('/subscribe', 'subscribe');
+});
+
+Route::controller(AuthController::class)->group(function () {
+    Route::post('/register', 'register');
+    Route::post('/verify', 'verifyOtp');
+    Route::post('/login', 'login');
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/create-profile', [AuthController::class, 'create_profile']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/profile', [AuthController::class, 'getProfile']);
+    Route::post('/update-profile', [AuthController::class, 'updateProfile']);
+    Route::get('/notifications', [AuthController::class, 'getNotifications']);
+
+    Route::post('/institution-nurse', [SingleAgencyNurseController::class, 'storeInstitutionNurse']);
+    Route::delete('/institution-nurse/{id}', [SingleAgencyNurseController::class, 'deleteInstitutionNurse']);
+
+    Route::post('/agency-employee', [SingleAgencyNurseController::class, 'storeAgencyEmployee']);
+    Route::delete('/agency-employee/{id}', [SingleAgencyNurseController::class, 'deleteAgencyEmployee']);
+
+    Route::post('/institution-nurse/{id}', [SingleAgencyNurseController::class, 'updateInstitutionNurse']);
+    Route::post('/agency-employee/{id}', [SingleAgencyNurseController::class, 'updateAgencyEmployee']);
+
+    Route::controller(BookingController::class)->group(function () {
+        Route::post('/booking', 'booking');
+        Route::get('/user-booking', 'getBooking');
+        Route::get('/specialist-booking', 'getSpecialistBooking');
+        Route::post('/update-booking-status/{id}', 'updateBookingStatus');
+        Route::post('/schedule', 'storeOrUpdate');
+    });
+
+    Route::controller(ReviewController::class)->group(function () {
+        Route::post('/review', 'review');
+        Route::get('/specialist-review', 'getSpecialistReview');
+    });
+
 });

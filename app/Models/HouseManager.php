@@ -15,13 +15,19 @@ class HouseManager extends Model
         'experience',
         'experienceYear',
         'salaryRange',
-        'serviceOffered',
+        // 'serviceOffered',
         'isMother',
         'ageOfKids',
         'isHandelingPet',
         'preferBeingA',
         'firstAidCertificate',
         'goodConductCertificate',
+    ];
+
+    protected $casts = [
+        'isMother' => 'boolean',
+        'ageOfKids' => 'array',
+        'isHandelingPet' => 'boolean',
     ];
 
     public function user()

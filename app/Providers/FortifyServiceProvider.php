@@ -31,6 +31,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+        $this->loginRoleValidation();
     }
 
     /**
@@ -87,5 +88,24 @@ class FortifyServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($throttleKey);
         });
+    }
+
+
+    private function loginRoleValidation(): void
+    {
+        Fortify::authenticateUsing(function (Request $request) {
+
+        $user = \App\Models\User::where('email', $request->email)->where('role','admin')->first();
+
+            if (! $user) {
+                return null;
+            }
+
+            if (! \Hash::check($request->password, $user->password)) {
+                return null;
+            }
+
+            return $user;
+        }); 
     }
 }

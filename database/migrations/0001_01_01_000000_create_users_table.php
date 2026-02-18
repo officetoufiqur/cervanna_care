@@ -13,18 +13,24 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->integer('number')->unique();
+            $table->string('number')->unique();
+            $table->string('number_two')->nullable();
             $table->integer('otp')->nullable();
             $table->integer('age')->nullable();
             $table->string('location')->nullable();
+            $table->enum('role', ['admin','user', 'specialist', 'agency', 'care_institutions'])->default('user');
+            $table->enum('subRole', ['house-manager', 'nurse', 'physiotherapist', 'nurse-aide-or-assistant', 'special-need-caregivers'])->nullable();
+            $table->string('type')->nullable();
             $table->string('gender')->nullable();
             $table->string('languages')->nullable();
             $table->boolean('canDrive')->default(false);
             $table->string('education')->nullable();
+            $table->text('bio')->nullable();
+            $table->string('preferredRole')->nullable();
             $table->string('idCopy')->nullable();
             $table->string('profilePhoto')->nullable();
             $table->string('drivingLicense')->nullable();
@@ -36,11 +42,12 @@ return new class extends Migration
             $table->boolean('homeBasedCare')->default(false);
             $table->integer('homeBasedYearsOfExperience')->nullable();
             $table->string('homeBasedReferenceContact')->nullable();
-            $table->string('preferred')->nullable();
+            $table->json('preferred')->nullable();
+            $table->boolean('is_profile_completed')->default(false);
+            $table->boolean('is_profile_verified')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
-
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');

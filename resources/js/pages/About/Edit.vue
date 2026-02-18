@@ -6,10 +6,10 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
 
-import { onMounted } from 'vue';
+import 'dropify';
 import 'dropify/dist/css/dropify.min.css';
 import $ from 'jquery';
-import 'dropify';
+import { onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

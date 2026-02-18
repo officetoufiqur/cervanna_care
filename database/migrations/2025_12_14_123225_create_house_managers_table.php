@@ -14,16 +14,15 @@ return new class extends Migration
         Schema::create('house_managers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('experience');
-            $table->string('experienceYear');
-            $table->string('salaryRange');
-            $table->string('serviceOffered');
+            $table->string('experience')->nullable();
+            $table->string('experienceYear')->nullable();
+            $table->string('salaryRange')->nullable();
             $table->boolean('isMother')->default(false);
-            $table->string('ageOfKids');
+            $table->string('ageOfKids')->nullable();
             $table->boolean('isHandelingPet')->default(false);
-            $table->string('preferBeingA');
-            $table->string('firstAidCertificate');
-            $table->string('goodConductCertificate');
+            $table->string('preferBeingA')->nullable();
+            $table->string('firstAidCertificate')->nullable();
+            $table->string('goodConductCertificate')->nullable();
             $table->timestamps();
         });
     }

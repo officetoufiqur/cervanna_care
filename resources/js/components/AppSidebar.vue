@@ -3,7 +3,7 @@ import NavMain from '@/components/NavMain.vue';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { CalendarCheckIcon, CogIcon, ConstructionIcon, HandHeartIcon, HeartHandshakeIcon, InfoIcon, LayoutGrid, MessageCircleQuestionIcon, SquareUserRoundIcon, UserRoundCheckIcon } from 'lucide-vue-next';
+import { Book, CalendarCheckIcon, CogIcon, ConstructionIcon, HandHeartIcon, HeartHandshakeIcon, InfoIcon, LayoutGrid, MessageCircleQuestionIcon, SquareUserRoundIcon, UserRoundCheckIcon } from 'lucide-vue-next';
 import CogUser from './admin/icon/CogUser.vue';
 
 const mainNavItems: NavItem[] = [
@@ -67,6 +67,39 @@ const mainNavItems: NavItem[] = [
     icon: CalendarCheckIcon,
   },
   {
+    title: 'Booking',
+    icon: Book,
+    subMenu: [
+    {
+     title: 'Price',
+     href: '/price',
+    },
+    {
+     title: 'Booking',
+     href: '/booking',
+    },
+    ]
+  },
+  {
+    title: 'User Management',
+    icon: SquareUserRoundIcon,
+    subMenu: [
+      {
+        title: 'User',
+        href: '/all-user',
+      },
+      {
+        title: 'Specialist',
+        href: '/all-specialist',
+      },
+      {
+        title: 'Agency & Institution',
+        href: '/all-agency',
+      },
+    ]
+  },
+
+  {
     title: 'Contact',
     icon: SquareUserRoundIcon,
     subMenu: [
@@ -75,6 +108,11 @@ const mainNavItems: NavItem[] = [
         href: '/contacts',
       },
     ]
+  },
+  {
+    title: 'Subscribe',
+    href: '/subscribe',
+    icon: SquareUserRoundIcon,
   }
 ];
 

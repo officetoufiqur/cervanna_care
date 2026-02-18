@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\FileUpload;
 use App\Models\About;
 use Illuminate\Http\Request;
+use App\Models\Subscribe;
 use Inertia\Inertia;
 
 class AboutController extends Controller
@@ -56,5 +57,15 @@ class AboutController extends Controller
 
         return redirect()->route('about.index')->with('success', 'About updated successfully.');
     
+    }
+
+
+        // subscriber
+    public function subscriber() {
+        $subscribers = Subscribe::orderBy('id', 'desc')->get();
+
+        return Inertia::render('Subscribe/Index', [
+            'subscribers' => $subscribers
+        ]);
     }
 }

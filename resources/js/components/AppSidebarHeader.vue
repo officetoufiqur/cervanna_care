@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
+import NavUser from '@/components/NavUser.vue';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItemType } from '@/types';
-import NavUser from '@/components/NavUser.vue';
+import { usePage } from '@inertiajs/vue3';
 import { Bell } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 
 withDefaults(defineProps<{
@@ -18,11 +19,11 @@ const toggleNotification = () => {
     notification.value = !notification.value
 }
 
-// const page = usePage();
+const page = usePage();
 
-// const notifications = page.props.auth.notifications;
+const notifications = computed(() => page.props.notifications ?? [])
 
-
+console.log(notifications, 'notifications');
 </script>
 
 <template>
@@ -39,32 +40,43 @@ const toggleNotification = () => {
             <div class="mr-3 relative">
                 <a class="cursor-pointer lg:text-2xl text-xl" @click="toggleNotification">
                     <Bell class="text-[#56274E] lg:text-2xl text-xl" />
-                    <!-- <span v-if="notifications.length > 0"
+                    <span v-if="notifications?.length > 0"
                         class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">{{
-                        notifications.length }}</span> -->
+                        notifications?.length }}</span>
                 </a>
 
                 <!-- Dropdown menu -->
-                <div class="z-50 my-4 w-100 absolute border text-base list-none shadow bg-white divide-y divide-gray-100 rounded-lg right-0"
-                    :class="{ 'hidden': !notification }" id="notification_dropdown">
-                    <ul class="py-2" aria-labelledby="user-menu-button">
-                        <!-- <template v-if="notifications.length > 0">
-                            <li v-for="notif in notifications" :key="notif.id">
-                                <Link href="/mark-as-read"
-                                    class="block px-4 py-2 text-sm text-[#0F79BC] font-semibold hover:bg-gray-100">
-                                {{ notif.data.message }}
-                                </Link>
-                            </li>
-                        </template> -->
-                        <template>
-                            <li>
-                                <p class="px-4 py-2 text-sm text-gray-500">No notifications found</p>
-                            </li>
-                        </template>
-                    </ul>
+<div
+  v-show="notification"
+  class="z-50 mt-3 w-80 absolute border text-base list-none shadow bg-white divide-y divide-gray-100 rounded-lg right-0 rounded-xl"
+>
+  <ul class="py-2">
 
+    <template v-if="notifications.length">
 
-                </div>
+      <li
+        v-for="notif in notifications"
+        :key="notif.id"
+        class="px-4 py-2 text-sm text-black hover:bg-gray-100"
+      >
+        {{ notif.data.title }}
+      </li>
+
+    </template>
+
+    <template v-else>
+
+      <li>
+        <p class="px-4 py-2 text-sm text-gray-500">
+          No notifications found
+        </p>
+      </li>
+
+    </template>
+
+  </ul>
+</div>
+
             </div>
 
             <NavUser />

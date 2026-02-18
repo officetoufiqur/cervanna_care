@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     * 
      */
     public function run(): void
     {
@@ -25,13 +26,16 @@ class DatabaseSeeder extends Seeder
             FoundationSeeder::class,
             EventSeeder::class,
             ContactUsSeeder::class,
-            BlogSeeder::class
+            BlogSeeder::class,
+            SkillSeeder::class,
+            PriceSeeder::class,
         ]);
 
          User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
+            'role' => 'admin',
             'number' => '1234567890',
             'email_verified_at' => now(),
         ]);
