@@ -22,7 +22,7 @@ class AgencyEmployee extends Model
         'cooking',
         'housekeeping',
         'childcare',
-        'liveType',
+        'preferred',
         'idCopy',
         'profilePhoto',
         'drivingLicense',
@@ -39,7 +39,8 @@ class AgencyEmployee extends Model
         'isMother' => 'boolean',
         'handlePets' => 'boolean',
         'languages' => 'array',
-        'kidAges' => 'array'
+        'kidAges' => 'array',
+        'preferred' => 'array',
     ];
 
 }
