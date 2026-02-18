@@ -15,6 +15,7 @@ use App\Models\Foundation;
 use App\Models\InstitutionNurse;
 use App\Models\NewsLetter;
 use App\Models\OurCore;
+use App\Models\Plan;
 use App\Models\Price;
 use App\Models\Service;
 use App\Models\Skill;
@@ -154,9 +155,8 @@ class LandingPageController extends Controller
 
     public function specialist(Request $request)
     {
-        $specialist = User::where('role', 'specialist')
+        $specialist = User::with(['houseManager', 'nurse','physiotherapist','nurseAssistant','specialNeed','schedule'])->where('role', 'specialist')
             ->where('is_profile_verified', 1)
-            ->with('schedule')
             ->inRandomOrder()
             ->get();
 
@@ -205,5 +205,15 @@ class LandingPageController extends Controller
             'status' => true,
             'message' => 'Subscribed successfully',
         ], 200);
+    }
+
+    public function plans()
+    {
+        $plans = Plan::where('status', true)->select('id', 'name', 'price')->get();
+
+        return $this->successResponse(
+            $plans,
+            'Plans data fetched successfully',
+        );
     }
 }

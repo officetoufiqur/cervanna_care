@@ -8,6 +8,7 @@ use App\Models\InstitutionNurse;
 use App\Models\AgencyEmployee;
 use App\Helpers\FileUpload;
 use App\Models\Agency;
+use App\Models\Schedule;
 use App\Models\CareInstitution;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -157,7 +158,6 @@ class SingleAgencyNurseController extends Controller
         $agencyEmployee->childcare = $request->childcare;
         $agencyEmployee->preferred = $request->preferred;
 
-
         $idCopy = null;
         if ($request->hasFile('idCopy')) {
             $idCopy = FileUpload::updateFile($request->file('idCopy'), 'uploads/employees', $agencyEmployee->idCopy);
@@ -202,6 +202,26 @@ class SingleAgencyNurseController extends Controller
         }
 
         $agencyEmployee->update();
+
+
+        // $specialistId =  $agencyEmployee->id;
+
+        // $request->validate([
+        //     'specialist_type' => 'nullable|string',
+        //     'date'           => 'required|array',
+        //     'date.*'         => 'date',
+        // ]);
+
+        // $schedule = Schedule::updateOrCreate(
+        //     [
+        //         'specialist_id' => $specialistId,
+        //     ],
+        //     [
+        //         'specialist_type' => 'agency-employee',
+        //         'date' => $request->date, 
+        //     ]
+        // );
+
 
         return response()->json([
             'status' => true,

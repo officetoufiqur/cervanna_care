@@ -219,6 +219,7 @@ class AuthController extends Controller
                     'preferredRole' => $request->preferredRole,
                     'languages' => $request->languages,
                     'preferred' => $request->preferred,
+                    'age' => $request->age,
                     'number_two' => $request->number_two,
                     'idCopy' => $idCopy,
                     'profilePhoto' => $profilePhoto,
@@ -1133,9 +1134,19 @@ class AuthController extends Controller
             $user = User::select('id', 'name','number', 'email', 'is_profile_verified', 'is_profile_completed', 'role')->find($user->id);
             $agency = Agency::where('user_id', $user->id)->first();
             $agencyEmployees = [];
-            if($agency){
-                $agencyEmployees = AgencyEmployee::where('agency_id', $agency->id)->get();
+
+            if ($agency) {
+                $agencyEmployees = AgencyEmployee::where('agency_id', $agency->id)
+                    ->get()
+                    ->map(function ($employee) {
+                        $employee->schedule = Schedule::where('specialist_type', 'agency-employee')
+                            ->where('specialist_id', $employee->id)
+                            ->get();
+
+                        return $employee;
+                    });
             }
+
 
             return response()->json([
                 'status' => true,
@@ -1153,11 +1164,17 @@ class AuthController extends Controller
             $institutionNurses = [];
 
             if ($careInstitution) {
-                $institutionNurses = InstitutionNurse::where(
-                    'care_institution_id',
-                    $careInstitution->id
-                )->get();
+                $institutionNurses = InstitutionNurse::where('care_institution_id', $careInstitution->id)
+                    ->get()
+                    ->map(function ($nurse) {
+                        $nurse->schedule = Schedule::where('specialist_type', 'institution-nurse')
+                            ->where('specialist_id', $nurse->id)
+                            ->get();
+
+                        return $nurse;
+                    });
             }
+
 
             return response()->json([
                 'status' => true,
@@ -1248,6 +1265,7 @@ class AuthController extends Controller
                     'name' => $request->name,
                     'education' => $request->education,
                     'location' => $request->location,
+                    'age' => $request->age,
                     'preferredRole' => $request->preferredRole,
                     'languages' => $request->languages,
                     'number' => $request->number,
