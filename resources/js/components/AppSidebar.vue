@@ -120,6 +120,10 @@ const mainNavItems: NavItem[] = [
         title: 'Institution',
         href: '/all-institution',
       },
+      {
+        title: 'Institution Employees',
+        href: '/institution-employees',
+      }
     ]
   },
 

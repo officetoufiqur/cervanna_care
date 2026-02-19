@@ -11,7 +11,9 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FoundationController;
 use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\InstitutionEmployController;
 use App\Http\Controllers\OurCoreController;
+use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SpecialistController;
@@ -19,7 +21,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorksController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PlanController;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
@@ -116,13 +117,23 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
         Route::get('/agency-employee/create', 'create')->name('agency-employee.create');
         Route::post('/agency-employee/store', 'store')->name('agency-employee.store');
         Route::get('/agency-employee/edit/{id}', 'edit')->name('agency-employee.edit');
-        Route::put('/agency-employee/update/{id}', 'update')->name('agency-employee.update');
+        Route::post('/agency-employee/update/{id}', 'update')->name('agency-employee.update');
+        Route::delete('/agency-employee/delete/{id}', 'destroy')->name('agency-employee.delete');
     });
 
     Route::controller(InstitutionController::class)->group(function () {
         Route::get('/all-institution', 'index')->name('institution.index');
         Route::get('/institution/create', 'create')->name('institution.create');
         Route::post('/institution/store', 'store')->name('institution.store');
+    });
+
+    Route::controller(InstitutionEmployController::class)->group(function () {
+        Route::get('/institution-employees', 'index')->name('institution-employees.index');
+        Route::get('/institution-employee/create', 'create')->name('institution-employee.create');
+        Route::post('/institution-employee/store', 'store')->name('institution-employee.store');
+        Route::get('/institution-employee/edit/{id}', 'edit')->name('institution-employee.edit');
+        Route::post('/institution-employee/update/{id}', 'update')->name('institution-employee.update');
+        Route::delete('/institution-employee/delete/{id}', 'destroy')->name('institution-employee.delete');
     });
 
     Route::controller(SpecialistController::class)->group(function () {

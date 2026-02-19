@@ -10,20 +10,20 @@ import { ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Agency Employees',
-        href: '/agency-employees',
+        title: 'Institution Employees',
+        href: '/institution-employees',
     },
 ];
 
 const props = defineProps<{
     employees: {
         id: number;
-        name: string;
-        educationLevel: string;
+        fullName: string;
         location: string;
         experience: string;
-        cooking: string;
-        housekeeping: string;
+        education: string;
+        practiceLicense: string;
+        registrationNumber: string;
     }[];
     flash: {
         message?: string;
@@ -33,12 +33,12 @@ const props = defineProps<{
 const columns = [
 
     { label: 'ID', key: 'id' },
-    { label: 'Name', key: 'name' },
-    { label: 'Education Level', key: 'educationLevel' },
+    { label: 'Full Name', key: 'fullName' },
     { label: 'Location', key: 'location' },
     { label: 'Experience', key: 'experience' },
-    { label: 'Cooking', key: 'cooking' },
-    { label: 'Housekeeping', key: 'housekeeping' },
+    { label: 'Education', key: 'education' },
+    { label: 'Practice License', key: 'practiceLicense' },
+    { label: 'Registration Number', key: 'registrationNumber' },
     { label: 'Action', key: 'action' }
 
 ];
@@ -57,7 +57,7 @@ function deleteEmployee(id: number) {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            router.delete(`/agency-employee/delete/${id}`, {
+            router.delete(`/institution-employee/delete/${id}`, {
                 preserveScroll: true,
                 onSuccess: () => {
                     data.value = props.employees;
@@ -71,17 +71,17 @@ function deleteEmployee(id: number) {
 
 <template>
 
-    <Head title="Agency Employees" />
+    <Head title="Institution Employees" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <FlashMessage :message="props.flash.message" />
 
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-10">
-            <FilterTable :rows="data" :columns="columns" create-btn create-text="Add New" create-url="/agency-employee/create" title="Agency Employees List">
+            <FilterTable :rows="data" :columns="columns" create-btn create-text="Add New" create-url="/institution-employee/create" title="Institution Employees List">
 
                 <template #action="{ item }">
                     <div class="flex items-center gap-2">
-                        <Link :href="`agency-employee/edit/${item.id}`"
+                        <Link :href="`institution-employee/edit/${item.id}`"
                             class="bg-[#0AB39C] text-sm cursor-pointer text-white rounded font-medium hover:bg-[#0AB39C] py-2 px-3">
                             <SquarePenIcon class="w-5 h-5" />
                         </Link>

@@ -9,16 +9,18 @@ import { Head, useForm } from '@inertiajs/vue3';
 import 'dropify';
 import 'dropify/dist/css/dropify.min.css';
 import $ from 'jquery';
+import { nextTick } from 'vue';
 import { onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Add Agency Employee',
+        title: 'Edit Agency Employee',
         href: '/agency-employee/create',
     },
 ];
 
 const props = defineProps<{
+    employee: any;
     agencies: {
         id: number;
         companyName: string;
@@ -50,21 +52,21 @@ interface AgencyEmployeeForm {
 
 
 const form = useForm<AgencyEmployeeForm>({
-    agency_id: '',
-    name: '',
-    educationLevel: '',
-    location: '',
-    experience: '',
-    salaryRange: '',
-    isMother: '',
-    kidAges: '',
-    handlePets: '',
-    preferredRole: '',
-    languages: [],
-    cooking: '',
-    housekeeping: '',
-    childcare: '',
-    preferred: '',
+    agency_id: props.employee.agency_id || '',
+    name: props.employee.name || '',
+    educationLevel: props.employee.educationLevel || '',
+    location: props.employee.location || '',
+    experience: props.employee.experience || '',
+    salaryRange: props.employee.salaryRange || '',
+    isMother: props.employee.isMother ?? null,
+    kidAges: props.employee.kidAges || '',
+    handlePets: props.employee.handlePets ?? null,
+    preferredRole: props.employee.preferredRole || '',
+    languages: props.employee.languages || [],
+    cooking: props.employee.cooking || '',
+    housekeeping: props.employee.housekeeping || '',
+    childcare: props.employee.childcare || '',
+    preferred: props.employee.preferred || '',
     idCopy: null,
     profilePhoto: null,
     drivingLicense: null,
@@ -86,10 +88,12 @@ const handleFileChange = (
 
 
 const submit = () => {
-    form.post('/agency-employee/store');
+    form.post('/agency-employee/update/' + props.employee.id);
 };
 
-onMounted(() => {
+onMounted(async () => {
+    await nextTick();
+
     $('.dropify').dropify({
         height: 120,
         messages: {
@@ -170,8 +174,8 @@ onMounted(() => {
                             <label class="block mb-1">Is Mother?</label>
                             <select v-model="form.isMother" class="w-full border rounded px-3 py-2">
                                 <option value="">Select</option>
-                                <option value="1">Yes</option>
-                                <option value="0">No</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
                             </select>
                         </div>
 
@@ -189,10 +193,11 @@ onMounted(() => {
                             <label class="block mb-1">Handle Pets?</label>
                             <select v-model="form.handlePets" class="w-full border rounded px-3 py-2">
                                 <option value="">Select</option>
-                                <option value="1">Yes</option>
-                                <option value="0">No</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
                             </select>
                         </div>
+
 
                         <div>
                             <label class="block mb-1">Preferred Role</label>
@@ -302,34 +307,34 @@ onMounted(() => {
 
                         <div>
                             <label class="block mb-1">ID Copy</label>
-                            <input type="file" class="dropify" @change="(e) => handleFileChange(e, 'idCopy')" />
+                            <input type="file" class="dropify" :data-default-file="props.employee.idCopy" @change="(e) => handleFileChange(e, 'idCopy')" />
                         </div>
 
                         <div>
                             <label class="block mb-1">Profile Photo</label>
-                            <input type="file" class="dropify" @change="(e) => handleFileChange(e, 'profilePhoto')" />
+                            <input type="file" class="dropify" :data-default-file="props.employee.profilePhoto" @change="(e) => handleFileChange(e, 'profilePhoto')" />
                         </div>
 
                         <div>
                             <label class="block mb-1">Driving License</label>
-                            <input type="file" class="dropify" @change="(e) => handleFileChange(e, 'drivingLicense')" />
+                            <input type="file" class="dropify" :data-default-file="props.employee.drivingLicense" @change="(e) => handleFileChange(e, 'drivingLicense')" />
                         </div>
 
                         <div>
                             <label class="block mb-1">Good Conduct Certificate</label>
-                            <input type="file" class="dropify"
+                            <input type="file" class="dropify" :data-default-file="props.employee.goodConductCertificate"
                                 @change="(e) => handleFileChange(e, 'goodConductCertificate')" />
                         </div>
 
                         <div>
                             <label class="block mb-1">Aid Certificate</label>
-                            <input type="file" class="dropify" @change="(e) => handleFileChange(e, 'aidCertificate')" />
+                            <input type="file" class="dropify" :data-default-file="props.employee.aidCertificate" @change="(e) => handleFileChange(e, 'aidCertificate')" />
                         </div>
 
                     </div>
 
                     <div class="mt-8">
-                        <Button label="Create" type="submit" />
+                        <Button label="Update" type="submit" />
                     </div>
 
                 </form>
