@@ -20,6 +20,7 @@ use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorksController;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -48,6 +49,14 @@ Route::middleware(['auth', 'is_not_admin', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'is_not_admin'])->group(function () {
+    Route::post('/notifications/{id}/read', function ($id) {
+        DB::table('notifications')
+            ->where('id', $id)
+            ->update(['read_at' => now()]);
+
+        return back();
+    });
+
     Route::controller(BannerController::class)->group(function () {
         Route::get('/banners', 'index')->name('banners.index');
         Route::get('/banners/create', 'create')->name('banners.create');
