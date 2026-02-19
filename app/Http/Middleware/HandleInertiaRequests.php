@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
-use Inertia\Middleware;
 use Illuminate\Support\Facades\DB;
+use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -48,25 +48,23 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
-                'message' => fn() => $request->session()->get('message'),
-                'error'   => fn() => $request->session()->get('error'),
+                'message' => fn () => $request->session()->get('message'),
+                'error' => fn () => $request->session()->get('error'),
             ],
 
-              
-        'notifications' => fn () =>
-            DB::table('notifications')
-                ->whereNull('read_at')
+            'notifications' => fn () => DB::table('notifications')
                 ->latest()
-                ->take(20)
+                ->take(50)
                 ->get()
                 ->map(function ($n) {
                     $n->data = json_decode($n->data, true);
+
                     return $n;
                 })
                 ->values()
                 ->toArray(),
 
-    ];
+        ];
 
-}
+    }
 }

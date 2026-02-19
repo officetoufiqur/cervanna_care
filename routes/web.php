@@ -12,6 +12,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FoundationController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionEmployController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OurCoreController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PriceController;
@@ -48,6 +49,9 @@ Route::middleware(['auth', 'is_not_admin', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'is_not_admin'])->group(function () {
+
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');
+
     Route::controller(BannerController::class)->group(function () {
         Route::get('/banners', 'index')->name('banners.index');
         Route::get('/banners/create', 'create')->name('banners.create');
