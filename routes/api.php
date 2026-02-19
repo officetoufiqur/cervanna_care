@@ -3,10 +3,11 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\LandingPageController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\SingleAgencyNurseController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\SingleAgencyNurseController;
-use App\Http\Controllers\Api\ReviewController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -38,7 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'getProfile']);
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
-    Route::get('/notifications', [AuthController::class, 'getNotifications']);
+    Route::get('/notifications', [NotificationController::class, 'getNotifications']);
 
     Route::post('/institution-nurse', [SingleAgencyNurseController::class, 'storeInstitutionNurse']);
     Route::delete('/institution-nurse/{id}', [SingleAgencyNurseController::class, 'deleteInstitutionNurse']);

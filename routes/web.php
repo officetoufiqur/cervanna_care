@@ -12,6 +12,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FoundationController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionEmployController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OurCoreController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PriceController;
@@ -20,7 +21,6 @@ use App\Http\Controllers\SpecialistController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorksController;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -49,13 +49,8 @@ Route::middleware(['auth', 'is_not_admin', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'is_not_admin'])->group(function () {
-    Route::post('/notifications/{id}/read', function ($id) {
-        DB::table('notifications')
-            ->where('id', $id)
-            ->update(['read_at' => now()]);
 
-        return back();
-    });
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');
 
     Route::controller(BannerController::class)->group(function () {
         Route::get('/banners', 'index')->name('banners.index');

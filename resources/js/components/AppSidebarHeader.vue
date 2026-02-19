@@ -26,7 +26,7 @@ const notifications = computed(() => page.props.notifications ?? [])
 
 // Unread count only
 const unreadCount = computed(() =>
-  notifications.value.filter((n: any) => !n.read_at).length
+  notifications.value.filter((n: any) => !n.admin_read_at).length
 )
 
 // Mark as read
@@ -79,8 +79,8 @@ const markAsRead = (id: string) => {
                 @click="markAsRead(notif.id)"
                 class="px-4 py-3 text-sm cursor-pointer transition hover:bg-gray-100"
                 :class="{
-                  'bg-purple-50 font-semibold text-gray-900': !notif.read_at,
-                  'text-gray-500': notif.read_at
+                  'bg-purple-50 font-semibold text-gray-900': !notif.admin_read_at,
+                  'text-gray-500': notif.admin_read_at
                 }"
               >
                 {{ notif.data?.title ?? 'Notification' }}

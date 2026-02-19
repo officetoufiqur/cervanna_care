@@ -1924,15 +1924,4 @@ class AuthController extends Controller
 
     }
 
-    public function getNotifications()
-    {
-        $user = auth()->user();
-        $notifications = $user->notifications;
-        return response()->json([
-            'status' => true,
-            'message' => 'Notifications retrieved successfully',
-            'data' => $notifications,
-        ], 200);
-    }
-
 }
