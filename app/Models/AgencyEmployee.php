@@ -14,6 +14,7 @@ class AgencyEmployee extends Model
         'experience',
         'salaryRange',
         'type',
+        'subRole',
         'isMother',
         'kidAges',
         'handlePets',

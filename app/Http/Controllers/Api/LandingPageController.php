@@ -160,21 +160,37 @@ class LandingPageController extends Controller
             ->inRandomOrder()
             ->get();
 
-        $employeAgencies = AgencyEmployee::inRandomOrder()
-            ->get()
-            ->map(function ($item) {
-                $item->setAttribute('subRole', 'house-manager');
-                $item->setAttribute('role', 'specialist');
-                return $item;
-            });
+        // $employeAgencies = AgencyEmployee::inRandomOrder()
+        //     ->get()
+        //     ->map(function ($item) {
+        //         $item->setAttribute('subRole', 'house-manager');
+        //         $item->setAttribute('role', 'specialist');
+        //         return $item;
+        //     });
 
-        $institutionalNurses = InstitutionNurse::inRandomOrder()
-            ->get()
-            ->map(function ($item) {
-                $item->setAttribute('subRole', 'nurse');
-                $item->setAttribute('role', 'specialist');
-                return $item;
-            });
+       $employeAgencies = AgencyEmployee::with(['agency.user:id,role,is_profile_verified'])
+        ->whereHas('agency.user', function ($query) {
+            $query->where('is_profile_verified', 1)
+                ->where('role', 'agency');
+        })
+        ->inRandomOrder()
+        ->get();
+
+        $institutionalNurses = InstitutionNurse::with(['careInstitution.user:id,role,is_profile_verified'])
+        ->whereHas('careInstitution.user', function ($query) {
+            $query->where('is_profile_verified', 1)
+                ->where('role', 'care_institutions');
+        })
+        ->inRandomOrder()
+        ->get();
+
+        // $institutionalNurses = InstitutionNurse::inRandomOrder()
+        //     ->get()
+        //     ->map(function ($item) {
+        //         $item->setAttribute('subRole', 'nurse');
+        //         $item->setAttribute('role', 'specialist');
+        //         return $item;
+        //     });
 
         $combined = $specialist
             ->concat($employeAgencies)
