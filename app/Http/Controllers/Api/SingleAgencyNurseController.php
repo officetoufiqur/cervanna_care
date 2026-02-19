@@ -204,23 +204,23 @@ class SingleAgencyNurseController extends Controller
         $agencyEmployee->update();
 
 
-        // $specialistId =  $agencyEmployee->id;
+        $specialistId =  $agencyEmployee->id;
 
-        // $request->validate([
-        //     'specialist_type' => 'nullable|string',
-        //     'date'           => 'required|array',
-        //     'date.*'         => 'date',
-        // ]);
+        $request->validate([
+            'specialist_type' => 'nullable|string',
+            'date'           => 'required|array',
+            'date.*'         => 'date',
+        ]);
 
-        // $schedule = Schedule::updateOrCreate(
-        //     [
-        //         'specialist_id' => $specialistId,
-        //     ],
-        //     [
-        //         'specialist_type' => 'agency-employee',
-        //         'date' => $request->date, 
-        //     ]
-        // );
+        $schedule = Schedule::updateOrCreate(
+            [
+                'specialist_id' => $specialistId,
+            ],
+            [
+                'specialist_type' => 'agency-employee',
+                'date' => $request->date, 
+            ]
+        );
 
 
         return response()->json([
@@ -490,6 +490,28 @@ class SingleAgencyNurseController extends Controller
         }
 
         $institutionNurse->update();
+
+
+        $specialistId =  $institutionNurse->id;
+
+        $request->validate([
+            'specialist_type' => 'nullable|string',
+            'date'           => 'required|array',
+            'date.*'         => 'date',
+        ]);
+
+        $schedule = Schedule::updateOrCreate(
+            [
+                'specialist_id' => $specialistId,
+            ],
+            [
+                'specialist_type' => 'institution-nurse',
+                'date' => $request->date, 
+            ]
+        );
+
+
+
 
         return response()->json([
             'status' => true,
