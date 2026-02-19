@@ -9,6 +9,7 @@ import { Head, useForm } from '@inertiajs/vue3';
 import 'dropify';
 import 'dropify/dist/css/dropify.min.css';
 import $ from 'jquery';
+import { nextTick } from 'vue';
 import { onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -57,9 +58,9 @@ const form = useForm<AgencyEmployeeForm>({
     location: props.employee.location || '',
     experience: props.employee.experience || '',
     salaryRange: props.employee.salaryRange || '',
-    isMother: props.employee.isMother || '',
+    isMother: props.employee.isMother ?? null,
     kidAges: props.employee.kidAges || '',
-    handlePets: props.employee.handlePets || '',
+    handlePets: props.employee.handlePets ?? null,
     preferredRole: props.employee.preferredRole || '',
     languages: props.employee.languages || [],
     cooking: props.employee.cooking || '',
@@ -90,9 +91,10 @@ const submit = () => {
     form.post('/agency-employee/update/' + props.employee.id);
 };
 
-onMounted(() => {
+onMounted(async () => {
+    await nextTick();
+
     $('.dropify').dropify({
-        defaultFile: props.employee.idCopyUrl || '',
         height: 120,
         messages: {
             default: 'Drag and drop a file here or click',
@@ -172,8 +174,8 @@ onMounted(() => {
                             <label class="block mb-1">Is Mother?</label>
                             <select v-model="form.isMother" class="w-full border rounded px-3 py-2">
                                 <option value="">Select</option>
-                                <option value="1">Yes</option>
-                                <option value="0">No</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
                             </select>
                         </div>
 
@@ -191,10 +193,11 @@ onMounted(() => {
                             <label class="block mb-1">Handle Pets?</label>
                             <select v-model="form.handlePets" class="w-full border rounded px-3 py-2">
                                 <option value="">Select</option>
-                                <option value="1">Yes</option>
-                                <option value="0">No</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
                             </select>
                         </div>
+
 
                         <div>
                             <label class="block mb-1">Preferred Role</label>
@@ -304,34 +307,34 @@ onMounted(() => {
 
                         <div>
                             <label class="block mb-1">ID Copy</label>
-                            <input type="file" class="dropify" @change="(e) => handleFileChange(e, 'idCopy')" />
+                            <input type="file" class="dropify" :data-default-file="props.employee.idCopy" @change="(e) => handleFileChange(e, 'idCopy')" />
                         </div>
 
                         <div>
                             <label class="block mb-1">Profile Photo</label>
-                            <input type="file" class="dropify" @change="(e) => handleFileChange(e, 'profilePhoto')" />
+                            <input type="file" class="dropify" :data-default-file="props.employee.profilePhoto" @change="(e) => handleFileChange(e, 'profilePhoto')" />
                         </div>
 
                         <div>
                             <label class="block mb-1">Driving License</label>
-                            <input type="file" class="dropify" @change="(e) => handleFileChange(e, 'drivingLicense')" />
+                            <input type="file" class="dropify" :data-default-file="props.employee.drivingLicense" @change="(e) => handleFileChange(e, 'drivingLicense')" />
                         </div>
 
                         <div>
                             <label class="block mb-1">Good Conduct Certificate</label>
-                            <input type="file" class="dropify"
+                            <input type="file" class="dropify" :data-default-file="props.employee.goodConductCertificate"
                                 @change="(e) => handleFileChange(e, 'goodConductCertificate')" />
                         </div>
 
                         <div>
                             <label class="block mb-1">Aid Certificate</label>
-                            <input type="file" class="dropify" @change="(e) => handleFileChange(e, 'aidCertificate')" />
+                            <input type="file" class="dropify" :data-default-file="props.employee.aidCertificate" @change="(e) => handleFileChange(e, 'aidCertificate')" />
                         </div>
 
                     </div>
 
                     <div class="mt-8">
-                        <Button label="Create" type="submit" />
+                        <Button label="Update" type="submit" />
                     </div>
 
                 </form>
