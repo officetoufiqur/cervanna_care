@@ -15,6 +15,7 @@ class InstitutionNurse extends Model
         'gender',
         'education',
         'type',
+        'subRole',
         'canDrive',
         'preferredRole',
         'languages',
