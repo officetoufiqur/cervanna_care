@@ -17,6 +17,7 @@ use App\Models\Physiotherapist;
 use App\Models\SpecialNeed;
 use App\Models\Subscribe;
 use App\Models\Schedule;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -1143,6 +1144,10 @@ class AuthController extends Controller
                             ->where('specialist_id', $employee->id)
                             ->get();
 
+                        $employee->reviews = Review::where('specialist_type', 'agency-employee')
+                            ->where('specialist_id', $employee->id)
+                            ->get();
+
                         return $employee;
                     });
             }
@@ -1168,6 +1173,10 @@ class AuthController extends Controller
                     ->get()
                     ->map(function ($nurse) {
                         $nurse->schedule = Schedule::where('specialist_type', 'institution-nurse')
+                            ->where('specialist_id', $nurse->id)
+                            ->get();
+
+                        $nurse->reviews = Review::where('specialist_type', 'institution-nurse')
                             ->where('specialist_id', $nurse->id)
                             ->get();
 

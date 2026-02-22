@@ -128,5 +128,10 @@ class User extends Authenticatable
         return $this->hasMany(Schedule::class, 'specialist_id', 'id');
     }
 
+    public function review()
+    {
+        return $this->hasMany(Review::class, 'specialist_id', 'id');
+    }
+
 
 }
