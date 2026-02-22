@@ -153,44 +153,81 @@ class LandingPageController extends Controller
         );
     }
 
+    // public function specialist(Request $request)
+    // {
+    //     $specialist = User::with(['houseManager', 'nurse','physiotherapist','nurseAssistant','specialNeed','schedule'])->where('role', 'specialist')
+    //         ->where('is_profile_verified', 1)
+    //         ->inRandomOrder()
+    //         ->get();
+
+    //    $employeAgencies = AgencyEmployee::with(['agency.user:id,role,is_profile_verified'])
+    //     ->whereHas('agency.user', function ($query) {
+    //         $query->where('is_profile_verified', 1)
+    //             ->where('role', 'agency');
+    //     })
+    //     ->inRandomOrder()
+    //     ->get();
+
+    //     $institutionalNurses = InstitutionNurse::with(['careInstitution.user:id,role,is_profile_verified'])
+    //     ->whereHas('careInstitution.user', function ($query) {
+    //         $query->where('is_profile_verified', 1)
+    //             ->where('role', 'care_institutions');
+    //     })
+    //     ->inRandomOrder()
+    //     ->get();
+
+
+    //     $combined = $specialist
+    //         ->concat($employeAgencies)
+    //         ->concat($institutionalNurses)
+    //         ->shuffle()
+    //         ->values();
+
+    //     return $this->successResponse($combined, 'Filtered results');
+    // }
+
     public function specialist(Request $request)
     {
-        $specialist = User::with(['houseManager', 'nurse','physiotherapist','nurseAssistant','specialNeed','schedule'])->where('role', 'specialist')
+        $specialist = User::with([
+                'houseManager',
+                'nurse',
+                'physiotherapist',
+                'nurseAssistant',
+                'specialNeed',
+                'schedule',
+            ])
+            ->withCount('review')
+            ->withAvg('review', 'rating')
+            ->where('role', 'specialist')
             ->where('is_profile_verified', 1)
             ->inRandomOrder()
             ->get();
 
-        // $employeAgencies = AgencyEmployee::inRandomOrder()
-        //     ->get()
-        //     ->map(function ($item) {
-        //         $item->setAttribute('subRole', 'house-manager');
-        //         $item->setAttribute('role', 'specialist');
-        //         return $item;
-        //     });
+        $employeAgencies = AgencyEmployee::with([
+                'agency.user:id,role,is_profile_verified',
+                'schedule',
+            ])
+            ->withCount('review')
+            ->withAvg('review', 'rating')
+            ->whereHas('agency.user', function ($query) {
+                $query->where('is_profile_verified', 1)
+                    ->where('role', 'agency');
+            })
+            ->inRandomOrder()
+            ->get();
 
-       $employeAgencies = AgencyEmployee::with(['agency.user:id,role,is_profile_verified'])
-        ->whereHas('agency.user', function ($query) {
-            $query->where('is_profile_verified', 1)
-                ->where('role', 'agency');
-        })
-        ->inRandomOrder()
-        ->get();
-
-        $institutionalNurses = InstitutionNurse::with(['careInstitution.user:id,role,is_profile_verified'])
-        ->whereHas('careInstitution.user', function ($query) {
-            $query->where('is_profile_verified', 1)
-                ->where('role', 'care_institutions');
-        })
-        ->inRandomOrder()
-        ->get();
-
-        // $institutionalNurses = InstitutionNurse::inRandomOrder()
-        //     ->get()
-        //     ->map(function ($item) {
-        //         $item->setAttribute('subRole', 'nurse');
-        //         $item->setAttribute('role', 'specialist');
-        //         return $item;
-        //     });
+        $institutionalNurses = InstitutionNurse::with([
+                'careInstitution.user:id,role,is_profile_verified',
+                'schedule',
+            ])
+            ->withCount('review')
+            ->withAvg('review', 'rating')
+            ->whereHas('careInstitution.user', function ($query) {
+                $query->where('is_profile_verified', 1)
+                    ->where('role', 'care_institutions');
+            })
+            ->inRandomOrder()
+            ->get();
 
         $combined = $specialist
             ->concat($employeAgencies)

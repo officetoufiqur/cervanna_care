@@ -46,6 +46,18 @@ class InstitutionNurse extends Model
         return $this->belongsTo(CareInstitution::class);
     }
 
+    public function schedule()
+    {
+        return $this->hasMany(Schedule::class, 'specialist_id')
+            ->where('specialist_type', 'institutional-nurse');
+    }
+
+    public function review()
+    {
+        return $this->hasMany(Review::class, 'specialist_id')
+            ->where('specialist_type', 'institutional-nurse');
+    }
+
 
     protected $casts = [
         'isNursingInKenya' => 'boolean',

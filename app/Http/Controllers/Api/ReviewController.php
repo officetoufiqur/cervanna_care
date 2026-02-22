@@ -52,7 +52,7 @@ class ReviewController extends Controller
     {
 
        $user = auth()->user();
-       $reviews = Review::with('user:id,name')->where('specialist_id', $user->id)->orderBy('id', 'desc')->get();
+       $reviews = Review::with('user:id,name')->where('specialist_id', $user->id)->whereNotIn('specialist_type', ['agency-employee', 'institution-nurse'])->orderBy('id', 'desc')->get();
 
         return response()->json([
             'status' => 200,
