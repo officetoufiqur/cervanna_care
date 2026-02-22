@@ -9,94 +9,134 @@ import { Head, useForm } from '@inertiajs/vue3';
 import 'dropify';
 import 'dropify/dist/css/dropify.min.css';
 import $ from 'jquery';
-import { onMounted } from 'vue';
+import { nextTick, onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Edit Specialist',
-        href: '/specialist',
-    },          
+        title: 'Edit House Manager',
+        href: '/house-manager',
+    },
 ];
 
-interface specialist {
-    id: number;
-    name?: string;
-    role?: string;
-    subRole?: string;
-    education?: string;
-    location?: string;
-    preferredRole?: string;
-    languages?: string;
-    number?: string;
-    preferred?: string;
+const props = defineProps<{
+    specialist: Specialist;
+}>()
 
+interface Specialist {
+    id: number,
+    name: string,
+    role: string,
+    subRole: string,
+    location: string,
+    age: string,
+    gender: string,
+    preferredRole: string,
+    languages: string[];
+    canDrive: string,
+    bio: string,
+    education: string,
+    preferred: string,
+    number_two: string,
+
+    hospitalBasedCare: string,
+    hospitalBasedYearsOfExperience: string,
+    hospitalBasedReferenceContact: string,
+
+    homeBasedCare: string,
+    homeBasedYearsOfExperience: string,
+    homeBasedReferenceContact: string,
+    idCopy: string,
+    profilePhoto: string,
+    goodConductCertificate: string,
+    drivingLicense: string,
+    referenceLetter: string,
+    is_profile_completed: boolean;
+    is_profile_verified: boolean;
+    created_at: string;
     house_manager: {
         experience?: string;
+        experienceYear?: string;
+        salaryRange?: string;
         isMother?: boolean;
         ageOfKids?: string;
-        salaryRange?: string;
         isHandelingPet?: boolean;
         preferBeingA?: string;
         firstAidCertificate?: string;
         goodConductCertificate: string;
-    }
+    };
 
-    is_profile_completed: boolean;
-    is_profile_verified: boolean;
-    created_at: string;
 }
 
 
-const props = defineProps<{
-    specialist: specialist;
-}>()
+
 
 const form = useForm({
 
     name: props.specialist.name,
     role: props.specialist.role,
     subRole: props.specialist.subRole,
-    education: props.specialist.education,
     location: props.specialist.location,
+    age: props.specialist.age,
+    gender: props.specialist.gender,
     preferredRole: props.specialist.preferredRole,
-    languages: props.specialist.languages,
-    number: props.specialist.number,
+    languages: props.specialist.languages || [],
+    canDrive: props.specialist.canDrive,
+    bio: props.specialist.bio,
+    education: props.specialist.education,
     preferred: props.specialist.preferred,
+    number_two: props.specialist.number_two,
+    hospitalBasedCare: props.specialist.hospitalBasedCare,
+    hospitalBasedYearsOfExperience: props.specialist.hospitalBasedYearsOfExperience,
+    hospitalBasedReferenceContact: props.specialist.hospitalBasedReferenceContact,
 
-    experience: props.specialist.house_manager.experience,
-    salaryRange: props.specialist.house_manager.salaryRange,
-    isMother: props.specialist.house_manager.isMother,
-    ageOfKids: props.specialist.house_manager.ageOfKids,
-    isHandelingPet: props.specialist.house_manager.isHandelingPet,
-    preferBeingA: props.specialist.house_manager.preferBeingA,
-    firstAidCertificate: props.specialist.house_manager.firstAidCertificate,
-    goodConductCertificate: props.specialist.house_manager.goodConductCertificate,
+    homeBasedCare: props.specialist.homeBasedCare,
+    homeBasedYearsOfExperience: props.specialist.homeBasedYearsOfExperience,
+    homeBasedReferenceContact: props.specialist.homeBasedReferenceContact,
+
+    idCopy: props.specialist.idCopy,
+    profilePhoto: props.specialist.profilePhoto,
+    drivingLicense: props.specialist.drivingLicense,
+    referenceLetter: props.specialist.referenceLetter,
 
     is_profile_completed: props.specialist.is_profile_completed,
     is_profile_verified: props.specialist.is_profile_verified,
     created_at: props.specialist.created_at,
+
+    experience: props.specialist.house_manager?.experience || '',
+    isMother: props.specialist.house_manager?.isMother || false,
+    ageOfKids: props.specialist.house_manager?.ageOfKids || '',
+    salaryRange: props.specialist.house_manager?.salaryRange || '',
+    isHandelingPet: props.specialist.house_manager?.isHandelingPet || false,
+    preferBeingA: props.specialist.house_manager?.preferBeingA || '',
+    firstAidCertificate: props.specialist.house_manager?.firstAidCertificate || '',
+    goodConductCertificate: props.specialist.house_manager?.goodConductCertificate || '',
+
+
 });
- 
+
+
+const handleFileChange = (
+    e: Event,
+    field: keyof typeof form
+) => {
+    const target = e.target as HTMLInputElement;
+
+    if (target.files && target.files.length > 0) {
+        (form as Record<string, any>)[field] = target.files[0];
+    }
+};
+
+
 
 const submit = () => {
-    form.put('/specialist/update/' + props.specialist.id);
+    form.post('/house-manager/update/' + props.specialist.id);
 }
 
-onMounted(() => {
-    $('#firstAidCertificate').dropify({
-        defaultFile: props.specialist.house_manager.firstAidCertificate,
-        height: 120,
-        messages: {
-            default: 'Drag and drop a file here or click',
-            replace: 'Drag and drop or click to replace',
-            remove: 'Remove',
-            error: 'Ooops, something wrong happened.'
-        }
-    });
-});
-onMounted(() => {
-    $('#goodConductCertificate').dropify({
-        defaultFile: props.specialist.house_manager.goodConductCertificate,
+
+onMounted(async () => {
+    await nextTick();
+
+    $('.dropify').dropify({
         height: 120,
         messages: {
             default: 'Drag and drop a file here or click',
@@ -111,164 +151,215 @@ onMounted(() => {
 
 <template>
 
-    <Head title="Specialist Update" />
+    <Head title="House Manager Update" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="pt-10 lg:px-20 px-5">
             <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-medium mb-4">Specialist Update</h1>
+                <h1 class="text-2xl font-medium mb-4">House Manager Update</h1>
                 <LinkButton :label="'Back'" :url="'/all-specialist'" />
             </div>
 
             <div class="border border-gray-200 p-10 mt-3 shadow rounded">
-                <form @submit.prevent="submit">
-                   <div class="space-y-3 grid grid-cols-1 gap-5">
-                        <div class="space-y-4">
-                                <div>
-                                    <InputLabel forr="name" :label="'Name'" v-model="form.name" type="text"
-                                        :placeholder="'Name'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.name">{{ form.errors.name }}</span>
-                                </div>
+                <form @submit.prevent="submit" enctype="multipart/form-data">
+                    <div class="grid grid-cols-2 gap-3">
 
-                                <div>
-                                    <InputLabel forr="role" :label="'Role'" v-model="form.role" type="text"
-                                        :placeholder="'Role'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.role">{{ form.errors.role }}</span>
-                                </div>
+                        <!-- Basic Info -->
+                        <InputLabel forr="name" label="Name" v-model="form.name" type="text" />
+                        <InputLabel forr="age" label="Age" v-model="form.age" type="number" />
+                        <div>
+                            <label class="block mb-1">Education</label>
+                            <select v-model="form.education" class="w-full border rounded px-3 py-2">
+                                <option value="">Select education</option>
+                                <option value="Primary">Primary</option>
+                                <option value="Secondary">Secondary</option>
+                                <option value="College">College</option>
+                                <option value="University">University</option>
+                            </select>
+                        </div>
 
-                                <div>
-                                    <InputLabel forr="subRole" :label="'Sub Role'" v-model="form.subRole" type="text"
-                                        :placeholder="'Sub Role'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.subRole">{{ form.errors.subRole }}</span>
-                                </div>
+                        <div>
+                            <label class="block mb-1">Experience (Years)</label>
+                            <select v-model="form.experience" class="w-full border rounded px-3 py-2">
+                                <option value="">Select experience</option>
+                                <option value="1 years">1 years</option>
+                                <option value="2 years">2 years</option>
+                                <option value="3 years">3 years</option>
+                                <option value="4 years">4 years</option>
+                                <option value="5+ years">5+ years</option>
+                            </select>
+                        </div>
 
-                                <div>   
-                                    <InputLabel forr="education" :label="'Education'" v-model="form.education" type="text"
-                                        :placeholder="'Education'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.education">{{ form.errors.education }}</span>
-                                </div>
-                                <div>   
-                                    <InputLabel forr="experience" :label="'Experience'" v-model="form.experience" type="text"
-                                        :placeholder="'Experience'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.experience">{{ form.errors.experience }}</span>
-                                </div>
-                                <div>   
-                                    <InputLabel forr="location" :label="'location'" v-model="form.location" type="text"
-                                        :placeholder="'location'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.location">{{ form.errors.location }}</span>
-                                </div>
+                        <div>
+                            <label class="block mb-1">Salary Range (KSH)</label>
+                            <select v-model="form.salaryRange" class="w-full border rounded px-3 py-2">
+                                <option value="">Select salary range</option>
+                                <option value="200-400">200-400</option>
+                                <option value="400-600">400-600</option>
+                                <option value="600-800">600-800</option>
+                                <option value="800-1000">800-1000</option>
+                                <option value="More then 1000">More then 1000</option>
+                            </select>
+                        </div>
 
-                                <div>
-                                    <InputLabel forr="preferredRole" :label="'preferredRole'" v-model="form.preferredRole" type="text"
-                                        :placeholder="'preferredRole'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.preferredRole">{{ form.errors.preferredRole }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="languages" :label="'languages'" v-model="form.languages" type="text"
-                                        :placeholder="'languages'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.languages">{{ form.errors.languages }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="phone" :label="'phone'" v-model="form.number" type="text"
-                                        :placeholder="'phone'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.number">{{ form.errors.number }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="salaryRange" :label="'salaryRange'" v-model="form.salaryRange" type="text"
-                                        :placeholder="'salaryRange'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.salaryRange">{{ form.errors.salaryRange }}</span>
-                                </div>
+                        <InputLabel forr="location" label="Location" v-model="form.location" type="text" />
 
-                                <div>
-                                    <InputLabel forr="preferred" :label="'preferred'" v-model="form.preferred" type="text"
-                                        :placeholder="'preferred'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.preferred">{{ form.errors.preferred }}</span>
-                                </div>
+                        <div>
+                            <label>Perferred</label>
+                            <select v-model="form.preferred" class="form-control">
+                                <option value="">Select</option>
+                                <option value="Live In">Live In</option>
+                                <option value="DayBurg">DayBurg</option>
+                            </select>
+                        </div>
 
-                                <div>
-                                    <InputLabel forr="isMother" :label="'Is Mother'" v-model="form.isMother" type="text"
-                                        :placeholder="'Is Mother'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.isMother">{{ form.errors.isMother }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="ageOfKids" :label="'ageOfKids'" v-model="form.ageOfKids" type="text"
-                                        :placeholder="'ageOfKids'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.ageOfKids">{{ form.errors.ageOfKids }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="isHandelingPet" :label="'isHandelingPet'" v-model="form.isHandelingPet" type="text"
-                                        :placeholder="'isHandelingPet'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.isHandelingPet">{{ form.errors.isHandelingPet }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="preferBeingA" :label="'preferBeingA'" v-model="form.preferBeingA" type="text"
-                                        :placeholder="'preferBeingA'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.preferBeingA">{{ form.errors.preferBeingA }}</span>
-                                </div>
+                        <InputLabel forr="number_two" label="Phone" v-model="form.number_two" type="text" />
 
-                                <div>
-                                    <InputLabel forr="firstAidCertificate" id="firstAidCertificate" :label="'First Aid Certificate'" @input="form.firstAidCertificate = $event.target.files[0]" type="file"
-                                        :placeholder="'Enter image URL'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.firstAidCertificate">{{ form.errors.firstAidCertificate }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="goodConductCertificate" id="goodConductCertificate" :label="'Good Conduct Certificate'" @input="form.goodConductCertificate = $event.target.files[0]" type="file"
-                                        :placeholder="'Enter image URL'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.goodConductCertificate">{{ form.errors.goodConductCertificate }}</span>
-                                </div>
+                        <div>
+                            <label class="block font-medium mb-2">Languages</label>
 
-             
-                                <div class="mt-5 mb-8">
-                                    <h1 class="text-sm font-medium mb-2">Profile Complete</h1>
+                            <div class="flex flex-wrap gap-4">
 
-                                    <select
-                                        class="form-control"
-                                        name="is_profile_completed"
-                                        id="is_profile_completed"
-                                        v-model="form.is_profile_completed"
-                                        :disabled="form.is_profile_completed"
-                                    >
-                                        <option :value="false">False</option>
-                                        <option :value="true">True</option>
-                                    </select>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="English"
+                                        v-model="form.languages" />
+                                    English
+                                </label>
 
-                                    <span
-                                        class="text-red-500 text-sm"
-                                        v-if="form.errors.is_profile_completed"
-                                    >
-                                        {{ form.errors.is_profile_completed }}
-                                    </span>
-                                </div>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="Swahili"
+                                        v-model="form.languages" />
+                                    Swahili
+                                </label>
 
-                                <div class="mt-5 mb-8">
-                                    <h1 class="text-sm font-bold mb-2">Profile Verified</h1>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="French"
+                                        v-model="form.languages" />
+                                    French
+                                </label>
 
-                                    <select
-                                        class="form-control"
-                                        name="is_profile_verified"
-                                        id="is_profile_verified"
-                                        v-model.boolean="form.is_profile_verified"
-                                    >
-                                        <option :value="false">False</option>
-                                        <option :value="true">True</option>
-                                    </select>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="German"
+                                        v-model="form.languages" />
+                                    German
+                                </label>
 
-                                    <span
-                                        class="text-red-500 text-sm"
-                                        v-if="form.errors.is_profile_verified"
-                                    >
-                                        {{ form.errors.is_profile_verified }}
-                                    </span>
-                                </div>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="Arabic"
+                                        v-model="form.languages" />
+                                    Arabic
+                                </label>
+
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="Chinese"
+                                        v-model="form.languages" />
+                                    Chinese
+                                </label>
+
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="Other"
+                                        v-model="form.languages" />
+                                    Other
+                                </label>
+
+                            </div>
+
+                            <span class="text-red-500 text-sm" v-if="form.errors.languages">
+                                {{ form.errors.languages }}
+                            </span>
+                        </div>
+
+                        <div>
+                            <label>Are You Mother</label>
+                            <select v-model="form.isMother" class="form-control">
+                                <option :value="null">Select</option>
+                                <option :value="true">Yes</option>
+                                <option :value="false">No</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>What age of kids do you prefer working with</label>
+                            <select v-model="form.ageOfKids" class="form-control">
+                                <option value="">Select Age</option>
+                                <option value="0-3">0-3 years</option>
+                                <option value="4-10">4-10 years</option>
+                                <option value="more then 10">more then 10 years</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Are you okay handling pets</label>
+                            <select v-model="form.isHandelingPet" class="form-control">
+                                <option :value="null">Select</option>
+                                <option :value="true">Yes</option>
+                                <option :value="false">No</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Preferred Role</label>
+                            <select v-model="form.preferredRole" class="form-control">
+                                <option value="">Select</option>
+                                <option value="Nanny">Nanny</option>
+                                <option value="Housekeeper">Housekeeper</option>
+                            </select>
+                        </div>
 
 
-                        </div> 
+                        <!-- File Uploads -->
+                        <div>
+                            <label>ID Copy</label>
+                            <input type="file" class="dropify" :data-default-file="form.idCopy"
+                                @change="(e) => handleFileChange(e, 'idCopy')" />
+                        </div>
+
+                        <div>
+                            <label>Profile Photo</label>
+                            <input type="file" class="dropify" :data-default-file="form.profilePhoto"
+                                @change="(e) => handleFileChange(e, 'profilePhoto')" />
+                        </div>
+
+                        <div>
+                            <label>Driving License</label>
+                            <input type="file" class="dropify" :data-default-file="form.drivingLicense"
+                                @change="(e) => handleFileChange(e, 'drivingLicense')" />
+                        </div>
+
+                        <div>
+                            <label>Good Conduct Certificate</label>
+                            <input type="file" class="dropify" :data-default-file="form.goodConductCertificate"
+                                @change="(e) => handleFileChange(e, 'goodConductCertificate')" />
+                        </div>
+
+                        <div>
+                            <label>First Aid Certificate</label>
+                            <input type="file" class="dropify" :data-default-file="form.firstAidCertificate"
+                                @change="(e) => handleFileChange(e, 'firstAidCertificate')" />
+                        </div>
+
                     </div>
 
-                    <Button :label="`Update`" :type="`submit`" />
+                    <div class="mt-8">
+                        <Button label="Update" type="submit" />
+                    </div>
                 </form>
+
             </div>
 
         </div>
     </AppLayout>
 </template>
+
+<style>
+.dropify-wrapper .dropify-preview .dropify-render img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+}
+
+.dropify-wrapper .dropify-message p {
+    font-size: 16px;
+    text-align: center;
+}
+</style>

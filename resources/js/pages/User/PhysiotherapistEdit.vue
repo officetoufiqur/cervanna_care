@@ -8,47 +8,55 @@ import { Head, useForm } from '@inertiajs/vue3';
 
 import 'dropify';
 import 'dropify/dist/css/dropify.min.css';
+import $ from 'jquery';
+import { nextTick, onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Edit Specialist',
-        href: '/specialist',
-    },          
+        title: 'Edit Physiotherapist',
+        href: '/physiotherapist',
+    },
 ];
 
-interface specialist {
-           
-    name: string;
-    location: string;
-    age: string;
-    role: string;
-    subRole: string;
-    experience: string;
-    gender: string;
-    languages: string;
-    canDrive: string;
-    bio: string;
-    education: string;
-    number_two: string;
-    hospitalBasedCare: string;
-    hospitalBasedYearsOfExperience: string;
-    hospitalBasedReferenceContact: string;
-    homeBasedCare: string;
-    homeBasedYearsOfExperience: string;
-    homeBasedReferenceContact: string;
-    preferred: string; 
-    
-    idCopy: string;
-    profilePhoto: string;
-    goodConductCertificate: string;
-    drivingLicense: string;
-    referenceLetter: string;
-    is_profile_completed: string;
-    is_profile_verified: string;
+const props = defineProps<{
+    specialist: Specialist;
+}>()
+
+interface Specialist {
+    id: number,
+    name: string,
+    role: string,
+    subRole: string,
+    location: string,
+    age: string,
+    gender: string,
+    preferredRole: string,
+    languages: string[];
+    canDrive: string,
+    bio: string,
+    education: string,
+    preferred: string[],
+    number_two: string,
+
+    hospitalBasedCare: string,
+    hospitalBasedYearsOfExperience: string,
+    hospitalBasedReferenceContact: string,
+
+    homeBasedCare: string,
+    homeBasedYearsOfExperience: string,
+    homeBasedReferenceContact: string,
+    idCopy: string,
+    profilePhoto: string,
+    goodConductCertificate: string,
+    drivingLicense: string,
+    referenceLetter: string,
+    is_profile_completed: boolean;
+    is_profile_verified: boolean;
     created_at: string;
-          
+
     physiotherapist: {
         eduCertificate: string;
+        experience: string;
         isRegisterPCK: string;
         registrationNumber: string;
         practiceLicense: string;
@@ -61,9 +69,6 @@ interface specialist {
 
 
 
-const props = defineProps<{
-    specialist: specialist;
-}>()
 
 const form = useForm({
 
@@ -73,11 +78,12 @@ const form = useForm({
     location: props.specialist.location,
     age: props.specialist.age,
     gender: props.specialist.gender,
-    languages: props.specialist.languages, 
-    canDrive: props.specialist.canDrive, 
-    bio: props.specialist.bio, 
-    education: props.specialist.education, 
-    preferred: props.specialist.preferred, 
+    preferredRole: props.specialist.preferredRole,
+    languages: props.specialist.languages || [],
+    canDrive: props.specialist.canDrive,
+    bio: props.specialist.bio,
+    education: props.specialist.education,
+    preferred: props.specialist.preferred || [],
     number_two: props.specialist.number_two,
     hospitalBasedCare: props.specialist.hospitalBasedCare,
     hospitalBasedYearsOfExperience: props.specialist.hospitalBasedYearsOfExperience,
@@ -87,232 +93,297 @@ const form = useForm({
     homeBasedYearsOfExperience: props.specialist.homeBasedYearsOfExperience,
     homeBasedReferenceContact: props.specialist.homeBasedReferenceContact,
 
-    // idCopy: props.specialist.idCopy,
-    // profilePhoto: props.specialist.profilePhoto,
-    // goodConductCertificate: props.specialist.goodConductCertificate,
-    // drivingLicense: props.specialist.drivingLicense,
-    // referenceLetter: props.specialist.referenceLetter, 
+    idCopy: props.specialist.idCopy,
+    goodConductCertificate: props.specialist.goodConductCertificate,
+    profilePhoto: props.specialist.profilePhoto,
+    drivingLicense: props.specialist.drivingLicense,
+    referenceLetter: props.specialist.referenceLetter,
 
     is_profile_completed: props.specialist.is_profile_completed,
     is_profile_verified: props.specialist.is_profile_verified,
     created_at: props.specialist.created_at,
 
     eduCertificate: props.specialist.physiotherapist.eduCertificate,
+    experience: props.specialist.physiotherapist.experience,
     isRegisterPCK: props.specialist.physiotherapist.isRegisterPCK,
     registrationNumber: props.specialist.physiotherapist.registrationNumber,
     practiceLicense: props.specialist.physiotherapist.practiceLicense,
     serviceFee: props.specialist.physiotherapist.serviceFee,
     serviceFeeDay: props.specialist.physiotherapist.serviceFeeDay,
     serviceFeeMonth: props.specialist.physiotherapist.serviceFeeMonth,
-    
+
 
 });
- 
+
+
+const handleFileChange = (
+    e: Event,
+    field: keyof typeof form
+) => {
+    const target = e.target as HTMLInputElement;
+
+    if (target.files && target.files.length > 0) {
+        (form as Record<string, any>)[field] = target.files[0];
+    }
+};
+
+
 
 const submit = () => {
-    form.put('/specialist/update/' + props.specialist.id);
+    form.post('/physiotherapist/update/' + props.specialist.id);
 }
 
+
+onMounted(async () => {
+    await nextTick();
+
+    $('.dropify').dropify({
+        height: 120,
+        messages: {
+            default: 'Drag and drop a file here or click',
+            replace: 'Drag and drop or click to replace',
+            remove: 'Remove',
+            error: 'Ooops, something wrong happened.'
+        }
+    });
+});
 
 </script>
 
 <template>
 
-    <Head title="Specialist Update" />
+    <Head title="Physiotherapist Update" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="pt-10 lg:px-20 px-5">
             <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-medium mb-4">Specialist Update</h1>
+                <h1 class="text-2xl font-medium mb-4">Physiotherapist Update</h1>
                 <LinkButton :label="'Back'" :url="'/all-specialist'" />
             </div>
 
             <div class="border border-gray-200 p-10 mt-3 shadow rounded">
-                <form @submit.prevent="submit">
-                   <div class="space-y-3 grid grid-cols-1 gap-5">
-                        <div class="space-y-4">
-                                <div>
-                                    <InputLabel forr="name" :label="'Name'" v-model="form.name" type="text"
-                                        :placeholder="'Name'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.name">{{ form.errors.name }}</span>
-                                </div>
+                <form @submit.prevent="submit" enctype="multipart/form-data">
+                    <div class="grid grid-cols-2 gap-3">
 
-                                <div>
-                                    <InputLabel forr="role" :label="'Role'" v-model="form.role" type="text"
-                                        :placeholder="'Role'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.role">{{ form.errors.role }}</span>
-                                </div>
+                        <!-- Basic Info -->
+                        <InputLabel forr="name" label="Name" v-model="form.name" type="text" />
+                        <InputLabel forr="age" label="Age" v-model="form.age" type="number" />
+                        <InputLabel forr="location" label="Location" v-model="form.location" type="text" />
 
-                                <div>
-                                    <InputLabel forr="subRole" :label="'Sub Role'" v-model="form.subRole" type="text"
-                                        :placeholder="'Sub Role'" readonly />
-                                    <span class="text-red-500 text-sm" v-if="form.errors.subRole">{{ form.errors.subRole }}</span>
-                                </div>
+                        <div>
+                            <label class="block mb-1">Gender</label>
+                            <select v-model="form.gender" class="w-full border rounded px-3 py-2">
+                                <option value="">Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
 
-                                <div>   
-                                    <InputLabel forr="location" :label="'Location'" v-model="form.location" type="text"
-                                        :placeholder="'Location'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.location">{{ form.errors.location }}</span>
-                                </div>
-                                <div>   
-                                    <InputLabel forr="age" :label="'Age'" v-model="form.age" type="text"
-                                        :placeholder="'Age'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.age">{{ form.errors.age }}</span>
-                                </div>
+                        <div>
+                            <label class="block font-medium mb-2">Languages</label>
 
-                                <div>
-                                    <InputLabel forr="gender" :label="'gender'" v-model="form.gender" type="text"
-                                        :placeholder="'gender'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.gender">{{ form.errors.gender }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="languages" :label="'languages'" v-model="form.languages" type="text"
-                                        :placeholder="'languages'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.languages">{{ form.errors.languages }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="number_two" :label="'phone'" v-model="form.number_two" type="text"
-                                        :placeholder="'phone'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.number_two">{{ form.errors.number_two }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="canDrive" :label="'canDrive'" v-model="form.canDrive" type="text"
-                                        :placeholder="'canDrive'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.canDrive">{{ form.errors.canDrive }}</span>
-                                </div>
+                            <div class="flex flex-wrap gap-4">
 
-                                <div>
-                                    <InputLabel forr="bio" :label="'bio'" v-model="form.bio" type="text"
-                                        :placeholder="'bio'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.bio">{{ form.errors.bio }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="education" :label="'education'" v-model="form.education" type="text"
-                                        :placeholder="'education'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.education">{{ form.errors.education }}</span>
-                                </div>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="English"
+                                        v-model="form.languages" />
+                                    English
+                                </label>
 
-                                <div>
-                                    <InputLabel forr="preferred" :label="'preferred'" v-model="form.preferred" type="text"
-                                        :placeholder="'preferred'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.preferred">{{ form.errors.preferred }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="hospitalBasedCare" :label="'hospitalBasedCare'" v-model="form.hospitalBasedCare" type="text"
-                                        :placeholder="'hospitalBasedCare'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.hospitalBasedCare">{{ form.errors.hospitalBasedCare }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="hospitalBasedYearsOfExperience" :label="'hospitalBasedYearsOfExperience'" v-model="form.hospitalBasedYearsOfExperience" type="text"
-                                        :placeholder="'hospitalBasedYearsOfExperience'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.hospitalBasedYearsOfExperience">{{ form.errors.hospitalBasedYearsOfExperience }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="hospitalBasedReferenceContact" :label="'hospitalBasedReferenceContact'" v-model="form.hospitalBasedReferenceContact" type="text"
-                                        :placeholder="'hospitalBasedReferenceContact'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.hospitalBasedReferenceContact">{{ form.errors.hospitalBasedReferenceContact }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="homeBasedCare " :label="'homeBasedCare'" v-model="form.homeBasedCare" type="text"
-                                        :placeholder="'homeBasedCare'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.homeBasedCare">{{ form.errors.homeBasedCare }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="homeBasedYearsOfExperience" :label="'homeBasedYearsOfExperience'" v-model="form.homeBasedYearsOfExperience" type="text"
-                                        :placeholder="'homeBasedYearsOfExperience'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.homeBasedYearsOfExperience">{{ form.errors.homeBasedYearsOfExperience }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="homeBasedReferenceContact" :label="'homeBasedReferenceContact'" v-model="form.homeBasedReferenceContact" type="text"
-                                        :placeholder="'homeBasedReferenceContact'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.homeBasedReferenceContact">{{ form.errors.homeBasedReferenceContact }}</span>
-                                </div>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="Swahili"
+                                        v-model="form.languages" />
+                                    Swahili
+                                </label>
 
-                                <div>
-                                    <InputLabel forr="isRegisterPCK" :label="'isRegisterPCK'" v-model="form.isRegisterPCK" type="text"
-                                        :placeholder="'isRegisterPCK'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.isRegisterPCK">{{ form.errors.isRegisterPCK }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="registrationNumber" :label="'registrationNumber'" v-model="form.registrationNumber" type="text"
-                                        :placeholder="'registrationNumber'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.registrationNumber">{{ form.errors.registrationNumber }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="practiceLicense" :label="'practiceLicense'" v-model="form.practiceLicense" type="text"
-                                        :placeholder="'practiceLicense'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.practiceLicense">{{ form.errors.practiceLicense }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="serviceFee" :label="'serviceFee'" v-model="form.serviceFee" type="text"
-                                        :placeholder="'serviceFee'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.serviceFee">{{ form.errors.serviceFee }}</span>
-                                </div>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="French"
+                                        v-model="form.languages" />
+                                    French
+                                </label>
 
-                                <div>
-                                    <InputLabel forr="serviceFeeDay" :label="'serviceFeeDay'" v-model="form.serviceFeeDay" type="text"
-                                        :placeholder="'serviceFeeDay'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.serviceFeeDay">{{ form.errors.serviceFeeDay }}</span>
-                                </div>
-                                <div>
-                                    <InputLabel forr="serviceFeeMonth" :label="'serviceFeeMonth'" v-model="form.serviceFeeMonth" type="text"
-                                        :placeholder="'serviceFeeMonth'" readonly/>
-                                    <span class="text-red-500 text-sm" v-if="form.errors.serviceFeeMonth">{{ form.errors.serviceFeeMonth }}</span>
-                                </div>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="German"
+                                        v-model="form.languages" />
+                                    German
+                                </label>
+
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="Arabic"
+                                        v-model="form.languages" />
+                                    Arabic
+                                </label>
+
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="Chinese"
+                                        v-model="form.languages" />
+                                    Chinese
+                                </label>
+
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" class="accent-[#72275B]" value="Other"
+                                        v-model="form.languages" />
+                                    Other
+                                </label>
+
+                            </div>
+
+                            <span class="text-red-500 text-sm" v-if="form.errors.languages">
+                                {{ form.errors.languages }}
+                            </span>
+                        </div>
+
+                        <div>
+                            <label>Can you Drive?</label>
+                            <select v-model="form.canDrive" class="form-control">
+                                <option :value="null">Select</option>
+                                <option :value="true">Yes</option>
+                                <option :value="false">No</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1">Education</label>
+                            <select v-model="form.education" class="w-full border rounded px-3 py-2">
+                                <option value="">Select education</option>
+                                <option value="Diploma In Physiotherapy">Diploma In Physiotherapy</option>
+                                <option value="Degree In Physiotherapy">Degree In Physiotherapy</option>
+                            </select>
+                        </div>
 
 
-             
-                                <div class="mt-5 mb-8">
-                                    <h1 class="text-sm font-medium mb-2">Profile Complete</h1>
+                        <div>
+                            <label>Is Register PCK</label>
+                            <select v-model="form.isRegisterPCK" class="form-control">
+                                <option :value="null">Select</option>
+                                <option :value="true">Yes</option>
+                                <option :value="false">No</option>
+                            </select>
+                        </div>
 
-                                    <select
-                                        class="form-control"
-                                        name="is_profile_completed"
-                                        id="is_profile_completed"
-                                        v-model="form.is_profile_completed"
-                                        :disabled="form.is_profile_completed"
-                                    >
-                                        <option :value="false">False</option>
-                                        <option :value="true">True</option>
-                                    </select>
+                        <InputLabel v-if="form.isRegisterPCK" forr="registrationNumber" label="Registration Number"
+                            v-model="form.registrationNumber" type="text" />
 
-                                    <span
-                                        class="text-red-500 text-sm"
-                                        v-if="form.errors.is_profile_completed"
-                                    >
-                                        {{ form.errors.is_profile_completed }}
-                                    </span>
-                                </div>
+                        <!-- Hospital Care -->
+                        <div>
+                            <label>Hospital Based Care</label>
+                            <select v-model="form.hospitalBasedCare" class="form-control">
+                                <option :value="true">Yes</option>
+                                <option :value="false">No</option>
+                            </select>
+                        </div>
 
-                                <div class="mt-5 mb-8">
-                                    <h1 class="text-sm font-bold mb-2">Profile Verified</h1>
-
-                                    <select
-                                        class="form-control"
-                                        name="is_profile_verified"
-                                        id="is_profile_verified"
-                                        v-model.boolean="form.is_profile_verified"
-                                    >
-                                        <option :value="false">False</option>
-                                        <option :value="true">True</option>
-                                    </select>
-
-                                    <span
-                                        class="text-red-500 text-sm"
-                                        v-if="form.errors.is_profile_verified"
-                                    >
-                                        {{ form.errors.is_profile_verified }}
-                                    </span>
-                                </div>
+                        <InputLabel v-if="form.hospitalBasedCare" forr="hospitalBasedYearsOfExperience"
+                            label="Hospital Experience Years" v-model="form.hospitalBasedYearsOfExperience"
+                            type="number" />
+                        <InputLabel v-if="form.hospitalBasedCare" forr="hospitalBasedReferenceContact"
+                            label="Hospital Reference Contact" v-model="form.hospitalBasedReferenceContact"
+                            type="number" />
 
 
-                        </div> 
+                        <!-- Home Care -->
+                        <div>
+                            <label>Home Based Care</label>
+                            <select v-model="form.homeBasedCare" class="form-control">
+                                <option :value="true">Yes</option>
+                                <option :value="false">No</option>
+                            </select>
+                        </div>
+
+                        <InputLabel v-if="form.homeBasedCare" forr="homeBasedYearsOfExperience"
+                            label="Home Experience Years" v-model="form.homeBasedYearsOfExperience" type="number" />
+                        <InputLabel v-if="form.homeBasedCare" forr="homeBasedReferenceContact"
+                            label="Home Reference Contact" v-model="form.homeBasedReferenceContact" type="number" />
+
+                        <div>
+                            <label class="block font-medium mb-2">Preferred</label>
+
+                            <select v-model="form.preferred" class="w-full border rounded px-3 py-2">
+                                <option value="">Select preference</option>
+                                <option value="Pediatric">Pediatric</option>
+                                <option value="Orthopedic">Orthopedic</option>
+                                <option value="Rehab">Rehab</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Stroke">Stroke</option>
+
+                            </select>
+
+                            <span class="text-red-500 text-sm" v-if="form.errors.preferred">
+                                {{ form.errors.preferred }}
+                            </span>
+                        </div>
+
+                        <InputLabel forr="serviceFeeDay" label="Service Fee (Per Day - KSh)"
+                            v-model="form.serviceFeeDay" type="number" />
+                        <InputLabel forr="serviceFeeMonth" label="Service Fee (Per Month - KSh)"
+                            v-model="form.serviceFeeMonth" type="number" />
+
+
+                        <!-- File Uploads -->
+                        <div>
+                            <label>ID Copy</label>
+                            <input type="file" class="dropify" :data-default-file="form.idCopy"
+                                @change="(e) => handleFileChange(e, 'idCopy')" />
+                        </div>
+
+                        <div>
+                            <label>Profile Photo</label>
+                            <input type="file" class="dropify" :data-default-file="form.profilePhoto"
+                                @change="(e) => handleFileChange(e, 'profilePhoto')" />
+                        </div>
+
+                        <div>
+                            <label>Driving License</label>
+                            <input type="file" class="dropify" :data-default-file="form.drivingLicense"
+                                @change="(e) => handleFileChange(e, 'drivingLicense')" />
+                        </div>
+
+                        <div>
+                            <label>Good Conduct Certificate</label>
+                            <input type="file" class="dropify" :data-default-file="form.goodConductCertificate"
+                                @change="(e) => handleFileChange(e, 'goodConductCertificate')" />
+                        </div>
+
+                        <div>
+                            <label>Reference Letter</label>
+                            <input type="file" class="dropify" :data-default-file="form.referenceLetter"
+                                @change="(e) => handleFileChange(e, 'referenceLetter')" />
+                        </div>
+
+                        <div>
+                            <label>Education Certificate</label>
+                            <input type="file" class="dropify" :data-default-file="form.eduCertificate"
+                                @change="(e) => handleFileChange(e, 'eduCertificate')" />
+                        </div>
+
+                        <div v-show="form.isRegisterPCK">
+                            <label>Practice License</label>
+                            <input type="file" class="dropify" :data-default-file="form.practiceLicense"
+                                @change="(e) => handleFileChange(e, 'practiceLicense')" />
+                        </div>
+
                     </div>
 
-                    <Button :label="`Update`" :type="`submit`" />
+                    <div class="mt-8">
+                        <Button label="Update" type="submit" />
+                    </div>
                 </form>
+
             </div>
 
         </div>
     </AppLayout>
 </template>
+
+<style>
+.dropify-wrapper .dropify-preview .dropify-render img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+}
+
+.dropify-wrapper .dropify-message p {
+    font-size: 16px;
+    text-align: center;
+}
+</style>
