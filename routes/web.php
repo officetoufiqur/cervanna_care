@@ -10,9 +10,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FoundationController;
+use App\Http\Controllers\HouseManagerController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionEmployController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\NurseController;
 use App\Http\Controllers\OurCoreController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PriceController;
@@ -144,6 +146,17 @@ Route::middleware(['auth', 'is_not_admin'])->group(function () {
         Route::get('/all-specialist', 'specialistIndex')->name('specialist.index');
         Route::get('/specialist/create', 'specialistCreate')->name('specialist.create');
         Route::post('/specialist/store', 'specialistStore')->name('specialist.store');
+        Route::post('/physiotherapist/update/{id}', 'physiotherapistUpdate')->name('physiotherapist.update');
+    });
+
+    Route::controller(NurseController::class)->group(function () {
+        Route::post('/nurse/update/{id}', 'nurseUpdate')->name('nurse.update');
+        Route::post('/nurse-assistant/update/{id}', 'nurseAssistantUpdate')->name('nurse-assistant.update');
+        Route::post('/specialist-need/update/{id}', 'specialistNeedUpdate')->name('specialist-need.update');
+    });
+
+    Route::controller(HouseManagerController::class)->group(function () {
+        Route::post('/house-manager/update/{id}', 'houseManagerUpdate')->name('house-manager.update');
     });
 
     Route::resource('/our-cores', OurCoreController::class);

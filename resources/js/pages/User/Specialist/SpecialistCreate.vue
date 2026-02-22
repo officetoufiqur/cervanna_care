@@ -47,9 +47,9 @@ const submit = () => {
 
             <div class="border border-gray-200 p-10 mt-3 shadow rounded">
                 <form @submit.prevent="submit">
-                   <div class="space-y-3 grid grid-cols-1 gap-5">
-                        <div class="space-y-4">
-                            <div class="mt-5 mb-8">
+                   <div class="space-y-3 grid grid-cols-1 gap-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="">
                                 <h1 class="text-sm font-medium mb-2">Specialist</h1>
 
                                 <select
@@ -99,7 +99,7 @@ const submit = () => {
                                 <span class="text-red-500 text-sm" v-if="form.errors.password">{{ form.errors.password }}</span>
                             </div>
 
-                            <div class="mt-5 mb-8">
+                            <div class="">
                                 <h1 class="text-sm font-medium mb-2">Experience</h1>
 
                                 <select
